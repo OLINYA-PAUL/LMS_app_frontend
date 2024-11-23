@@ -27,7 +27,7 @@ const CustomeModel = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box className="flex flex-1 flex-col dark:bg-gradient-to-b  dark:from-blue-900 dark:to-black duration-300 w-full md:max-w-[50%] p-6 bg-white shadow-md rounded-lg absolute top-[6%] left-[25%] border-2 dark:border-[#ffffff1c]  transition ">
+        <Box className="flex flex-1 flex-col dark:bg-gradient-to-b  dark:from-blue-900 dark:to-black duration-300  bg-white shadow-md rounded-lg  border-2 dark:border-[#ffffff1c] transition ">
           <Component setOpen={setIsOpen} setRoute={setRoute} />
         </Box>
       </Modal>

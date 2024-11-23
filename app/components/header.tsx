@@ -7,7 +7,7 @@ import { LuMenuSquare } from "react-icons/lu";
 import Link from "next/link";
 import React, { useState } from "react";
 import CustomeModel from "../../utils/customeModel";
-import Login from "../components/auth/Login";
+import Login from "./auth/login";
 
 interface headerProps {
   isOpen: boolean;
@@ -126,9 +126,24 @@ const Header = ({
           )}
         </div>
       )}
+      {route === "Sign-up" && (
+        <div>
+          {isOpen && (
+            <div className="w-full">
+              <CustomeModel
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                activeItem={activeItem}
+                route={route}
+                setRoute={setRoute}
+                Component={Login}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
 
 export default Header;
-// flex items-center absolute top-[50px] left-[200px] w-[30%] h-[500px] bg-green-600

@@ -21,7 +21,7 @@ const HeroBannar = () => {
             Unlock Your Potential with Expert-Led, World-Class Courses — Learn
             Anytime, Anywhere.{" "}
           </h1>
-          <p className="text-black dark:text-white text-base md:text-lg mt-4 ">
+          <p className="text-black dark:text-white text-base md:text-lg mt-4">
             We have 40k+ Online courses & 500K+ Online registered students. Find
             your desired courses from them.
           </p>
