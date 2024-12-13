@@ -9,13 +9,33 @@ import { FcGoogle } from "react-icons/fc";
 import { signUpSchema } from "../../../utils/authValidation";
 import { styles } from "../../styles/style";
 import { FaLongArrowAltRight } from "react-icons/fa";
+import { ImSpinner } from "react-icons/im";
+import { useRegisterMutation } from "@/radux/features/auth/authApi";
+import toast from "react-hot-toast";
+
 interface LoginPops {
   setRoute: React.Dispatch<SetStateAction<string>>;
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
 }
 
-const Login = ({ setRoute, setIsOpen }: LoginPops) => {
+const Singup = ({ setRoute, setIsOpen }: LoginPops) => {
   const [show, setShow] = useState<boolean>(true);
+  const [register, { error, isSuccess, data, reset }] = useRegisterMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      const message = data?.message || "registration is successful";
+
+      setRoute("Verification");
+      toast?.success(message);
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorData = (error as any) || "failed to register";
+        toast?.success(errorData.data.error);
+      }
+    }
+  }, [isSuccess, error]);
 
   const formik = useFormik({
     initialValues: {
@@ -24,8 +44,14 @@ const Login = ({ setRoute, setIsOpen }: LoginPops) => {
       password: "",
     },
     validationSchema: signUpSchema,
-    onSubmit: ({ email, password }) => {
-      console.log({ email, password });
+    onSubmit: async ({ name, email, password }) => {
+      try {
+        await register({ name, email, password });
+
+        reset();
+      } catch (error: any) {
+        console.log(error.message);
+      }
     },
   });
 
@@ -36,146 +62,170 @@ const Login = ({ setRoute, setIsOpen }: LoginPops) => {
     resetForm,
     values,
     status,
+    isSubmitting,
+    handleBlur,
     handleSubmit,
   } = formik;
 
   return (
-    <div className="flex flex-1 flex-col dark:bg-gradient-to-b  dark:from-blue-900 dark:to-black duration-300 w-full md:max-w-[50%] p-6 bg-white shadow-md rounded-lg absolute top-[6%] left-[25%] border-2 dark:border-[#ffffff1c]  transition ">
-      <h1 className={`${styles.title} `}>Singup With React Prodigy</h1>
-      <form onSubmit={handleSubmit} className="mt-5 mb-4">
-        <div>
-          <label htmlFor="email" className={`${styles.lable} `}>
-            Email
-          </label>
-          <input
-            id="text"
-            name="text"
-            type="text"
-            placeholder="Enter your name"
-            onChange={handleChange}
-            value={values.name}
-            className={`${
-              errors.email && touched.name
-                ? "border-red-600"
-                : "border-transparent"
-            } w-full rounded-md p-3 mt-3 bg-slate-300 text-black dark:text-white 
-            border-2 border-r-slate-200 
-            focus:outline-none focus:ring-4 focus:ring-blue-500
-            focus:ring-opacity-50 
-            transition-all duration-300 
-            bg-gradient-to-r from-blue-500 to-teal-400 dark:placeholder:text-white`}
-            style={{
-              backgroundImage: "linear-gradient(45deg, #6ee7b7, #3b82f6)",
-              borderImage: "linear-gradient(45deg, #6ee7b7, #3b82f6) 1",
-            }}
-          />
-        </div>
-        <div>
-          <label htmlFor="email" className={`${styles.lable} `}>
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Enter your email"
-            onChange={handleChange}
-            value={values.email}
-            className={`${
-              errors.email && touched.email
-                ? "border-red-600"
-                : "border-transparent"
-            } w-full rounded-md p-3 mt-3 bg-slate-300 text-black dark:text-white 
-            border-2 border-r-slate-200 
-            focus:outline-none focus:ring-4 focus:ring-blue-500
-            focus:ring-opacity-50 
-            transition-all duration-300 
-            bg-gradient-to-r from-blue-500 to-teal-400 dark:placeholder:text-white`}
-            style={{
-              backgroundImage: "linear-gradient(45deg, #6ee7b7, #3b82f6)",
-              borderImage: "linear-gradient(45deg, #6ee7b7, #3b82f6) 1",
-            }}
-          />
-        </div>
-        text
-        <div className="mt-3">
-          <label htmlFor="Password" className={`${styles.lable} `}>
-            Password
-          </label>
-          <div className="flex items-center mt-3 rounded-md bg-gradient-to-r from-blue-500 to-teal-400 p-[2px]">
+    <div>
+      <div
+
+      // className="flex flex-1 flex-col dark:bg-gradient-to-b  dark:from-blue-900 dark:to-black duration-300 w-full md:max-w-[50%] p-6 bg-white shadow-md rounded-lg absolute  left-[25%] border-2 dark:border-[#ffffff1c]  transition "
+      >
+        <h1 className={`${styles.title}`}>Singup With React Prodigy</h1>
+        <form onSubmit={handleSubmit} className="mt-5 mb-4">
+          <div>
+            <label htmlFor="name" className={`${styles.lable}`}>
+              name
+            </label>
             <input
-              id="password"
-              name="password"
-              type={show ? "text" : "password"}
-              placeholder="Enter your Password"
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Enter your name"
               onChange={handleChange}
-              value={values.password}
+              onBlur={handleBlur} // Add this
+              value={values.name}
+              className={`${
+                errors.name && touched.name
+                  ? "border-red-600"
+                  : "border-transparent"
+              } w-full rounded-md p-3 mt-3 bg-slate-300 text-black dark:text-white 
+            border-2 border-r-slate-200 
+            focus:outline-none focus:ring-4 focus:ring-blue-500
+            focus:ring-opacity-50 
+            transition-all duration-300 
+            bg-gradient-to-r from-blue-500 to-teal-400 dark:placeholder:text-white`}
+              style={{
+                backgroundImage: "linear-gradient(45deg, #6ee7b7, #3b82f6)",
+                borderImage: "linear-gradient(45deg, #6ee7b7, #3b82f6) 1",
+              }}
+            />
+            {errors.name && touched.name && (
+              <div className="text-red-600 mt-2">{errors.name}</div>
+            )}
+          </div>
+          <div className="mt-2">
+            <label htmlFor="email" className={`${styles.lable}`}>
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              onChange={handleChange}
+              onBlur={handleBlur} // Add this
+              value={values.email}
               className={`${
                 errors.email && touched.email
                   ? "border-red-600"
                   : "border-transparent"
-              }  w-full p-3 text-black dark:text-white bg-transparent focus:outline-none 
-            placeholder:text-gray-700 dark:placeholder:text-white`}
+              } w-full rounded-md p-3 mt-3 bg-slate-300 text-black dark:text-white 
+            border-2 border-r-slate-200 
+            focus:outline-none focus:ring-4 focus:ring-blue-500
+            focus:ring-opacity-50 
+            transition-all duration-300 
+            bg-gradient-to-r from-blue-500 to-teal-400 dark:placeholder:text-white`}
+              style={{
+                backgroundImage: "linear-gradient(45deg, #6ee7b7, #3b82f6)",
+                borderImage: "linear-gradient(45deg, #6ee7b7, #3b82f6) 1",
+              }}
             />
-            <div className="mr-5">
-              {show ? (
-                <AiOutlineEye
-                  className="w-6 h-6 text-black dark:text-white cursor-pointer hover:scale-105 transition-transform duration-200"
-                  onClick={() => setShow(false)} // Toggle visibility
-                />
-              ) : (
-                <AiOutlineEyeInvisible
-                  className="w-6 h-6 text-black dark:text-white cursor-pointer hover:scale-105 transition-transform duration-200"
-                  onClick={() => setShow(true)} // Toggle visibility
-                />
-              )}
+            {errors.email && touched.email && (
+              <div className="text-red-600 mt-2">{errors.email}</div>
+            )}
+          </div>
+
+          <div className="mt-3">
+            <label htmlFor="Password" className={`${styles.lable}`}>
+              Password
+            </label>
+            <div className="flex items-center mt-3 rounded-md bg-gradient-to-r from-blue-500 to-teal-400 p-[2px]">
+              <input
+                id="password"
+                name="password"
+                type={show ? "text" : "password"}
+                placeholder="Enter your Password"
+                onChange={handleChange}
+                onBlur={handleBlur} // Add this
+                value={values.password}
+                className={`${
+                  errors.email && touched.email
+                    ? "border-red-600"
+                    : "border-transparent"
+                }  w-full p-3 text-black dark:text-white bg-transparent focus:outline-none 
+            placeholder:text-gray-700 dark:placeholder:text-white`}
+              />
+              <div className="mr-5">
+                {show ? (
+                  <AiOutlineEye
+                    className="w-6 h-6 text-black dark:text-white cursor-pointer hover:scale-105 transition-transform duration-200"
+                    onClick={() => setShow(false)} // Toggle visibility
+                  />
+                ) : (
+                  <AiOutlineEyeInvisible
+                    className="w-6 h-6 text-black dark:text-white cursor-pointer hover:scale-105 transition-transform duration-200"
+                    onClick={() => setShow(true)} // Toggle visibility
+                  />
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <button
-          type="submit"
-          disabled={
-            values.name === "" || values?.email === "" || values.password === ""
-          }
-          className={`${
-            styles.submit
-          } w-full py-3 mt-10 rounded-full cursor-pointer text-black bg-gradient-to-r from-blue-500 via-purple-500 to-teal-400 dark:text-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-501 ${
-            values.name === "" ||
-            values?.email === "" ||
-            values?.password === ""
-              ? "opacity-50 cursor-not-allowed"
-              : ""
-          }`}
-        >
-          SIng up
-        </button>
-        <div className="text-black dark:text-white transition-all duration-300 transform mt-10 font-extrabold text-center font-Poppins text-[20px]">
-          Join with Goole
-        </div>
-        <div className="flex items-center justify-center gap-3 mt-5 ">
-          <FcGoogle
-            className="w-8 h-8 cursor-pointer hover:scale-105 transition-transform duration-200"
-            onClick={() => setShow(false)} // Toggle visibility
-          />
-          <AiFillGithub
-            className="w-8 h-8 cursor-pointer hover:scale-105 transition-transform duration-200 ml-5"
-            onClick={() => setShow(false)} // Toggle visibility
-          />
-        </div>
-        <div
-          className="flex cursor-pointer items-center justify-center gap-3  text-black dark:text-white transition-all duration-300 transform mt-5 text-center font-Poppins text-[19px]"
-          onClick={() => setRoute("Sign-up")}
-        >
-          <p> have an account?</p>
-          <p className="text-blue-500"> Sing in </p>
-          <FaLongArrowAltRight
-            width={20}
-            className="w-4 h-4 cursor-pointer hover:scale-105 transition-transform duration-200 "
-          />
-        </div>
-      </form>
+          {errors.password && touched.password && (
+            <div className="text-red-600 mt-2">{errors.password}</div>
+          )}
+          <button
+            type="submit"
+            disabled={
+              (values.name === "" ||
+                values?.email === "" ||
+                values.password === "",
+              isSubmitting)
+            }
+            className={`${styles.submit} ${
+              values.name === "" ||
+              values?.email === "" ||
+              values?.password === ""
+                ? "opacity-50 cursor-not-allowed"
+                : "cursor-pointer"
+            } w-full py-3 mt-10 rounded-full flex items-center justify-center text-black bg-gradient-to-r from-blue-500 via-purple-500 to-teal-400 dark:text-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-501`}
+          >
+            {isSubmitting ? (
+              <ImSpinner className="w-6 h-6 text-black dark:text-white" />
+            ) : (
+              "Sing up"
+            )}
+          </button>
+          <div className="text-black dark:text-white transition-all duration-300 transform mt-10 font-extrabold text-center font-Poppins text-[20px]">
+            Join with Goole
+          </div>
+          <div className="flex items-center justify-center gap-3 mt-5 ">
+            <FcGoogle
+              className="w-8 h-8 cursor-pointer hover:scale-105 transition-transform duration-200"
+              onClick={() => setShow(false)} // Toggle visibility
+            />
+            <AiFillGithub
+              className="w-8 h-8 cursor-pointer hover:scale-105 transition-transform duration-200 ml-5"
+              onClick={() => setShow(false)} // Toggle visibility
+            />
+          </div>
+          <div
+            className="flex cursor-pointer items-center justify-center gap-3  text-black dark:text-white transition-all duration-300 transform mt-5 text-center font-Poppins text-[19px]"
+            onClick={() => setRoute("Login")}
+          >
+            <p> have an account?</p>
+            <p className="text-blue-500"> Sing in </p>
+            <FaLongArrowAltRight
+              width={20}
+              className="w-4 h-4 cursor-pointer hover:scale-105 transition-transform duration-200 "
+            />
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default Login;
+export default Singup;

@@ -40,7 +40,7 @@ const NavItems = ({ activeItem, isMobile }: navProps) => {
               className="font-Poppins  cursor-pointer p-3 font-extrabold"
             >
               <Link
-                href={`/pages/${i.url}`}
+                href={i.url}
                 passHref
                 className={`${
                   activeItem === index ? "active_link" : "normal_link"

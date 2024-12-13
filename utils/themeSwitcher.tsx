@@ -13,20 +13,20 @@ const ThemeSwitcher = () => {
   if (!mounted) return null;
 
   return (
-    <div className="flex items-center justify-center mx-2">
+    <div className="flex items-center justify-center mx-2 ">
       {theme === "light" ? (
         <MdDarkMode
           onClick={() => setTheme("dark")}
           width={400}
           color="black"
-          className="toggle_mode"
+          className="toggle_mode cursor-pointer"
         />
       ) : (
         <MdLightMode
           width={400}
           color="white"
           onClick={() => setTheme("light")}
-          className="toggle_mode font-extrabold"
+          className="toggle_mode font-extrabold cursor-pointer"
         />
       )}
     </div>
