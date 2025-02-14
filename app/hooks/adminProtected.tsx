@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { redirect } from "next/navigation";
 import { useSelector } from "react-redux";
@@ -10,8 +12,7 @@ interface UseProtectedProps {
 export const AdminProtected = ({ children }: UseProtectedProps) => {
   const { user } = useSelector((state: any) => state.auth);
 
-  if (!user) toast.error("You are not authorised to see this page");
-
+  if (!user) return null;
   const isAdmin = user?.role === "admin";
   if (!isAdmin) toast.error("You are not authorised to see this page");
 

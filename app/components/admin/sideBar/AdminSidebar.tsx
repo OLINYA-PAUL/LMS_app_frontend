@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 
 const AdminSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false); // State to manage collapse
-  const [selected, setSelected] = useState("dashboard"); // State to manage selected item
+  const [selected, setSelected] = useState("admin"); // State to manage selected item
   const { theme, setTheme } = useTheme(); // Next-themes hook
   const isDarkMode = theme === "dark";
   const { user } = useSelector((state: any) => state.auth);
@@ -95,8 +95,8 @@ const AdminSidebar = () => {
           {/* Dashboard */}
           <MenuItem
             icon={<HomeOutlined />}
-            active={selected === "dashboard"}
-            onClick={() => handleNavigation("/dashboard")}
+            active={selected === "admin"}
+            onClick={() => handleNavigation("/admin")}
           >
             Dashboard
           </MenuItem>

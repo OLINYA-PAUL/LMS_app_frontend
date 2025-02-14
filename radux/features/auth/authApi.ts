@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { apiSlice } from "../api/apiSlice";
 import { userRegistration, userLogin, userLogout } from "./authSlice";
-import Login from "@/app/components/auth/login";
+// import Login from "@/app/components/auth/login";
 
 interface registrationResponse {
   message: string;
