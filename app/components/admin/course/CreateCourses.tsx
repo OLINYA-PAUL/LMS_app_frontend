@@ -81,7 +81,7 @@ const CreateCourse = () => {
 
   return (
     <div className="w-full flex min-h-screen">
-      <div className="w-[90%]">
+      <div className="w-[90%] max-sm:w-[100%] ">
         {active === 0 && (
           <CourseInformation
             active={active}
@@ -91,7 +91,7 @@ const CreateCourse = () => {
           />
         )}
       </div>
-      <div className="w-[15%] mt-[100px] h-screen fixed top-5 right-0">
+      <div className="w-[15%] mt-[100px] h-screen fixed top-5 right-0 hidden md:flex">
         <CourseOptions active={active} setActive={setActive} />
       </div>
     </div>

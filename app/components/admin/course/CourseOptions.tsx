@@ -20,7 +20,7 @@ const CourseOptions = ({ active, setActive }: CourseOptionsProps) => {
         <div
           key={option}
           className="flex w-full items-start hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer p-2"
-          onClick={() => setActive(index)}
+          // onClick={() => setActive(index)}
         >
           {/* Step indicator column */}
           <div className="flex flex-col items-center mr-3 relative">
