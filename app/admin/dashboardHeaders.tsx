@@ -8,7 +8,7 @@ const DashboardHeaders = ({}) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="w-full flex items-center justify-end p-6 fixed top-5 right-0 ">
+    <div className="w-full flex items-center justify-end p-6 fixed top-0 right-0 dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900  bg-gradient-to-b from-gray-200 to-gray-300 duration-300">
       <ThemeSwitcher />
       <div
         className="relative cursor-pointer m-2 "
