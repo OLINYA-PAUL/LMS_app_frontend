@@ -3,12 +3,21 @@ import NavItems from "@/utils/navItems";
 import ThemeSwitcher from "@/utils/themeSwitcher";
 import { CgProfile } from "react-icons/cg";
 import { LuMenuSquare } from "react-icons/lu";
-
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CustomeModel from "../../utils/customeModel";
 import Login from "./auth/login";
+import Signup from "./auth/signup";
+import Verification from "./auth/Verification";
+import { useDispatch, useSelector } from "react-redux";
+import Image from "next/image";
+import avatar from "../../public/assets/profile_image.jpg";
+import { useSocialAuthMutation } from "@/radux/features/auth/authApi";
+import { useSession } from "next-auth/react";
+import { CiLogout } from "react-icons/ci";
 
+import toast from "react-hot-toast";
+import { ImSpinner } from "react-icons/im";
 interface headerProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,12 +36,41 @@ const Header = ({
   const [active, setActive] = useState<boolean>(false);
   const [isMobile, setisMobile] = useState<boolean>(false);
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 200) setActive(true);
+  const { user, token } = useSelector((state: any) => state.auth);
+  console.log({ USER: user, TOKEN: token });
+  const { data } = useSession();
+
+  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) setActive(true);
       else setActive(false);
-    });
-  }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("scroll", handleScroll);
+    }
+
+    return () => {
+      // Clean up the event listener on unmount
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      if (data) {
+        socialAuth({
+          email: data.user?.email as string,
+          name: data.user?.name as string,
+          avatar: data.user?.image as string,
+        });
+      }
+    }
+
+    if (isSuccess) toast.success("login successfully!");
+  }, [data, user]);
 
   const handleClose = (e: any) => {
     if (e.target?.id === "screen") {
@@ -66,16 +104,33 @@ const Header = ({
                 </h1>
               </div>
               <div className="hidden 800px:block">
-                <h1
-                  className="font-bold text-xl ml-3"
-                  onClick={() => setIsOpen(() => true)}
-                >
-                  <CgProfile
-                    width={300}
-                    className="dark:text-white text-black"
-                  />
+                <h1 className="font-bold text-xl ml-3">
+                  {user && user.avatar.url ? (
+                    <Link href={"/profile"}>
+                      <Image
+                        src={user.avatar.url ? user.avatar.url : avatar}
+                        alt={user?.profile || "user_profile"}
+                        width={25}
+                        height={25}
+                        className={`rounded-full  sm:w-[80px] sm:h-[80px] md:w-[30px] md:h-[30px]  ${
+                          activeItem === 5
+                            ? "border-[3px] border-green-500 "
+                            : ""
+                        }`}
+                      />
+                    </Link>
+                  ) : (
+                    <div>
+                      <CgProfile
+                        width={300}
+                        className="dark:text-white text-black"
+                        onClick={() => setIsOpen(() => true)}
+                      />
+                    </div>
+                  )}
                 </h1>
               </div>
+              <div></div>
             </div>
           </div>
         </div>
@@ -136,7 +191,23 @@ const Header = ({
                 activeItem={activeItem}
                 route={route}
                 setRoute={setRoute}
-                Component={Login}
+                Component={Signup}
+              />
+            </div>
+          )}
+        </div>
+      )}
+      {route === "Verification" && (
+        <div>
+          {isOpen && (
+            <div className="w-full">
+              <CustomeModel
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                activeItem={activeItem}
+                route={route}
+                setRoute={setRoute}
+                Component={Verification}
               />
             </div>
           )}
