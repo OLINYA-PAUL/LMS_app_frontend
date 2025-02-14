@@ -81,12 +81,17 @@ const CreateCourse = () => {
 
   return (
     <div className="w-full flex min-h-screen">
-      <div className="w-[80%]">
+      <div className="w-[90%]">
         {active === 0 && (
-          <CourseInformation active={active} setActive={setActive} />
+          <CourseInformation
+            active={active}
+            setActive={setActive}
+            courseInfo={courseInfo}
+            setCourseInfo={setCourseInfo}
+          />
         )}
       </div>
-      <div className="w-[20%] mt-[100px] h-screen fixed top-5 right-0">
+      <div className="w-[15%] mt-[100px] h-screen fixed top-5 right-0">
         <CourseOptions active={active} setActive={setActive} />
       </div>
     </div>

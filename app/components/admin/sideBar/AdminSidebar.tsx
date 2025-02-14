@@ -16,13 +16,17 @@ import {
   Analytics,
   Menu as MenuIcon,
 } from "@mui/icons-material";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 
-const AdminSidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false); // State to manage collapse
+interface AdminSidebarProps {
+  isCollapsed: boolean;
+  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
   const [selected, setSelected] = useState("admin"); // State to manage selected item
   const { theme, setTheme } = useTheme(); // Next-themes hook
   const isDarkMode = theme === "dark";
@@ -40,10 +44,11 @@ const AdminSidebar = () => {
     <Box
       sx={{
         height: "100vh",
-        width: "100%",
+        width: "90%",
         overflowY: "auto",
         backgroundColor: isDarkMode ? "#1E1E2F" : "#FFF",
         color: isDarkMode ? "#FFF" : "#000",
+        marginRight: isCollapsed ? "0px" : "50px",
         "& .pro-sidebar-inner": {
           background: "transparent !important",
         },

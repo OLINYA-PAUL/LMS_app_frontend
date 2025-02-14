@@ -3,7 +3,7 @@ import React from "react";
 
 const DashBoardHero = () => {
   return (
-    <div className="w-full">
+    <div className="w-full z-50 ">
       <DashboardHeaders />
     </div>
   );
