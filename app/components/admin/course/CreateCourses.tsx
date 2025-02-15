@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
+import CourseData from "./CourseData";
 
 // Define types for the state variables
 interface CourseInfo {
@@ -88,6 +89,16 @@ const CreateCourse = () => {
             setActive={setActive}
             courseInfo={courseInfo}
             setCourseInfo={setCourseInfo}
+          />
+        )}
+        {active === 1 && (
+          <CourseData
+            active={active}
+            setActive={setActive}
+            benefits={benefits}
+            setBenefits={setBenefits}
+            prerequites={prerequites}
+            setPrerequites={setPrerequites}
           />
         )}
       </div>
