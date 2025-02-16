@@ -1,10 +1,6 @@
 import { styles } from "@/app/styles/style";
 import React from "react";
-import {
-  AddCircleOutline,
-  Margin,
-  RemoveCircleOutline,
-} from "@mui/icons-material";
+import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
 import toast from "react-hot-toast";
 
 interface Benefit {
@@ -74,6 +70,19 @@ const CourseData = ({
     );
     setPrerequites(updatedPrerequites);
   };
+
+  const handleNext = () => {
+    if (!prerequites[0].title || !benefits[0].title) {
+      return toast.error("Please fill all the fields");
+    }
+
+    setActive(active + 1);
+  };
+
+  const prev = () => {
+    setActive(active - 1);
+  };
+
   return (
     <div className="w-[90%] px-20 max-sm:px-0 mt-10">
       <div>
@@ -113,7 +122,7 @@ const CourseData = ({
           What are the Prerequites in this course
         </label>
         <div className="w-full mt-5">
-          {prerequites.map((items: Benefit, index: number) => (
+          {prerequites.map((items: Prerequisite, index: number) => (
             <div className="w-full" key={index}>
               <input
                 type="text"
@@ -139,6 +148,23 @@ const CourseData = ({
             />
           </div>
         </div>
+      </div>
+      <div className="w-full flex items-center justify-between mt-10">
+        <button
+          className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+               hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
+          onClick={prev}
+        >
+          Prev
+        </button>
+
+        <button
+          className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+               hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
+          onClick={handleNext}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

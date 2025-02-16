@@ -250,12 +250,13 @@ const CourseInformation = ({
             </label>
           </div>
           <div className="w-full flex items-end justify-end mt-10">
-            <input
-              type="button"
-              value="Next"
-              className="py-3 px-10 bg-blue-400 rounded-md font-bold cursor-pointer "
+            <button
+              className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+               hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
               onClick={handleNext}
-            />
+            >
+              Next
+            </button>
           </div>
         </form>
       </div>
