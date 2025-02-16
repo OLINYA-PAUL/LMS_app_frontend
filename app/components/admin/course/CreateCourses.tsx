@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
 import CourseData from "./CourseData";
+import CourseContentData from "./CourseContentData";
 
 // Define types for the state variables
 interface CourseInfo {
@@ -67,7 +68,7 @@ const CreateCourse = () => {
       videoUrl: "",
       title: "",
       description: "",
-      videoSection: "",
+      videoSection: "Untitled Section",
       links: [
         {
           title: "",
@@ -77,6 +78,10 @@ const CreateCourse = () => {
       suggestion: "",
     },
   ]);
+
+  const handleSubmit = () => {
+    console.log("");
+  };
 
   const [courseData, setCourseData] = useState<CourseData>({});
 
@@ -99,6 +104,15 @@ const CreateCourse = () => {
             setBenefits={setBenefits}
             prerequites={prerequites}
             setPrerequites={setPrerequites}
+          />
+        )}
+        {active === 2 && (
+          <CourseContentData
+            active={active}
+            setActive={setActive}
+            courseContentData={courseContentData}
+            setCourseContentData={setCourseContentData}
+            handleSubmit={handleSubmit}
           />
         )}
       </div>
