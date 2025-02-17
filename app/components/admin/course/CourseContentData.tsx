@@ -156,8 +156,7 @@ const CourseContentData = ({
           {courseContentData.map((items: CourseContent, index: number) => {
             const showSection =
               index === 0 ||
-              courseContentData[index].videoSection !==
-                courseContentData[index - 1].videoSection;
+              items.videoSection !== courseContentData[index - 1].videoSection;
 
             return (
               <div>
