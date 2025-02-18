@@ -10,8 +10,8 @@ import CourseContentData from "./CourseContentData";
 interface CourseInfo {
   name: string;
   description: string;
-  price: string;
-  estimatedPrice: string;
+  price: number;
+  estimatedPrice: number;
   tags: string;
   level: string;
   demoUrl: string;
@@ -40,18 +40,34 @@ interface CourseContent {
   suggestion: string;
 }
 
-interface CourseData {
-  // You can define the structure based on your actual course data
+interface CourseDatas {
+  name: string;
+  description: string;
+  price: number;
+  estimatedPrice: number;
+  tags: string;
+  level: string;
+  demoUrl: string;
+  thumbnail: string;
+  benefits: string[];
+  prerequisites: string[];
+  courseData: {
+    videoUrl: string;
+    title: string;
+    description: string;
+    videoSection: string;
+    links: { title: string; url: string }[];
+    suggestion: string;
+  }[];
 }
-
 const CreateCourse = () => {
   const [active, setActive] = useState<number>(0);
 
   const [courseInfo, setCourseInfo] = useState<CourseInfo>({
     name: "",
     description: "",
-    price: "",
-    estimatedPrice: "",
+    price: 0,
+    estimatedPrice: 0,
     tags: "",
     level: "",
     demoUrl: "",
@@ -79,11 +95,65 @@ const CreateCourse = () => {
     },
   ]);
 
-  const handleSubmit = () => {
-    console.log("");
-  };
+  const [courseData, setCourseData] = useState<CourseDatas>({
+    name: "",
+    description: "",
+    price: 0,
+    estimatedPrice: 0,
+    tags: "",
+    level: "",
+    demoUrl: "",
+    thumbnail: "",
+    benefits: [],
+    prerequisites: [],
+    courseData: [],
+  });
 
-  const [courseData, setCourseData] = useState<CourseData>({});
+  const handleSubmit = () => {
+    const formatedBenefits = benefits.map((item: Benefit) => item.title);
+    const formatedPrerequites = prerequites.map(
+      (item: Prerequisite) => item.title
+    );
+
+    const formatedCourseContentData = courseContentData.map(
+      (item: CourseContent) => ({
+        videoUrl: item.videoUrl,
+        title: item.title,
+        description: item.description,
+        videoSection: item.videoSection,
+        links: item.links.map((link: Link) => ({
+          title: link.title,
+          url: link.url,
+        })),
+        suggestion: item.suggestion,
+      })
+    );
+
+    const {
+      name,
+      description,
+      price,
+      estimatedPrice,
+      tags,
+      level,
+      demoUrl,
+      thumbnail,
+    } = courseInfo;
+
+    setCourseData({
+      name,
+      description,
+      price: price,
+      estimatedPrice,
+      tags,
+      level,
+      demoUrl,
+      thumbnail,
+      benefits: formatedBenefits,
+      prerequisites: formatedPrerequites,
+      courseData: formatedCourseContentData,
+    });
+  };
 
   return (
     <div className="w-full flex min-h-screen">

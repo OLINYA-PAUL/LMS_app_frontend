@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 interface CourseInfo {
   name: string;
   description: string;
-  price: string;
-  estimatedPrice: string;
+  price: number;
+  estimatedPrice: number;
   tags: string;
   level: string;
   demoUrl: string;
@@ -144,7 +144,10 @@ const CourseInformation = ({
                 name=""
                 value={courseInfo.price}
                 onChange={(e) => {
-                  setCourseInfo({ ...courseInfo, price: e.target.value });
+                  setCourseInfo({
+                    ...courseInfo,
+                    price: Number(e.target.value),
+                  });
                 }}
               />
             </div>
@@ -160,7 +163,7 @@ const CourseInformation = ({
                 onChange={(e) => {
                   setCourseInfo({
                     ...courseInfo,
-                    estimatedPrice: e.target.value,
+                    estimatedPrice: Number(e.target.value),
                   });
                 }}
               />
