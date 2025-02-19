@@ -144,9 +144,11 @@ const CourseInformation = ({
                 name=""
                 value={courseInfo.price}
                 onChange={(e) => {
+                  const value = e.target.value;
+
                   setCourseInfo({
                     ...courseInfo,
-                    price: Number(e.target.value),
+                    price: value === "" ? 0 : Number(e.target.value),
                   });
                 }}
               />
@@ -161,9 +163,10 @@ const CourseInformation = ({
                 name=""
                 value={courseInfo.estimatedPrice}
                 onChange={(e) => {
+                  const value = e.target.value;
                   setCourseInfo({
                     ...courseInfo,
-                    estimatedPrice: Number(e.target.value),
+                    estimatedPrice: value === "" ? 0 : Number(e.target.value),
                   });
                 }}
               />

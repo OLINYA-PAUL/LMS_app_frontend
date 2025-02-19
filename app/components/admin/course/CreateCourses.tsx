@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
 import CourseData from "./CourseData";
@@ -49,17 +49,11 @@ interface CourseDatas {
   level: string;
   demoUrl: string;
   thumbnail: string;
-  benefits: string[];
-  prerequisites: string[];
-  courseData: {
-    videoUrl: string;
-    title: string;
-    description: string;
-    videoSection: string;
-    links: { title: string; url: string }[];
-    suggestion: string;
-  }[];
+  benefits: Benefit[]; // Changed from string to Benefit[]
+  prerequisites: Prerequisite[]; // Changed from string to Prerequisite[]
+  courseData: CourseContent[]; // Changed to CourseContent[]
 }
+
 const CreateCourse = () => {
   const [active, setActive] = useState<number>(0);
 
@@ -75,7 +69,7 @@ const CreateCourse = () => {
   });
 
   const [benefits, setBenefits] = useState<Benefit[]>([{ title: "" }]);
-  const [prerequites, setPrerequites] = useState<Prerequisite[]>([
+  const [prerequisites, setPrerequisites] = useState<Prerequisite[]>([
     { title: "" },
   ]);
 
@@ -85,12 +79,7 @@ const CreateCourse = () => {
       title: "",
       description: "",
       videoSection: "Untitled Section",
-      links: [
-        {
-          title: "",
-          url: "",
-        },
-      ],
+      links: [{ title: "", url: "" }],
       suggestion: "",
     },
   ]);
@@ -109,25 +98,27 @@ const CreateCourse = () => {
     courseData: [],
   });
 
-  const handleSubmit = () => {
-    const formatedBenefits = benefits.map((item: Benefit) => item.title);
-    const formatedPrerequites = prerequites.map(
-      (item: Prerequisite) => item.title
-    );
+  const handleSubmit = () => {};
 
-    const formatedCourseContentData = courseContentData.map(
-      (item: CourseContent) => ({
-        videoUrl: item.videoUrl,
-        title: item.title,
-        description: item.description,
-        videoSection: item.videoSection,
-        links: item.links.map((link: Link) => ({
-          title: link.title,
-          url: link.url,
-        })),
-        suggestion: item.suggestion,
-      })
-    );
+  useEffect(() => {
+    const formattedBenefits = benefits.map((item) => ({
+      title: item.title,
+    }));
+    const formattedPrerequisites = prerequisites.map((item) => ({
+      title: item.title,
+    }));
+
+    const formattedCourseContentData = courseContentData.map((item) => ({
+      videoUrl: item.videoUrl,
+      title: item.title,
+      description: item.description,
+      videoSection: item.videoSection,
+      links: item.links.map((link) => ({
+        title: link.title,
+        url: link.url,
+      })),
+      suggestion: item.suggestion,
+    }));
 
     const {
       name,
@@ -143,17 +134,19 @@ const CreateCourse = () => {
     setCourseData({
       name,
       description,
-      price: price,
+      price,
       estimatedPrice,
       tags,
       level,
       demoUrl,
       thumbnail,
-      benefits: formatedBenefits,
-      prerequisites: formatedPrerequites,
-      courseData: formatedCourseContentData,
+      benefits: formattedBenefits,
+      prerequisites: formattedPrerequisites,
+      courseData: formattedCourseContentData,
     });
-  };
+  }, [courseContentData, courseInfo, benefits, prerequisites]);
+
+  console.log("all data", courseData);
 
   return (
     <div className="w-full flex min-h-screen">
@@ -172,8 +165,8 @@ const CreateCourse = () => {
             setActive={setActive}
             benefits={benefits}
             setBenefits={setBenefits}
-            prerequites={prerequites}
-            setPrerequites={setPrerequites}
+            prerequites={prerequisites}
+            setPrerequites={setPrerequisites}
           />
         )}
         {active === 2 && (
