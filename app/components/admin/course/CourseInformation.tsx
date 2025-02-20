@@ -137,18 +137,16 @@ const CourseInformation = ({
             <div className="w-full">
               <label className={`${styles.lable} `}>Course Price</label>
               <input
-                type="number"
+                type="text"
                 className={`${styles.input}`}
                 placeholder="Course price"
                 required
                 name=""
                 value={courseInfo.price}
                 onChange={(e) => {
-                  const value = e.target.value;
-
                   setCourseInfo({
                     ...courseInfo,
-                    price: value === "" ? 0 : Number(e.target.value),
+                    price: Number(e.target.value),
                   });
                 }}
               />
@@ -156,17 +154,16 @@ const CourseInformation = ({
             <div className="w-full">
               <label className={`${styles.lable} `}>estimated Price</label>
               <input
-                type="number"
+                type="text"
                 className={`${styles.input}`}
                 placeholder="estimatedPrice"
                 required
                 name=""
                 value={courseInfo.estimatedPrice}
                 onChange={(e) => {
-                  const value = e.target.value;
                   setCourseInfo({
                     ...courseInfo,
-                    estimatedPrice: value === "" ? 0 : Number(e.target.value),
+                    estimatedPrice: Number(e.target.value),
                   });
                 }}
               />
