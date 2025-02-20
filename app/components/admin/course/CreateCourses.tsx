@@ -49,9 +49,9 @@ interface CourseDatas {
   level: string;
   demoUrl: string;
   thumbnail: string;
-  benefits: Benefit[]; // Changed from string to Benefit[]
-  prerequisites: Prerequisite[]; // Changed from string to Prerequisite[]
-  courseData: CourseContent[]; // Changed to CourseContent[]
+  benefits: Benefit[];
+  prerequisites: Prerequisite[];
+  courseData: CourseContent[];
 }
 
 const CreateCourse = () => {
