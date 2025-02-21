@@ -5,6 +5,7 @@ import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
 import CourseData from "./CourseData";
 import CourseContentData from "./CourseContentData";
+import CoursePreview from "./CoursePreview";
 
 // Define types for the state variables
 interface CourseInfo {
@@ -146,7 +147,10 @@ const CreateCourse = () => {
     });
   }, [courseContentData, courseInfo, benefits, prerequisites]);
 
-  console.log("all data", courseData);
+  const handleCourseCreate = () => {
+    const data = courseData;
+    console.log(data);
+  };
 
   return (
     <div className="w-full flex min-h-screen">
@@ -176,6 +180,14 @@ const CreateCourse = () => {
             courseContentData={courseContentData}
             setCourseContentData={setCourseContentData}
             handleSubmit={handleSubmit}
+          />
+        )}
+        {active === 3 && (
+          <CoursePreview
+            active={active}
+            setActive={setActive}
+            courseData={courseData}
+            handleCourseCreate={handleCourseCreate}
           />
         )}
       </div>
