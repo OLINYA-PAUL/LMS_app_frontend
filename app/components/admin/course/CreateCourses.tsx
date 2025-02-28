@@ -190,6 +190,14 @@ const CreateCourse = () => {
             handleCourseCreate={handleCourseCreate}
           />
         )}
+        {active === 3 && (
+          <CoursePreview
+            active={active}
+            setActive={setActive}
+            courseData={courseData}
+            handleCourseCreate={handleCourseCreate}
+          />
+        )}
       </div>
       <div className="w-[15%] mt-[100px] h-screen fixed top-5 right-0 hidden md:flex">
         <CourseOptions active={active} setActive={setActive} />
