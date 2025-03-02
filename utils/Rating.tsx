@@ -8,22 +8,20 @@ interface RatingsProps {
 }
 
 const Ratings = ({
-  rating = 0,
+  rating,
   onRatingChange,
   readonly = false,
 }: RatingsProps) => {
   const [hoverRating, setHoverRating] = useState<number | null>(null);
-  const [currentRating, setCurrentRating] = useState<number>(rating);
-  const [isUserRated, setIsUserRated] = useState<boolean>(false); // Track user interaction
+  const [currentRating, setCurrentRating] = useState<number>(rating ?? 0);
 
-  // Update `currentRating` only when `rating` prop changes and user hasn't rated yet
+  // Update currentRating only if the component is controlled (rating prop is provided)
   useEffect(() => {
-    if (!isUserRated) {
+    if (rating !== undefined) {
       setCurrentRating(rating);
     }
-  }, [rating, isUserRated]);
+  }, [rating]);
 
-  // Determine displayed rating (hover effect takes priority)
   const displayRating = hoverRating ?? currentRating;
 
   const handleMouseMove = (
@@ -37,15 +35,15 @@ const Ratings = ({
     const percentage = position / rect.width;
 
     let partialRating = index + percentage;
-    partialRating = Math.round(partialRating * 2) / 2; // Round to nearest 0.5
-    partialRating = Math.min(Math.max(partialRating, 0), 5); // Clamp between 0 and 5
+    partialRating = Math.round(partialRating * 2) / 2;
+    partialRating = Math.min(Math.max(partialRating, 0), 5);
 
     setHoverRating(partialRating);
   };
 
   const handleMouseLeave = () => {
     if (readonly) return;
-    setHoverRating(null); // Keep currentRating intact
+    setHoverRating(null);
   };
 
   const handleClick = (
@@ -59,12 +57,11 @@ const Ratings = ({
     const percentage = position / rect.width;
 
     let clickedRating = index + percentage;
-    clickedRating = Math.round(clickedRating * 2) / 2; // Round to nearest 0.5
-    clickedRating = Math.min(Math.max(clickedRating, 0), 5); // Clamp between 0 and 5
+    clickedRating = Math.round(clickedRating * 2) / 2;
+    clickedRating = Math.min(Math.max(clickedRating, 0), 5);
 
-    setCurrentRating(clickedRating); // Keep the clicked rating permanent
-    setIsUserRated(true); // Mark that the user has given a rating
-    setHoverRating(null); // Clear hover effect after selection
+    setCurrentRating(clickedRating);
+    setHoverRating(null);
     onRatingChange(clickedRating);
   };
 
@@ -109,7 +106,6 @@ const Ratings = ({
         })}
       </div>
 
-      {/* Numerical Rating Display */}
       <span className="ml-2 text-sm text-gray-600">
         {displayRating.toFixed(1)}
       </span>

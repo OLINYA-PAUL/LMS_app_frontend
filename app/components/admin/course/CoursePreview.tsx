@@ -67,7 +67,13 @@ const CoursePreview = ({
           />
 
           <div className="w-full flex items-center font-bold mt-10">
-            <h1 className=" text-xl">
+            <h1
+              className={` ${
+                courseData.estimatedPrice && courseData.estimatedPrice > 0
+                  ? "line-through"
+                  : ""
+              } text-xl`}
+            >
               {courseData.price === 0 ? "Free" : courseData.price + "$"}
             </h1>
             <h5 className="pl-3  pb-3 opacity-80 line-through text-sm">
