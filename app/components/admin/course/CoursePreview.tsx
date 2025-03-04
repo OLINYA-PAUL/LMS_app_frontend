@@ -115,6 +115,7 @@ const CoursePreview = ({
           <div className="mt-5 flex items-center justify-between ">
             <div className="flex items-center">
               <Rating rating={5} />
+              <Rating rating={4} />
             </div>
           </div>
         </div>
