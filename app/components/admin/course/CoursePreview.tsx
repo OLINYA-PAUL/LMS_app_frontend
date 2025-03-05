@@ -2,6 +2,8 @@ import React from "react";
 import CoursePlayer from "../../../../utils/CoursePlayer";
 import Rating from "../../../../utils/Rating";
 import { styles } from "@/app/styles/style";
+import { Benne } from "next/font/google";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 interface Benefit {
   title: string;
@@ -57,6 +59,14 @@ const CoursePreview = ({
 
   const courseContentPercentange = coursePercentange ? coursePercentange : 0;
 
+  const prev = () => {
+    setActive(active - 1);
+  };
+
+  const handleSubmitCourse = () => {
+    handleCourseCreate();
+  };
+
   return (
     <div className="w-[90%] px-20 max-sm:px-0 mt-10">
       <div className="w-full relative">
@@ -106,17 +116,67 @@ const CoursePreview = ({
               Apply
             </div>
           </div>
-          <div className="w-full mt-auto">
+          <div className="w-full mt-auto text-sm font-Poppins">
             <p className="pbl-1">. Source Code Included</p>
             <p className="pbl-1">. Full liftime Access</p>
             <p className="pbl-1">. Certificate of Completion</p>
             <p className="pbl-1">. Premium Supports</p>
           </div>
-          <div className="mt-5 flex items-center justify-between ">
-            <div className="flex items-center">
+          <div className="mt-5 flex items-center justify-between max-sm:flex-wrap md:flex-nowrap ">
+            <div className="flex items-center gap-5 text-sm max-sm:flex-wrap md:flex-nowrap">
               <Rating rating={5} />
-              <Rating rating={4} />
+              <h5>0 Reviews</h5>
             </div>
+            <h5 className="max-sm:pt-2">0 Students</h5>
+          </div>
+          <h1 className="text-[30px] font-Poppins mt-5 font-bold">
+            What you will learn from this course
+          </h1>
+          <div className="w-full mt-5">
+            {courseData.benefits.map((items) => (
+              <div className="w-full flex md:items-center gap-5 ">
+                <div className="w-[15px] mr-1g ap-5 ">
+                  <IoMdCheckmarkCircleOutline size={20} className="mt-3" />
+                </div>
+                <p className="pl-2 text-sm">{items.title}</p>
+              </div>
+            ))}
+          </div>
+          <h1 className="text-[30px] font-Poppins mt-5 font-bold">
+            What are the prerequisites for starting this course
+          </h1>
+          <div className="w-full mt-5">
+            {courseData.prerequisites.map((items) => (
+              <div className="w-full flex md:items-center gap-5 ">
+                <div className="w-[15px] mr-1g ap-5 ">
+                  <IoMdCheckmarkCircleOutline size={20} className="mt-3" />
+                </div>
+                <p className="pl-2 text-sm">{items.title}</p>
+              </div>
+            ))}
+          </div>
+          <div className="w-full mt-5">
+            <h1 className="font-Poppins text-[25px] ">Course Details</h1>
+            <div className="w-full mt-auto">
+              <p className="text-sm">{courseData.description}</p>
+            </div>
+          </div>
+          <div className="w-full flex items-center justify-between mt-10">
+            <button
+              className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+               hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
+              onClick={prev}
+            >
+              Prev
+            </button>
+
+            <button
+              className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+               hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
+              onClick={handleSubmitCourse}
+            >
+              Submit
+            </button>
           </div>
         </div>
       </div>

@@ -6,6 +6,8 @@ import CourseOptions from "./CourseOptions";
 import CourseData from "./CourseData";
 import CourseContentData from "./CourseContentData";
 import CoursePreview from "./CoursePreview";
+import { useCreateCoureQuery } from "../../../../radux/features/course/course";
+import toast from "react-hot-toast";
 
 // Define types for the state variables
 interface CourseInfo {
@@ -41,7 +43,7 @@ interface CourseContent {
   suggestion: string;
 }
 
-interface CourseDatas {
+export interface CourseDatas {
   name: string;
   description: string;
   price: number;
@@ -56,6 +58,22 @@ interface CourseDatas {
 }
 
 const CreateCourse = () => {
+  const [createCoure, { data, error, isLoading, isSuccess }] =
+    useCreateCoureQuery();
+
+  useEffect(() => {
+    if (isSuccess) {
+      const message = data?.message || "Course Create successfully";
+      toast?.success(message);
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorData = (error as any) || "failed to Create Course";
+        toast?.success(errorData.data.error);
+      }
+    }
+  }, [isSuccess, error]);
+
   const [active, setActive] = useState<number>(0);
 
   const [courseInfo, setCourseInfo] = useState<CourseInfo>({
@@ -188,6 +206,7 @@ const CreateCourse = () => {
             setActive={setActive}
             courseData={courseData}
             handleCourseCreate={handleCourseCreate}
+            isLoading={isLoading}
           />
         )}
       </div>
