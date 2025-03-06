@@ -12,13 +12,14 @@ const Page = () => {
   const [activeItem, setActiveItem] = useState<number>(5);
   const [route, setRoute] = useState<string>("Login");
   const { user } = useSelector((state: any) => state.auth);
+  console.log("profileUser", { user });
 
   return (
     <div>
       <UserProtected>
         <>
           <HeaderSEO
-            title={`${user.name} Profile - Elearning`}
+            title={`${user?.name} Profile - Elearning`}
             descripion="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
             keyWords="Nextjs, React, Javascript, Radux MERN"
           />

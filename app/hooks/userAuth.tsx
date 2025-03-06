@@ -1,10 +1,10 @@
 "use client";
+
 import { useSelector } from "react-redux";
 
-const userAuth = (): boolean => {
-  const { user } = useSelector((state: any) => state.auth);
-
-  return Boolean(user);
+const useUserAuth = () => {
+  const user = useSelector((state: any) => state.auth?.user);
+  return !!user;
 };
 
-export default userAuth;
+export default useUserAuth;

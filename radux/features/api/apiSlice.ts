@@ -4,13 +4,11 @@ import { userLogin } from "../auth/authSlice";
 const handleAuthResponse = async (queryFulfilled: any, dispatch: any) => {
   try {
     const {
-      data: {
-        access_token,
-        arg: { _doc: user },
-      },
+      data: { access_token, arg: user },
     } = await queryFulfilled;
 
     console.log({ RELOADUSER: { access_token, user } });
+
     dispatch(
       userLogin({
         accessToken: access_token,
@@ -18,7 +16,7 @@ const handleAuthResponse = async (queryFulfilled: any, dispatch: any) => {
       })
     );
   } catch (error: any) {
-    console.error("Error handling authentication:", error.message);
+    console.log("Error handling authentication:", error.message);
   }
 };
 

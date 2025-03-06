@@ -6,7 +6,6 @@ import { LuMenuSquare } from "react-icons/lu";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import CustomeModel from "../../utils/customeModel";
-import Login from "./auth/login";
 import Signup from "./auth/signup";
 import Verification from "./auth/Verification";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +17,7 @@ import { CiLogout } from "react-icons/ci";
 
 import toast from "react-hot-toast";
 import { ImSpinner } from "react-icons/im";
+import Login from "./auth/Login";
 interface headerProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,9 +48,7 @@ const Header = ({
       else setActive(false);
     };
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("scroll", handleScroll);
-    }
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
       // Clean up the event listener on unmount
