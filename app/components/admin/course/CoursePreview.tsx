@@ -46,6 +46,7 @@ interface CoursePreviewProps {
   setActive: React.Dispatch<React.SetStateAction<number>>;
   courseData: CourseDatas;
   handleCourseCreate: () => void;
+  isLoading: boolean;
 }
 
 const CoursePreview = ({
@@ -53,6 +54,7 @@ const CoursePreview = ({
   setActive,
   courseData,
   handleCourseCreate,
+  isLoading,
 }: CoursePreviewProps) => {
   const coursePercentange =
     courseData.price - (courseData.estimatedPrice / courseData.price) * 100;
@@ -175,7 +177,14 @@ const CoursePreview = ({
                hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
               onClick={handleSubmitCourse}
             >
-              Submit
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />{" "}
+                  <span>Uploading...</span>
+                </div>
+              ) : (
+                "Submit"
+              )}
             </button>
           </div>
         </div>

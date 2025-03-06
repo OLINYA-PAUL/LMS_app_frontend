@@ -6,7 +6,7 @@ import CourseOptions from "./CourseOptions";
 import CourseData from "./CourseData";
 import CourseContentData from "./CourseContentData";
 import CoursePreview from "./CoursePreview";
-import { useCreateCoureQuery } from "../../../../radux/features/course/course";
+import { useCreateCoureMutation } from "../../../../radux/features/course/course";
 import toast from "react-hot-toast";
 
 // Define types for the state variables
@@ -59,7 +59,7 @@ export interface CourseDatas {
 
 const CreateCourse = () => {
   const [createCoure, { data, error, isLoading, isSuccess }] =
-    useCreateCoureQuery();
+    useCreateCoureMutation();
 
   useEffect(() => {
     if (isSuccess) {
@@ -165,9 +165,9 @@ const CreateCourse = () => {
     });
   }, [courseContentData, courseInfo, benefits, prerequisites]);
 
-  const handleCourseCreate = () => {
+  const handleCourseCreate = async () => {
     const data = courseData;
-    console.log(data);
+    await createCoure(data);
   };
 
   return (

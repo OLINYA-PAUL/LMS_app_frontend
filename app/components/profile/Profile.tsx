@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { userLogout } from "@/radux/features/auth/authSlice";
 import { signOut } from "next-auth/react";
 
-const Profile = ({ user }: { user: object }) => {
+const Profile = ({ user }: { user: any }) => {
   const [scroll, setscroll] = useState(false);
   const [isActive, setIsActive] = useState<number>(1);
   const [avatar, SetAvatar] = useState<string | null>(null);

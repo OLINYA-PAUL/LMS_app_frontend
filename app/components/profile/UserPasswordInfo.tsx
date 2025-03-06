@@ -14,7 +14,6 @@ const UserPasswordInfo = ({ user }: UserProps) => {
     useUpdateUserPasswordMutation();
 
   const [oldPassword, setOldPassword] = useState("");
-  console.log({ ddddddddddd: oldPassword });
   const [newPassword, setNewPassword] = useState("");
   const [comfirmPassword, setComfirmedPassword] = useState("");
   const [loadUser, setLoadUser] = useState(false);
@@ -24,7 +23,7 @@ const UserPasswordInfo = ({ user }: UserProps) => {
     e.preventDefault();
     try {
       if (newPassword !== comfirmPassword) {
-        toast.error("Password does not match😜");
+        toast.error("Password not match");
 
         return;
       } else {

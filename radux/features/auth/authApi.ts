@@ -47,6 +47,7 @@ export const authApi = apiSlice.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           console.log({ REGISTER: data });
+              console.log("get Register:", { queryFulfilled });
 
           dispatch(
             userRegistration({
@@ -82,9 +83,11 @@ export const authApi = apiSlice.injectEndpoints({
           const {
             data: {
               access_token,
-              arg: { _doc: user },
+              arg: user ,
             },
           } = await queryFulfilled;
+
+              console.log("get userLogin:", { queryFulfilled });
           dispatch(
             userLogin({
               accessToken: access_token,
@@ -118,9 +121,11 @@ export const authApi = apiSlice.injectEndpoints({
           const {
             data: {
               access_token,
-              arg: { _doc: user },
+              arg: user,
             },
           } = await queryFulfilled;
+
+            console.log("get userLogin:", { queryFulfilled });
           dispatch(
             userLogin({
               accessToken: access_token,
