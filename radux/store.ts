@@ -10,8 +10,8 @@ export const storeConfigs = configureStore({
     auth: authSlice,
   },
   devTools: false,
-  middleware: (getDefaultMiddleWare) =>
-    getDefaultMiddleWare().concat(apiSlice.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({}).concat(apiSlice.middleware),
 });
 
 // initialise app to refress token every page reload
