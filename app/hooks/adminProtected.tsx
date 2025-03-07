@@ -17,14 +17,14 @@ export const AdminProtected = ({ children }: AdminProtectedProps) => {
   useEffect(() => {
     if (!user) {
       setIsAuthorized(false);
-      router.push("/"); // Redirect if no user
+      router.replace("/"); // Redirect safely
       return;
     }
 
     if (user?.role !== "admin") {
       toast.error("You are not authorised to see this page");
       setIsAuthorized(false);
-      router.push("/");
+      router.replace("/"); // Redirect safely
       return;
     }
 
@@ -32,8 +32,12 @@ export const AdminProtected = ({ children }: AdminProtectedProps) => {
   }, [user, router]);
 
   if (isAuthorized === null) {
-    return <p>Loading...</p>; // Prevent blank screen
+    return (
+      <p className="w-full h-screen text-center flex items-center justify-center font-Poppins font-bold">
+        Loading...
+      </p>
+    ); // Prevent blank screen
   }
 
-  return isAuthorized ? children : router.push("/");
+  return isAuthorized ? children : null; // Avoid returning router.push
 };

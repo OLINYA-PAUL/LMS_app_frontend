@@ -4,14 +4,14 @@ import { userLogin } from "../auth/authSlice";
 const handleAuthResponse = async (queryFulfilled: any, dispatch: any) => {
   try {
     const {
-      data: { access_token, arg: user },
+      data: { access_token, user },
     } = await queryFulfilled;
 
     console.log({ RELOADUSER: { access_token, user } });
 
     dispatch(
       userLogin({
-        accessToken: access_token,
+        accessToken: "",
         user: user,
       })
     );
@@ -25,6 +25,11 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_SERVER_URL,
     credentials: "include" as const,
+    headers: { "Content-Type": "application/json" },
+    prepareHeaders: (headers) => {
+      headers.set("Cache-Control", "no-store");
+      return headers;
+    },
   }),
   endpoints: (builder) => ({
     refreshToken: builder.query({
@@ -35,6 +40,7 @@ export const apiSlice = createApi({
       }),
 
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        console.log("fetching refresh token", queryFulfilled);
         await handleAuthResponse(queryFulfilled, dispatch);
       },
     }),
@@ -47,6 +53,7 @@ export const apiSlice = createApi({
       }),
 
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        console.log("fetching user", queryFulfilled);
         await handleAuthResponse(queryFulfilled, dispatch);
       },
     }),
