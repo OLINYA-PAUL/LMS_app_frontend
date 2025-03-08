@@ -148,8 +148,8 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
           </MenuItem>
           <MenuItem
             icon={<OndemandVideo />}
-            active={selected === "liveCourses"}
-            onClick={() => handleNavigation("/admin/liveCourses")}
+            active={selected === "courses"}
+            onClick={() => handleNavigation("/admin/courses")}
           >
             Live Courses
           </MenuItem>
