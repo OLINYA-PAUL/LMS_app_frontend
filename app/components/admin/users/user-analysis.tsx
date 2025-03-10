@@ -1,25 +1,32 @@
 "use client";
 
 import { Box, Button } from "@mui/material";
-import React from "react";
-import { AiFillEdit, AiOutlineDelete } from "react-icons/ai";
+import React, { useState } from "react";
+import { AiFillEdit, AiOutlineDelete, AiOutlineMail } from "react-icons/ai";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useTheme } from "next-themes";
 import { useGetAllCoursesQuery } from "@/radux/features/course/course";
 import { format } from "timeago.js";
+import { useGetAllUsersQuery } from "@/radux/features/user/userApiSlice";
+import { styles } from "@/app/styles/style";
+import UserRole from "../../editUserRole/userRole";
 
-const AllCourses = () => {
+const UserAnalysis = ({ team }: { team: boolean }) => {
   const { theme, setTheme } = useTheme();
+  const [active, setActive] = useState<boolean>(false);
 
-  const { data, isLoading, error } = useGetAllCoursesQuery({});
+  //   const { data, isLoading, error } = useGetAllCoursesQuery({});
+
+  const { data, isLoading, error } = useGetAllUsersQuery({});
   console.log("dataa course", { data });
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
-    { field: "title", headerName: "Title", flex: 1 },
-    { field: "ratings", headerName: "Ratings", flex: 0.5 },
-    { field: "purchased", headerName: "Purchased", flex: 0.5 },
-    { field: "created_at", headerName: "Created_at", flex: 0.5 },
+    { field: "name", headerName: "name", flex: 0.5 },
+    { field: "email", headerName: "email", flex: 0.5 },
+    { field: "role", headerName: "role", flex: 0.5 },
+    { field: "courses", headerName: "courses", flex: 0.5 },
+    { field: "created_at", headerName: "Join at", flex: 0.5 },
     {
       field: "edit",
       headerName: "Edit",
@@ -43,30 +50,82 @@ const AllCourses = () => {
         </Button>
       ),
     },
+    {
+      field: "  ",
+      headerName: "Email",
+      flex: 0.5,
+      renderCell: (params: any) => (
+        <Button>
+          <a href={`mailTo:${params.row.email}`}>
+            <AiOutlineMail
+              size={15}
+              color={theme === "dark" ? "#fff" : "#000"}
+            />
+          </a>
+        </Button>
+      ),
+    },
   ];
 
   const rows: any = [];
 
-  data?.courses?.forEach((items: any) => {
-    rows.push({
-      id: items._id,
-      title: items.name,
-      ratings: items.ratings,
-      purchased: items.purchased,
-      created_at: format(items.createdAt),
-      edit: items._id,
-      delete: items._id,
+  if (team) {
+    const teams =
+      data && data.users.filter((role: any) => role.role === "admin");
+
+    teams &&
+      teams.forEach((items: any) => {
+        rows.push({
+          id: items._id,
+          name: items.name,
+          email: items.email,
+          role: items?.role,
+          courses: items.courses.length,
+          created_at: format(items.createdAt),
+          edit: items._id,
+          delete: items._id,
+        });
+      });
+  } else {
+    data?.users?.forEach((items: any) => {
+      rows.push({
+        id: items._id,
+        name: items.name,
+        email: items.email,
+        role: items?.role,
+        courses: items.courses.length,
+        created_at: format(items.createdAt),
+        edit: items._id,
+        delete: items._id,
+      });
     });
-  });
+  }
+
+  const handleClose = (e: any) => {
+    if (e.target.id === "model") {
+      setActive(false);
+    }
+  };
 
   return (
-    <div className="w-[95%] max-w-full mt-10">
+    <div className="w-[95%] max-w-full mt-10 relative">
       {isLoading ? (
         <div className="flex items-center justify-center w-full h-screen">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white mr-2" />{" "}
         </div>
       ) : (
         <Box m="20px" sx={{ width: "100%", overflowX: "auto" }}>
+          <div className="w-full flex justify-end ">
+            <div
+              className={
+                "text-black dark:text-white w-[160px] cursor-pointer text-sm p-2 text-center  font-bold rounded-full  bg-blue-600 dark:bg-blue-600"
+              }
+              onClick={() => setActive((prev) => !prev)}
+            >
+              Add New Member
+            </div>
+          </div>
+
           <Box
             m="30px 0 0 0"
             height="80vh"
@@ -190,12 +249,22 @@ const AllCourses = () => {
               checkboxSelection
               disableRowSelectionOnClick
               loading={isLoading}
+              // autoHeight={true}
             />
           </Box>
         </Box>
+      )}
+      {active && (
+        <div
+          id="model"
+          className=" fixed w-full flex items-center justify-center  cursor-pointer top-0 left-20 bg-black/75 h-screen  text-black dark:text-white"
+          // onClick={handleClose}
+        >
+          <UserRole active={active} setActive={setActive} data={data} />
+        </div>
       )}
     </div>
   );
 };
 
-export default AllCourses;
+export default UserAnalysis;
