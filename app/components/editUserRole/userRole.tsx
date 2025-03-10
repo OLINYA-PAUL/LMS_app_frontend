@@ -1,29 +1,38 @@
 import { styles } from "@/app/styles/style";
 import { useLoadUserQuery } from "@/radux/features/api/apiSlice";
-import { useUpdateUserRoleMutation } from "@/radux/features/user/userApiSlice";
+import {
+  useGetAllUsersQuery,
+  useUpdateUserRoleMutation,
+} from "@/radux/features/user/userApiSlice";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const UserRole = ({
   active,
   setActive,
-  data,
-}: {
+}: // data,
+{
   active: boolean;
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
   data: any;
 }) => {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("admin");
-  const { refetch } = useLoadUserQuery({}, { refetchOnMountOrArgChange: true });
+
+  const { refetch, data } = useGetAllUsersQuery(
+    {},
+    { refetchOnMountOrArgChange: true }
+  );
+
+  console.log("data roles", { data });
 
   const [updateUserRole, { isLoading, isSuccess, isError, error }] =
     useUpdateUserRoleMutation();
 
   useEffect(() => {
     if (isSuccess) {
-      refetch(); // Refetch user data to sync with the latest changes
-      toast.success("Role updated successfully");
+      refetch();
+      toast.success("Role updated");
       setActive(false);
     }
     if (error) {
@@ -32,31 +41,41 @@ const UserRole = ({
     }
   }, [isSuccess, isError, error, refetch, setActive]);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate if the email exists in the user list
-    if (data?.users && !data.users.some((item: any) => item.email === email)) {
-      toast.error("Email does not match");
+    if (!data?.users || data.users.length === 0) {
+      toast.error("No users found");
       return;
     }
 
-    if (!data?.users?.[0]?._id) {
+    // Find the correct user using email
+    const user = data.users.find((u: any) => u.email === email);
+
+    if (!user) {
+      toast.error("Email does not match any user");
+      return;
+    }
+
+    if (!user._id) {
       toast.error("User ID not found");
       return;
     }
 
-    const id = data.users[0]._id;
+    // Ensure the found user's ID matches its email
+    if (
+      String(user._id) !==
+      String(data.users.find((u: any) => u.email === user.email)?._id)
+    ) {
+      toast.error("User ID and email mismatch");
+      return;
+    }
 
-    // Optimistically update the UI before waiting for API response
-    await updateUserRole({ id, role });
-    // .unwrap()
-    // .then(() => {
-    //   // Update the local state with the new role
-    //   data.users &&= data.users.map((user: any) =>
-    //     user._id === id ? { ...user, role } : user
-    //   );
-    // });
+    try {
+      await updateUserRole({ id: user._id, role });
+    } catch (error) {
+      toast.error("Failed to update user role");
+    }
   };
 
   return (
