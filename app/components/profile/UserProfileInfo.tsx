@@ -24,7 +24,7 @@ const UserProfileInfo = ({ user, avatar }: UserProps) => {
   const [userName, setUserName] = useState(user?.name || "");
 
   // Fetch user data (this will auto-refresh after mutations)
-  const { refetch } = useLoadUserQuery(undefined);
+  const { refetch } = useLoadUserQuery({}, { refetchOnMountOrArgChange: true });
 
   useEffect(() => {
     if (isSuccess) {

@@ -185,6 +185,22 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
             Categories
           </MenuItem>
 
+          {/* Controllers */}
+          {!isCollapsed && (
+            <Typography
+              variant="subtitle1"
+              sx={{ ml: 3, my: 1, color: isDarkMode ? "gray" : "#555" }}
+            >
+              Controllers
+            </Typography>
+          )}
+          <MenuItem
+            icon={<Analytics />}
+            active={selected === "team"}
+            onClick={() => handleNavigation("/admin/team")}
+          >
+            Manage Teams
+          </MenuItem>
           {/* Analytics Section */}
           {!isCollapsed && (
             <Typography
