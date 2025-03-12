@@ -92,12 +92,12 @@ const CourseSection = ({
   };
 
   return (
-    <div className="w-[90%] px-20 max-sm:px-0 mt-10">
+    <div className="w-[100%] px-10 max-sm:px-0 mt-10">
       <div>
         <label className={`${styles.lable} `}>
           What are the benefits in this course
         </label>
-        <div className="w-full mt-5">
+        <div className="w-full mt-2">
           {benefits.map((items: Benefit, index: number) => (
             <div className="w-full" key={index}>
               <input
@@ -125,11 +125,11 @@ const CourseSection = ({
         </div>
       </div>
 
-      <div className="mt-5">
+      <div className="mt-2">
         <label className={`${styles.lable} `}>
           What are the Prerequites in this course
         </label>
-        <div className="w-full mt-5">
+        <div className="w-full mt-2">
           {prerequites.map((items: Prerequisite, index: number) => (
             <div className="w-full" key={index}>
               <input
@@ -159,7 +159,7 @@ const CourseSection = ({
       </div>
       <div className="w-full flex items-center justify-between mt-10">
         <button
-          className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+          className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md
                hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
           onClick={prev}
         >
@@ -167,7 +167,7 @@ const CourseSection = ({
         </button>
 
         <button
-          className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md 
+          className="py-2 px-10 bg-blue-600 text-white font-semibold rounded-lg shadow-md
                hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
           onClick={handleNext}
         >

@@ -101,7 +101,7 @@ const CourseInformation = ({
   };
 
   return (
-    <div className="w-[90%] px-20 max-sm:px-0">
+    <div className="w-[100%] px-10 max-sm:px-0">
       <div className="w-full">
         <form onSubmit={handleSubmit}>
           <div className="w-full">
