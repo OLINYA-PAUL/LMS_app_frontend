@@ -81,7 +81,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
           {!isCollapsed && (
             <>
               <Avatar
-                src={user.avatar.url}
+                src={user?.avatar?.url}
                 sx={{ width: 60, height: 60, mb: 1 }}
               />
               <Typography variant="h6" color={isDarkMode ? "#FFF" : "#000"}>

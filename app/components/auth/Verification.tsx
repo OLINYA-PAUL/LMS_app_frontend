@@ -63,7 +63,6 @@ const Verification = ({ setRoute }: VerificationPops) => {
 
   const verifyHandleChange = async () => {
     const verifyActivationCode: any = Object.values(verifyNumber).join("");
-    console.log({ CODE: verifyActivationCode });
 
     if (verifyActivationCode.length !== 6) {
       setIsValideError(true);
@@ -73,8 +72,6 @@ const Verification = ({ setRoute }: VerificationPops) => {
       activation_token: token,
       activation_code: verifyActivationCode,
     });
-
-    console.log({ ACTIVCODE: activeCode });
   };
 
   const handleInputChange = (index: number, value: string) => {

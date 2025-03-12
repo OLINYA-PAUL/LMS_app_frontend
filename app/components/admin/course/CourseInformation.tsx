@@ -10,7 +10,7 @@ interface CourseInfo {
   tags: string;
   level: string;
   demoUrl: string;
-  thumbnail: string;
+  thumbnails: string;
 }
 
 interface courseInfoProps {
@@ -42,7 +42,7 @@ const CourseInformation = ({
         if (fileReader.readyState === 2) {
           setCourseInfo(() => ({
             ...courseInfo,
-            thumbnail: fileReader.result as string,
+            thumbnails: fileReader.result as string,
           }));
         }
       };
@@ -92,7 +92,7 @@ const CourseInformation = ({
       !courseInfo.tags ||
       !courseInfo.level ||
       !courseInfo.demoUrl ||
-      !courseInfo.thumbnail
+      !courseInfo.thumbnails
     ) {
       return toast.error("Please fill all the fields");
     }
@@ -239,9 +239,9 @@ const CourseInformation = ({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              {courseInfo.thumbnail ? (
+              {courseInfo.thumbnails ? (
                 <img
-                  src={courseInfo.thumbnail}
+                  src={courseInfo.thumbnails}
                   alt="Thumbnail"
                   className="w-full max-h-full object-cover"
                 />

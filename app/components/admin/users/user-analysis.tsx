@@ -10,10 +10,16 @@ import { format } from "timeago.js";
 import { useGetAllUsersQuery } from "@/radux/features/user/userApiSlice";
 import { styles } from "@/app/styles/style";
 import UserRole from "../../editUserRole/userRole";
+import DeleteUser from "../../editUserRole/DeleteUser";
 
-const UserAnalysis = ({ team }: { team: boolean }) => {
+interface Teamprops {
+  team?: boolean;
+}
+
+const UserAnalysis = ({ team }: Teamprops) => {
   const { theme, setTheme } = useTheme();
   const [active, setActive] = useState<boolean>(false);
+  const [isActiveDelete, setIsActiveDelete] = useState<boolean>(false);
 
   //   const { data, isLoading, error } = useGetAllCoursesQuery({});
 
@@ -46,6 +52,7 @@ const UserAnalysis = ({ team }: { team: boolean }) => {
           <AiOutlineDelete
             size={15}
             color={theme === "dark" ? "#fff" : "#000"}
+            onClick={() => setIsActiveDelete(true)}
           />
         </Button>
       ),
@@ -258,9 +265,22 @@ const UserAnalysis = ({ team }: { team: boolean }) => {
         <div
           id="model"
           className=" fixed w-full flex items-center justify-center  cursor-pointer top-0 left-20 bg-black/75 h-screen  text-black dark:text-white"
-          // onClick={handleClose}
+          onClick={handleClose}
         >
           <UserRole active={active} setActive={setActive} data={data} />
+        </div>
+      )}
+
+      {isActiveDelete && (
+        <div
+          id="model"
+          className=" fixed w-full flex items-center justify-center  cursor-pointer top-0 left-20 bg-black/75 h-screen  text-black dark:text-white"
+          onClick={handleClose}
+        >
+          <DeleteUser
+            isActiveDelete={isActiveDelete}
+            setIsActiveDelete={setIsActiveDelete}
+          />
         </div>
       )}
     </div>

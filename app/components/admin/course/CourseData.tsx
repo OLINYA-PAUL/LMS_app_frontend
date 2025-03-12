@@ -21,7 +21,7 @@ interface courseDataProps {
   setPrerequites: React.Dispatch<React.SetStateAction<Prerequisite[]>>;
 }
 
-const CourseData = ({
+const CourseSection = ({
   active,
   setActive,
   benefits,
@@ -30,10 +30,14 @@ const CourseData = ({
   setPrerequites,
 }: courseDataProps) => {
   const handleBenefitChange = (index: number, value: string) => {
-    const updatedBenefits = [...benefits];
-    updatedBenefits[index].title = value;
-
-    setBenefits(updatedBenefits);
+    setBenefits((prevBenefits: Benefit[]) =>
+      prevBenefits.map((items, idx) => {
+        if (idx === index) {
+          return { ...items, title: value };
+        }
+        return items;
+      })
+    );
   };
 
   const handleAddBenefits = () => {
@@ -41,10 +45,14 @@ const CourseData = ({
   };
 
   const handlePrerequitesChange = (index: number, value: string) => {
-    const updatedPrerequites = [...prerequites];
-    updatedPrerequites[index].title = value;
-
-    setPrerequites(updatedPrerequites);
+    setPrerequites((prevPrequities: Prerequisite[]) =>
+      prevPrequities.map((items, idx) => {
+        if (idx === index) {
+          return { ...items, title: value };
+        }
+        return items;
+      })
+    );
   };
 
   const handlePrerequites = () => {
@@ -170,4 +178,4 @@ const CourseData = ({
   );
 };
 
-export default CourseData;
+export default CourseSection;

@@ -30,14 +30,17 @@ const Login = ({ setRoute, setIsOpen }: LoginPops) => {
 
       toast?.success(message);
       setIsOpen(false);
+
+      // Reset success state after handling it
+      reset();
     }
     if (error) {
       if ("data" in error) {
-        const errorData = (error as any) || "failed to Login";
-        toast?.success(errorData.data.error);
+        const errorData = (error as any) || "Failed to login";
+        toast?.error(errorData.data.error);
       }
     }
-  }, [isSuccess, error]);
+  }, [isSuccess, error, data, setIsOpen, reset]);
 
   const formik = useFormik({
     initialValues: {
