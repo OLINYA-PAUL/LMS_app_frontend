@@ -1,17 +1,27 @@
 "use client";
 
 import { Box, Button } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiFillEdit, AiOutlineDelete } from "react-icons/ai";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useTheme } from "next-themes";
-import { useGetAllCoursesQuery } from "@/radux/features/course/course";
+import {
+  useDeleteUserCourseMutation,
+  useGetAllCoursesQuery,
+} from "@/radux/features/course/course";
 import { format } from "timeago.js";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import toast from "react-hot-toast";
+import { useGetAllUsersQuery } from "@/radux/features/user/userApiSlice";
+import Link from "next/link";
 
 const AllCourses = () => {
   const { theme, setTheme } = useTheme();
 
-  const { data, isLoading, error } = useGetAllCoursesQuery({});
+  const { data, isLoading, error, refetch } = useGetAllCoursesQuery({});
+  const [open, setIsOpen] = useState(false);
+  const [courseId, setCourseId] = useState("");
   console.log("dataa course", { data });
 
   const columns = [
@@ -24,9 +34,11 @@ const AllCourses = () => {
       field: "edit",
       headerName: "Edit",
       flex: 0.5,
-      renderCell: () => (
+      renderCell: (params: any) => (
         <Button>
-          <AiFillEdit size={15} color={theme === "dark" ? "#fff" : "#000"} />
+          <Link href={`edit-course/${params.row.id}`}>
+            <AiFillEdit size={15} color={theme === "dark" ? "#fff" : "#000"} />
+          </Link>
         </Button>
       ),
     },
@@ -34,11 +46,16 @@ const AllCourses = () => {
       field: "delete",
       headerName: "Delete",
       flex: 0.5,
-      renderCell: () => (
+      renderCell: (params: any) => (
         <Button>
           <AiOutlineDelete
             size={15}
             color={theme === "dark" ? "#fff" : "#000"}
+            onClick={() => {
+              console.log("datacell params", { params });
+              setIsOpen(true);
+              setCourseId(params.row.id);
+            }}
           />
         </Button>
       ),
@@ -58,6 +75,31 @@ const AllCourses = () => {
       delete: items._id,
     });
   });
+
+  const [
+    deleteUserCourse,
+    { error: deleteCoursse, isLoading: loading, isSuccess },
+  ] = useDeleteUserCourseMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Course Deleted");
+      refetch();
+      setIsOpen(false);
+    }
+
+    if (deleteCoursse) {
+      console.log("deleteing user error", error);
+      const errorData = error as any;
+      toast.error(errorData?.error || "Failed to delete Course");
+      console.log("deleteing Course error", errorData.error);
+      setIsOpen(false);
+    }
+  }, [isSuccess, error, refetch]);
+
+  const handleDeleteCourse = async () => {
+    await deleteUserCourse(courseId);
+  };
 
   return (
     <div className="w-[95%] max-w-full mt-10">
@@ -179,19 +221,53 @@ const AllCourses = () => {
             <DataGrid
               rows={rows}
               columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 5,
-                  },
-                },
-              }}
-              pageSizeOptions={[5]}
+              // initialState={{
+              //   pagination: {
+              //     paginationModel: {
+              //       pageSize: 5,
+              //     },
+              //   },
+              // }}
+              // pageSizeOptions={[5]}
               checkboxSelection
               disableRowSelectionOnClick
               loading={isLoading}
             />
           </Box>
+
+          {open && (
+            <Modal
+              open={open}
+              onClose={() => setIsOpen(false)}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] bg-blue-900  shadow-xl p-4">
+                <div className="text-xl text-center font-Poppins">
+                  Are you sure you want to delete course
+                </div>
+                <div className="mt-10 w-full flex items-center justify-between max-sm:flex-wrap md:flex-nowrap">
+                  <button
+                    className="bg-red-500 text-black dark:text-white py-2 rounded-full px-6"
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className={`bg-blue-500 text-black dark:text-white py-2 rounded-full px-6 ${
+                      isLoading && "cursor-not-allowed"
+                    }`}
+                    type="submit"
+                    disabled={loading}
+                    onClick={handleDeleteCourse}
+                  >
+                    {loading ? "Deleting course..." : "Delete"}
+                  </button>
+                </div>
+              </Box>
+            </Modal>
+          )}
         </Box>
       )}
     </div>

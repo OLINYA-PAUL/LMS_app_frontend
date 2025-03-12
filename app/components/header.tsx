@@ -35,10 +35,12 @@ const Header = ({
 }: headerProps) => {
   const [active, setActive] = useState<boolean>(false);
   const [isMobile, setisMobile] = useState<boolean>(false);
+  const [hasAuthenticated, setHasAuthenticated] = useState(false);
 
   const { user, token } = useSelector((state: any) => state.auth);
   console.log({ USER: user, TOKEN: token });
   const { data } = useSession();
+  console.log("session data", data, data?.user?.image);
 
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
 
@@ -57,18 +59,20 @@ const Header = ({
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      if (data) {
-        socialAuth({
-          email: data.user?.email as string,
-          name: data.user?.name as string,
-          avatar: data.user?.image as string,
-        });
-      }
+    if (!user && data && !hasAuthenticated) {
+      socialAuth({
+        email: data.user?.email as string,
+        name: data.user?.name as string,
+        avatar: data.user?.image as string,
+      });
+
+      setHasAuthenticated(true); // Prevent re-runs
     }
 
-    if (isSuccess) toast.success("login successfully!");
-  }, [data, user]);
+    if (isSuccess && !hasAuthenticated) {
+      toast.success("Login successful!");
+    }
+  }, [data, user, isSuccess, hasAuthenticated]);
 
   const handleClose = (e: any) => {
     if (e.target?.id === "screen") {
@@ -103,11 +107,17 @@ const Header = ({
               </div>
               <div className="hidden 800px:block">
                 <h1 className="font-bold text-xl ml-3">
-                  {user && user.avatar.url ? (
+                  {user ? (
                     <Link href={"/profile"}>
-                      <Image
-                        src={user.avatar.url ? user.avatar.url : avatar}
-                        alt={user?.profile || "user_profile"}
+                      <img
+                        src={
+                          user.avatar?.url === "" || data?.user?.image === ""
+                            ? "https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-profile-picture-business-profile-woman-suitable-social-media-profiles-icons-screensavers-as-templatex9_719432-1339.jpg?w=740"
+                            : user.avatar?.url || data?.user?.image
+                        }
+                        alt={
+                          user?.profile || data?.user?.image || "user_profile"
+                        }
                         width={25}
                         height={25}
                         className={`rounded-full  sm:w-[80px] sm:h-[80px] md:w-[30px] md:h-[30px]  ${
@@ -128,7 +138,6 @@ const Header = ({
                   )}
                 </h1>
               </div>
-              <div></div>
             </div>
           </div>
         </div>
@@ -164,7 +173,7 @@ const Header = ({
         )}
       </div>
       {route === "Login" && (
-        <div>
+        <>
           {isOpen && (
             <div className="w-full">
               <CustomeModel
@@ -177,10 +186,10 @@ const Header = ({
               />
             </div>
           )}
-        </div>
+        </>
       )}
       {route === "Sign-up" && (
-        <div>
+        <>
           {isOpen && (
             <div className="w-full">
               <CustomeModel
@@ -193,10 +202,10 @@ const Header = ({
               />
             </div>
           )}
-        </div>
+        </>
       )}
       {route === "Verification" && (
-        <div>
+        <>
           {isOpen && (
             <div className="w-full">
               <CustomeModel
@@ -209,7 +218,7 @@ const Header = ({
               />
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );

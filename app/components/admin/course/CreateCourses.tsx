@@ -3,12 +3,15 @@
 import React, { useEffect, useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOptions from "./CourseOptions";
-import CourseData from "./CourseData";
+import CourseSection from "./CourseData";
 import CourseContentData from "./CourseContentData";
 import CoursePreview from "./CoursePreview";
-import { useCreateCoureMutation } from "../../../../radux/features/course/course";
+import {
+  useCreateCoureMutation,
+  useUpdateCourseMutation,
+} from "../../../../radux/features/course/course";
 import toast from "react-hot-toast";
-
+import { redirect } from "next/navigation";
 // Define types for the state variables
 interface CourseInfo {
   name: string;
@@ -18,7 +21,7 @@ interface CourseInfo {
   tags: string;
   level: string;
   demoUrl: string;
-  thumbnail: string;
+  thumbnails: string;
 }
 
 interface Benefit {
@@ -39,7 +42,7 @@ interface CourseContent {
   title: string;
   description: string;
   videoSection: string;
-  links: Link[];
+  link: Link[];
   suggestion: string;
 }
 
@@ -51,28 +54,51 @@ export interface CourseDatas {
   tags: string;
   level: string;
   demoUrl: string;
-  thumbnail: string;
+  thumbnails: string;
   benefits: Benefit[];
-  prerequisites: Prerequisite[];
+  prerequiste: Prerequisite[];
   courseData: CourseContent[];
 }
 
-const CreateCourse = () => {
+interface CourseEditProps {
+  courseId: string;
+  isEditing: boolean;
+  data?: any;
+  isLoading?: boolean;
+  error?: any;
+  refetch?: () => void;
+  isCreating: boolean;
+}
+
+const CreateCourse = ({
+  courseId,
+  isEditing,
+  data: x,
+  isLoading: loading,
+  error: err,
+  refetch,
+  isCreating,
+}: CourseEditProps) => {
   const [createCoure, { data, error, isLoading, isSuccess }] =
     useCreateCoureMutation();
 
-  useEffect(() => {
-    if (isSuccess) {
-      const message = data?.message || "Course Create successfully";
-      toast?.success(message);
-    }
-    if (error) {
-      if ("data" in error) {
-        const errorData = (error as any) || "failed to Create Course";
-        toast?.success(errorData.data.error);
-      }
-    }
-  }, [isSuccess, error]);
+  const [
+    updateCourse,
+    {
+      data: editData,
+      error: editError,
+      isLoading: editLoading,
+      isSuccess: editSuccess,
+    },
+  ] = useUpdateCourseMutation();
+
+  console.log("x course data", { x, courseId });
+
+  const editedCourseData = x?.courses?.find(
+    (items: any) => items._id === courseId
+  );
+
+  console.log("find Course data", { editedCourseData });
 
   const [active, setActive] = useState<number>(0);
 
@@ -84,7 +110,7 @@ const CreateCourse = () => {
     tags: "",
     level: "",
     demoUrl: "",
-    thumbnail: "",
+    thumbnails: "",
   });
 
   const [benefits, setBenefits] = useState<Benefit[]>([{ title: "" }]);
@@ -98,7 +124,7 @@ const CreateCourse = () => {
       title: "",
       description: "",
       videoSection: "Untitled Section",
-      links: [{ title: "", url: "" }],
+      link: [{ title: "", url: "" }],
       suggestion: "",
     },
   ]);
@@ -111,63 +137,137 @@ const CreateCourse = () => {
     tags: "",
     level: "",
     demoUrl: "",
-    thumbnail: "",
+    thumbnails: "",
     benefits: [],
-    prerequisites: [],
+    prerequiste: [],
     courseData: [],
   });
 
-  const handleSubmit = () => {};
+  // Initialize form with existing data when in edit mode
+  useEffect(() => {
+    if (editedCourseData && isEditing) {
+      // Update courseInfo state
+      setCourseInfo({
+        name: editedCourseData.name || "",
+        description: editedCourseData.description || "",
+        price: editedCourseData.price || 0,
+        estimatedPrice: editedCourseData.estimatedPrice || 0,
+        tags: editedCourseData.tags || "",
+        level: editedCourseData.level || "",
+        demoUrl: editedCourseData.demoUrl || "",
+        thumbnails: editedCourseData.thumbnails?.url || "",
+      });
+
+      // Update benefits state - ensure it's an array with at least one item
+      if (editedCourseData.benefits && editedCourseData.benefits.length > 0) {
+        setBenefits(editedCourseData.benefits);
+      }
+
+      // Update prerequisites state - ensure it's an array with at least one item
+      if (
+        editedCourseData.prerequiste &&
+        editedCourseData.prerequiste.length > 0
+      ) {
+        setPrerequisites(editedCourseData.prerequiste);
+      }
+
+      // Update courseContentData state - ensure it's an array with at least one item
+      if (
+        editedCourseData.courseData &&
+        editedCourseData.courseData.length > 0
+      ) {
+        setCourseContentData(editedCourseData.courseData);
+      }
+    }
+  }, [editedCourseData, isEditing]);
 
   useEffect(() => {
-    const formattedBenefits = benefits.map((item) => ({
+    if (isEditing && isEditing === true) {
+      if (editSuccess) {
+        const message = editData?.message || "Course Updated";
+        toast?.success(message);
+
+        redirect("/admin/courses");
+      }
+      if (editError) {
+        if ("data" in editError) {
+          const errorData = (error as any) || "failed to Update Course";
+          toast?.success(errorData.data.error);
+        }
+      }
+    }
+
+    if (isCreating) {
+      if (isSuccess) {
+        const message = data?.message || "Course Created";
+        toast?.success(message);
+
+        redirect("/admin/courses");
+      }
+      if (error) {
+        if ("data" in error) {
+          const errorData = (error as any) || "failed to Create Course";
+          toast?.success(errorData.data.error);
+        }
+      }
+    }
+  }, [isSuccess, error, editError, editSuccess, editData, data]);
+
+  const handleSubmit = () => {};
+
+  const formattedBenefits =
+    benefits &&
+    benefits?.map((item) => ({
       title: item.title,
     }));
-    const formattedPrerequisites = prerequisites.map((item) => ({
+  const formattedPrerequisites =
+    prerequisites &&
+    prerequisites?.map((item) => ({
       title: item.title,
     }));
 
-    const formattedCourseContentData = courseContentData.map((item) => ({
+  const formattedCourseContentData =
+    courseContentData &&
+    courseContentData?.map((item) => ({
       videoUrl: item.videoUrl,
       title: item.title,
       description: item.description,
       videoSection: item.videoSection,
-      links: item.links.map((link) => ({
+      link: item.link?.map((link) => ({
         title: link.title,
         url: link.url,
       })),
       suggestion: item.suggestion,
     }));
 
-    const {
-      name,
-      description,
-      price,
-      estimatedPrice,
-      tags,
-      level,
-      demoUrl,
-      thumbnail,
-    } = courseInfo;
-
+  // Update courseData whenever any dependencies change
+  useEffect(() => {
     setCourseData({
-      name,
-      description,
-      price,
-      estimatedPrice,
-      tags,
-      level,
-      demoUrl,
-      thumbnail,
+      name: courseInfo.name,
+      description: courseInfo.description,
+      price: courseInfo.price,
+      estimatedPrice: courseInfo.estimatedPrice,
+      tags: courseInfo.tags,
+      level: courseInfo.level,
+      demoUrl: courseInfo.demoUrl,
+      thumbnails: courseInfo.thumbnails,
       benefits: formattedBenefits,
-      prerequisites: formattedPrerequisites,
+      prerequiste: formattedPrerequisites,
       courseData: formattedCourseContentData,
     });
   }, [courseContentData, courseInfo, benefits, prerequisites]);
 
   const handleCourseCreate = async () => {
-    const data = courseData;
-    await createCoure(data);
+    if (isEditing) {
+      const data = { ...courseData };
+      const id = courseId;
+      await updateCourse({ id, data });
+    }
+
+    if (isCreating) {
+      const data = courseData;
+      await createCoure(data);
+    }
   };
 
   return (
@@ -182,7 +282,7 @@ const CreateCourse = () => {
           />
         )}
         {active === 1 && (
-          <CourseData
+          <CourseSection
             active={active}
             setActive={setActive}
             benefits={benefits}
@@ -207,6 +307,9 @@ const CreateCourse = () => {
             courseData={courseData}
             handleCourseCreate={handleCourseCreate}
             isLoading={isLoading}
+            isEditing={isEditing}
+            isCreating={isCreating}
+            editLoading={editLoading}
           />
         )}
       </div>

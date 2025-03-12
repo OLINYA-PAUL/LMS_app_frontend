@@ -7,10 +7,9 @@ import { userLogout } from "@/radux/features/auth/authSlice";
 import { signOut } from "next-auth/react";
 
 const Profile = ({ user }: { user: any }) => {
-  const [scroll, setscroll] = useState(false);
+  const [scroll, setScroll] = useState(false);
   const [isActive, setIsActive] = useState<number>(1);
-  const [avatar, SetAvatar] = useState<string | null>(null);
-  const [logOut, SetlogOut] = useState<boolean>(false);
+  const [avatar, setAvatar] = useState<string | null>(null);
 
   const dispatch = useDispatch();
 
@@ -22,8 +21,7 @@ const Profile = ({ user }: { user: any }) => {
   useEffect(() => {
     if (logoutSuccess) {
       toast.success("You have logged out successfully");
-      // Clear user data from Redux store
-      dispatch(userLogout());
+      dispatch(userLogout()); // Clear user data from Redux store
     }
     if (logoutError) {
       toast.error("There was an error logging out");
@@ -32,22 +30,35 @@ const Profile = ({ user }: { user: any }) => {
   }, [logoutSuccess, logoutError, dispatch]);
 
   const handleLogoutUser = async () => {
-    await logoutUser(undefined); // Triggers the API call
-    await signOut(); // signout from social auth
+    try {
+      // Call backend logout first
+      const response = await logoutUser({});
+      if ("error" in response) {
+        toast.error("Logout failed, please try again.");
+        return;
+      }
+
+      // NextAuth sign-out without immediate redirection
+      await signOut();
+
+      // Clear user data from Redux store
+      dispatch(userLogout());
+
+      toast.success("You have logged out successfully");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Something went wrong, please try again.");
+    }
   };
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) setscroll(true);
-      else setscroll(false);
+      setScroll(window.scrollY > 100);
     };
-
     if (typeof window !== "undefined") {
       window.addEventListener("scroll", handleScroll);
     }
-
     return () => {
-      // Clean up the event listener on unmount
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -57,9 +68,9 @@ const Profile = ({ user }: { user: any }) => {
       <div
         className={`${
           scroll ? "top-[130px]" : "top-[30px]"
-        } w-full flex rounded-md  sticky my-[8px]`}
+        } w-full flex rounded-md sticky my-[8px]`}
       >
-        <div className="w-full flex flex-col tems-center justify-center">
+        <div className="w-full flex flex-col items-center justify-center">
           <SideBarProfile
             user={user}
             isActive={isActive}

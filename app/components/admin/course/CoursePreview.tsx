@@ -2,7 +2,6 @@ import React from "react";
 import CoursePlayer from "../../../../utils/CoursePlayer";
 import Rating from "../../../../utils/Rating";
 import { styles } from "@/app/styles/style";
-import { Benne } from "next/font/google";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 interface Benefit {
@@ -23,7 +22,7 @@ interface CourseContent {
   title: string;
   description: string;
   videoSection: string;
-  links: Link[];
+  link: Link[];
   suggestion: string;
 }
 
@@ -35,9 +34,9 @@ interface CourseDatas {
   tags: string;
   level: string;
   demoUrl: string;
-  thumbnail: string;
+  thumbnails: string;
   benefits: Benefit[];
-  prerequisites: Prerequisite[];
+  prerequiste: Prerequisite[];
   courseData: CourseContent[];
 }
 
@@ -47,6 +46,9 @@ interface CoursePreviewProps {
   courseData: CourseDatas;
   handleCourseCreate: () => void;
   isLoading: boolean;
+  editLoading: boolean;
+  isEditing: boolean;
+  isCreating: boolean;
 }
 
 const CoursePreview = ({
@@ -55,6 +57,9 @@ const CoursePreview = ({
   courseData,
   handleCourseCreate,
   isLoading,
+  isEditing,
+  editLoading,
+  isCreating,
 }: CoursePreviewProps) => {
   const coursePercentange =
     courseData.price - (courseData.estimatedPrice / courseData.price) * 100;
@@ -75,7 +80,7 @@ const CoursePreview = ({
         <div className="w-full mt-10">
           <CoursePlayer
             videoID={courseData.demoUrl}
-            title={courseData.courseData?.[0].title}
+            title={courseData?.courseData?.[0]?.title}
           />
 
           <div className="w-full flex items-center font-bold mt-10">
@@ -131,12 +136,12 @@ const CoursePreview = ({
             </div>
             <h5 className="max-sm:pt-2">0 Students</h5>
           </div>
-          <h1 className="text-[30px] font-Poppins mt-5 font-bold">
+          <h1 className="text-[20px] font-Poppins mt-5 font-bold">
             What you will learn from this course
           </h1>
           <div className="w-full mt-5">
-            {courseData.benefits.map((items) => (
-              <div className="w-full flex md:items-center gap-5 ">
+            {courseData?.benefits?.map((items, index: number) => (
+              <div className="w-full flex md:items-center gap-5 " key={index}>
                 <div className="w-[15px] mr-1g ap-5 ">
                   <IoMdCheckmarkCircleOutline size={20} className="mt-3" />
                 </div>
@@ -144,12 +149,12 @@ const CoursePreview = ({
               </div>
             ))}
           </div>
-          <h1 className="text-[30px] font-Poppins mt-5 font-bold">
+          <h1 className="text-[20px] font-Poppins mt-5 font-bold">
             What are the prerequisites for starting this course
           </h1>
           <div className="w-full mt-5">
-            {courseData.prerequisites.map((items) => (
-              <div className="w-full flex md:items-center gap-5 ">
+            {courseData?.prerequiste?.map((items, index: number) => (
+              <div className="w-full flex md:items-center gap-5 " key={index}>
                 <div className="w-[15px] mr-1g ap-5 ">
                   <IoMdCheckmarkCircleOutline size={20} className="mt-3" />
                 </div>
@@ -158,8 +163,10 @@ const CoursePreview = ({
             ))}
           </div>
           <div className="w-full mt-5">
-            <h1 className="font-Poppins text-[25px] ">Course Details</h1>
-            <div className="w-full mt-auto">
+            <h1 className="font-Poppins text-[15px] font-bold">
+              Course Details
+            </h1>
+            <div className="w-full mt-2">
               <p className="text-sm">{courseData.description}</p>
             </div>
           </div>
@@ -177,13 +184,18 @@ const CoursePreview = ({
                hover:bg-blue-700 active:bg-blue-800 transition-all duration-300"
               onClick={handleSubmitCourse}
             >
-              {isLoading ? (
+              {isLoading || editLoading ? (
                 <div className="flex items-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2" />{" "}
-                  <span>Uploading...</span>
+                  <span>
+                    {" "}
+                    <>
+                      {isLoading || editLoading ? "Creating..." : "Updating..."}
+                    </>
+                  </span>
                 </div>
               ) : (
-                "Submit"
+                <>{isCreating || isEditing ? "Create" : "Update"}</>
               )}
             </button>
           </div>

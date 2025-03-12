@@ -15,7 +15,7 @@ interface CourseContent {
   title: string;
   description: string;
   videoSection: string;
-  links: Link[];
+  link: Link[];
   suggestion: string;
 }
 
@@ -52,7 +52,7 @@ const CourseContentData = ({
     if (i === 0) return toast.error("First field cannot be deleted");
     const updateItem = [...courseContentData];
 
-    updateItem[index].links = updateItem[index].links.filter(
+    updateItem[index].link = updateItem[index].link.filter(
       (_, idx) => idx !== i
     );
     setCourseContentData(updateItem);
@@ -60,18 +60,18 @@ const CourseContentData = ({
 
   const handleAddLink = (index: any) => {
     const updateItem = [...courseContentData];
-    updateItem[index]?.links.push({ title: "", url: "" });
+    updateItem[index]?.link.push({ title: "", url: "" });
     setCourseContentData(updateItem);
   };
 
   const newContentHandler = (items: CourseContent) => {
     if (
-      !items.title ||
-      !items.videoUrl ||
-      !items.description ||
-      !items.videoSection ||
-      !items.links[0].title ||
-      !items.links[0].url
+      items.title === "" ||
+      items.videoUrl === "" ||
+      items.description === "" ||
+      items.videoSection === "" ||
+      items.link[0].title === "" ||
+      items.link[0].url === ""
     ) {
       return toast.error("Please fill all the fields");
     }
@@ -92,7 +92,7 @@ const CourseContentData = ({
           title: "",
           description: "",
           videoSection,
-          links: [{ title: "", url: "" }],
+          link: [{ title: "", url: "" }],
           suggestion: "",
         },
       ]);
@@ -105,8 +105,8 @@ const CourseContentData = ({
       !items.videoUrl ||
       !items.description ||
       !items.videoSection ||
-      !items.links[0].title ||
-      !items.links[0].url
+      !items.link[0].title ||
+      !items.link[0].url
     ) {
       return toast.error("Please fill all the fields");
     }
@@ -120,14 +120,14 @@ const CourseContentData = ({
         title: "",
         description: "",
         videoSection: `Untitled Section ${courseContentData.length + 1}`,
-        links: [{ title: "", url: "" }],
+        link: [{ title: "", url: "" }],
         suggestion: "",
       },
     ]);
   };
 
   const handleNext = () => {
-    const { title, description, videoUrl, videoSection, links } =
+    const { title, description, videoUrl, videoSection } =
       courseContentData[courseContentData.length - 1];
 
     if (
@@ -135,8 +135,8 @@ const CourseContentData = ({
       videoUrl === "" ||
       description === "" ||
       videoSection === "" ||
-      links[0].title === "" ||
-      links[0].url === ""
+      courseContentData[courseContentData.length - 1].link[0].title === "" ||
+      courseContentData[courseContentData.length - 1].link[0]?.url === ""
     ) {
       return toast.error("Please fill all the fields");
     }
@@ -159,7 +159,7 @@ const CourseContentData = ({
               items.videoSection !== courseContentData[index - 1].videoSection;
 
             return (
-              <div>
+              <div key={index}>
                 <div
                   className={` ${
                     showSection ? "mt-5" : "mb-0"
@@ -179,9 +179,17 @@ const CourseContentData = ({
                             placeholder="Untitled Section"
                             value={items.videoSection}
                             onChange={(e) => {
-                              const updateItem = [...courseContentData];
-                              updateItem[index].videoSection = e.target.value;
-                              setCourseContentData(updateItem);
+                              setCourseContentData((prevData) =>
+                                prevData.map((item, idx) => {
+                                  if (idx === index) {
+                                    return {
+                                      ...item,
+                                      videoSection: e.target.value,
+                                    };
+                                  }
+                                  return item;
+                                })
+                              );
                             }}
                           />
                           <BiSolidPencil className="text-black dark:text-gray-500 text-[20px] cursor-pointer" />
@@ -237,9 +245,21 @@ const CourseContentData = ({
                             placeholder="Project title"
                             value={items.title}
                             onChange={(e) => {
-                              const updateItem = [...courseContentData];
-                              updateItem[index].title = e.target.value;
-                              setCourseContentData(updateItem);
+                              // const updateItem = [...courseContentData];
+                              // updateItem[index].title = e.target.value;
+                              // setCourseContentData(updateItem);
+
+                              setCourseContentData((prevData) =>
+                                prevData.map((item, idx) => {
+                                  if (idx === index) {
+                                    return {
+                                      ...item,
+                                      title: e.target.value,
+                                    };
+                                  }
+                                  return item;
+                                })
+                              );
                             }}
                           />
                         </div>
@@ -253,9 +273,17 @@ const CourseContentData = ({
                             placeholder="Video url"
                             value={items.videoUrl}
                             onChange={(e) => {
-                              const updateItem = [...courseContentData];
-                              updateItem[index].videoUrl = e.target.value;
-                              setCourseContentData(updateItem);
+                              setCourseContentData((prev: CourseContent[]) =>
+                                prev.map((items, idx) => {
+                                  if (idx === index) {
+                                    return {
+                                      ...items,
+                                      videoUrl: e.target.value,
+                                    };
+                                  }
+                                  return items;
+                                })
+                              );
                             }}
                           />
                         </div>
@@ -270,14 +298,22 @@ const CourseContentData = ({
                             placeholder="Video Description"
                             value={items.description}
                             onChange={(e) => {
-                              const updateItem = [...courseContentData];
-                              updateItem[index].description = e.target.value;
-                              setCourseContentData(updateItem);
+                              setCourseContentData((prev: CourseContent[]) =>
+                                prev.map((items, idx) => {
+                                  if (idx === index) {
+                                    return {
+                                      ...items,
+                                      description: e.target.value,
+                                    };
+                                  }
+                                  return items; // ✅ Always return an item to maintain the array structure
+                                })
+                              );
                             }}
                           />
                         </div>
                         <div className="mt-auto w-full">
-                          {items.links.map((link: Link, i: number) => (
+                          {items?.link?.map((link: Link, i: number) => (
                             <div className="w-full" key={i}>
                               <div className="w-full">
                                 <div className="flex items-center justify-between gap-5">
@@ -303,7 +339,7 @@ const CourseContentData = ({
                                   value={link.title}
                                   onChange={(e) => {
                                     const updateItem = [...courseContentData];
-                                    updateItem[index].links[i].title =
+                                    updateItem[index].link[i].title =
                                       e.target.value;
                                     setCourseContentData(updateItem);
                                   }}
@@ -320,7 +356,7 @@ const CourseContentData = ({
                                   value={link.url}
                                   onChange={(e) => {
                                     const updateItem = [...courseContentData];
-                                    updateItem[index].links[i].url =
+                                    updateItem[index].link[i].url =
                                       e.target.value;
                                     setCourseContentData(updateItem);
                                   }}

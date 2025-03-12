@@ -4,7 +4,7 @@ import React from "react";
 const UsersAnalytics = () => {
   return (
     <div className="w-full">
-      <UserAnalysis team={true} />
+      <UserAnalysis />
     </div>
   );
 };

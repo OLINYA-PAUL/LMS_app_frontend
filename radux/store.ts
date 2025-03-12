@@ -23,16 +23,21 @@ const initialiseApp = async () => {
   );
 
   console.log({ refreshResponse });
-  if (
-    refreshResponse.data?.accessToken &&
-    refreshResponse.data?.status === "fulfilled"
-  ) {
-    // If refresh was successful, attempt to load the user data
-    const userResponse = await storeConfigs.dispatch(
-      apiSlice.endpoints.loadUser.initiate({}, { forceRefetch: true })
-    );
-    console.log({ userResponse });
-  }
+  // if (
+  //   refreshResponse.data?.accessToken &&
+  //   refreshResponse.data?.status === "fulfilled"
+  // ) {
+  //   // If refresh was successful, attempt to load the user data
+  //   const userResponse = await storeConfigs.dispatch(
+  //     apiSlice.endpoints.loadUser.initiate({}, { forceRefetch: true })
+  //   );
+  //   console.log({ userResponse });
+
+  // }
+
+  const userResponse = await storeConfigs.dispatch(
+    apiSlice.endpoints.loadUser.initiate({}, { forceRefetch: true })
+  );
 };
 
 initialiseApp();

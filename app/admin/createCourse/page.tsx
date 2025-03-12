@@ -6,7 +6,7 @@ import CreateCourses from "@/app/components/admin/course/CreateCourses";
 const CreateCourse = () => {
   return (
     <div className="w-full">
-      <CreateCourses />
+      <CreateCourses isCreating={true} />
     </div>
   );
 };

@@ -41,7 +41,7 @@ const SideBarProfile = ({
         >
           <Image
             src={
-              user.avatar.url || avatar
+              user.avatar?.url || avatar
                 ? user.avatar.url || avatar
                 : customAvatar
             }

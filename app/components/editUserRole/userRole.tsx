@@ -79,10 +79,10 @@ const UserRole = ({
   };
 
   return (
-    <div className="w-[50%] p-5 flex items-center justify-center">
+    <div className="w-[30%] p-5 flex items-center justify-center bg-blue-950 rounded-md">
       <div className="w-full">
         <div className="w-full">
-          <div className="font-bold text-2xl text-black dark:text-white font-Poppins">
+          <div className="font-bold text-2xl text-black dark:text-white font-Poppins text-center">
             Add New Member
           </div>
           <form className="w-full" onSubmit={handleSubmit}>
@@ -90,7 +90,7 @@ const UserRole = ({
               <input
                 type="email"
                 placeholder="Email"
-                className={`${styles.input}`}
+                className={`${styles.input} !my-2 !p-auto !text-sm `}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -99,7 +99,7 @@ const UserRole = ({
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className={`${styles.input} !bg-transparent w-full p-3 border border-gray-400 dark:border-gray-600 rounded-md focus:outline-none text-gray-700 dark:text-white appearance-none`}
+                className={`${styles.input} !text-sm !p-auto !my-2 !bg-transparent w-full p-3 border border-gray-400 dark:border-gray-600 rounded-md focus:outline-none text-gray-700 dark:text-white appearance-none`}
                 style={{
                   WebkitAppearance: "none",
                   MozAppearance: "none",
@@ -121,8 +121,11 @@ const UserRole = ({
               </select>
 
               <button
-                className="bg-blue-500 text-white p-2 rounded-md"
+                className={`bg-blue-500 text-white p-2 rounded-md ${
+                  isLoading && "cursor-not-allowed"
+                }`}
                 type="submit"
+                disabled={isLoading}
               >
                 {isLoading ? "Updating user..." : "Add Member"}
               </button>
