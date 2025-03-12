@@ -12,7 +12,7 @@ const Layout = ({
   children: React.ReactElement | React.ReactNode;
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const sidebarWidth = isCollapsed ? "80px" : "240px";
+  const sidebarWidth = isCollapsed ? "70px" : "240px";
 
   return (
     <AdminProtected>

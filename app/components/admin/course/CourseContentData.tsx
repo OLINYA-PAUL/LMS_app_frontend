@@ -1,3 +1,5 @@
+"use client"
+
 import { styles } from "@/app/styles/style";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -100,13 +102,16 @@ const CourseContentData = ({
   };
 
   const newSectionHandler = (items: CourseContent) => {
+    const lastItem = courseContentData[courseContentData.length - 1];
+    const { title, description, videoUrl, videoSection } = lastItem;
+
     if (
-      !items.title ||
-      !items.videoUrl ||
-      !items.description ||
-      !items.videoSection ||
-      !items.link[0].title ||
-      !items.link[0].url
+      title === "" ||
+      videoUrl === "" ||
+      description === "" ||
+      videoSection === "" ||
+      lastItem.link[0]?.title === "" ||
+      lastItem.link[0]?.url === ""
     ) {
       return toast.error("Please fill all the fields");
     }
@@ -135,7 +140,7 @@ const CourseContentData = ({
       videoUrl === "" ||
       description === "" ||
       videoSection === "" ||
-      courseContentData[courseContentData.length - 1].link[0].title === "" ||
+      courseContentData[courseContentData.length - 1].link[0]?.title === "" ||
       courseContentData[courseContentData.length - 1].link[0]?.url === ""
     ) {
       return toast.error("Please fill all the fields");
@@ -150,15 +155,15 @@ const CourseContentData = ({
   };
 
   return (
-    <div className="w-[90%] px-20 max-sm:px-0 mt-10">
-      <div className="w-full">
+    <div className="w-[95%] max-sm:px-0 mt-10">
+      <div className="w-full mr-[5px]">
         <form onSubmit={handleCourseSubmit}>
           {courseContentData.map((items: CourseContent, index: number) => {
             const showSection =
               index === 0 ||
               items.videoSection !== courseContentData[index - 1].videoSection;
 
-            return (
+            return (  
               <div key={index}>
                 <div
                   className={` ${
@@ -244,20 +249,16 @@ const CourseContentData = ({
                             className={`${styles.input} `}
                             placeholder="Project title"
                             value={items.title}
-                            onChange={(e) => {
-                              // const updateItem = [...courseContentData];
-                              // updateItem[index].title = e.target.value;
-                              // setCourseContentData(updateItem);
-
-                              setCourseContentData((prevData) =>
-                                prevData.map((item, idx) => {
+                           onChange={(e) => {
+                              setCourseContentData((prev: CourseContent[]) =>
+                                prev.map((items, idx) => {
                                   if (idx === index) {
                                     return {
-                                      ...item,
+                                      ...items,
                                       title: e.target.value,
                                     };
                                   }
-                                  return item;
+                                  return items;
                                 })
                               );
                             }}
@@ -371,54 +372,33 @@ const CourseContentData = ({
                                 />
                                 Add Link
                               </div>
-                              <div className="w-full mt-5 ">
-                                {index === courseContentData.length - 1 && (
-                                  <div
-                                    className="flex items-center justify-start gap-5 cursor-pointer"
-                                    onClick={() => newContentHandler(items)}
-                                  >
-                                    <AiOutlinePlusCircle
-                                      className={`${""} dark:text-white text-[20px] gap-auto text-black `}
-                                    />
-                                    Add New Content
-                                  </div>
-                                )}
-                              </div>
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-center">
-                      {/* <div className="w-full mt-5 ">
-                      {index === courseContentData.length - 1 && (
-                        <div
-                          className="flex items-center justify-start gap-5 cursor-pointer"
-                          onClick={() => newContentHandler(items)}
-                        >
-                          <AiOutlinePlusCircle
-                            className={`${""} dark:text-white text-[20px] gap-auto text-black `}
-                          />
-                          Add New Content
-                        </div>
-                      )}
-                    </div> */}
-                      <div className="w-full mt-5 flex items-end justify-end">
-                        {index === courseContentData.length - 1 && (
-                          <div
-                            className="flex items-center justify-start gap-5 cursor-pointer"
-                            onClick={() => newSectionHandler(items)}
-                          >
-                            <AiOutlinePlusCircle
-                              className={`${""} dark:text-white text-[20px] gap-auto text-black `}
-                            />
-                            Add New Section
-                          </div>
-                        )}
-                      </div>
-                    </div>
                   </div>
                 </div>
+                
+                {/* Action buttons outside of the parent background */}
+                {index === courseContentData.length - 1 && (
+                  <div className="flex justify-between mt-3 px-1">
+                    <div
+                      className="flex items-center justify-start gap-2 cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
+                      onClick={() => newContentHandler(items)}
+                    >
+                      <AiOutlinePlusCircle className="text-[18px]" />
+                      <span className="font-medium">Add New Content</span>
+                    </div>
+                    <div
+                      className="flex items-center justify-start gap-2 cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
+                      onClick={() => newSectionHandler(items)}
+                    >
+                      <AiOutlinePlusCircle className="text-[18px]" />
+                      <span className="font-medium">Add New Section</span>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}

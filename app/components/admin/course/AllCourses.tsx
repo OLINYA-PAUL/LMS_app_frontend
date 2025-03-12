@@ -22,7 +22,7 @@ const AllCourses = () => {
   const { data, isLoading, error, refetch } = useGetAllCoursesQuery({});
   const [open, setIsOpen] = useState(false);
   const [courseId, setCourseId] = useState("");
-  console.log("dataa course", { data });
+
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
