@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -9,6 +11,7 @@ const CoursePlayer = ({
   title: string;
 }) => {
   const [videoData, setVideoData] = useState<{ embedUrl: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!videoID) return;
@@ -25,11 +28,18 @@ const CoursePlayer = ({
             },
           }
         );
+
+        console.log("Video Data:", response.data); // Debugging log
+
         if (response.data?.embedUrl) {
           setVideoData(response.data);
+          setError(null);
+        } else {
+          throw new Error("Invalid video URL received");
         }
-      } catch (error) {
-        console.error("Error fetching video data:", error);
+      } catch (err) {
+        console.error("Error fetching video data:", err);
+        setError("Failed to load video. Please try again.");
       }
     };
 
@@ -38,14 +48,19 @@ const CoursePlayer = ({
 
   return (
     <div className="w-full mt-5">
-      {videoData ? (
+      {error ? (
+        <p className="text-red-500 flex items-center justify-center mt-20">
+          {error}
+        </p>
+      ) : videoData ? (
         <iframe
           width="100%"
           height="450"
-          src={`${videoData.embedUrl}?controls=0&modestbranding=1&rel=0&disablekb=1`} // Removes playback controls
+          src={`${videoData.embedUrl}?controls=1&modestbranding=1&rel=0&disablekb=1`}
           title={title}
           allowFullScreen
-          sandbox="allow-scripts allow-presentation"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          sandbox="allow-scripts allow-same-origin allow-presentation"
           style={{ userSelect: "none" }}
         ></iframe>
       ) : (
