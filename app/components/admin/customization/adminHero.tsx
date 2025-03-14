@@ -1,8 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useGetHeroDataQuery } from "@/radux/features/layout/layoutApi";
+import {
+  useEditHeroDataMutation,
+  useGetHeroDataQuery,
+} from "@/radux/features/layout/layoutApi";
 import { AiOutlineCamera } from "react-icons/ai";
 import { styles } from "@/app/styles/style";
+import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
 
 const AdminHero = () => {
   const [image, setImage] = useState("");
@@ -15,24 +20,43 @@ const AdminHero = () => {
       refetchOnMountOrArgChange: true,
     }
   );
+  const [editHeroData, { data: editData, error, isSuccess, isLoading }] =
+    useEditHeroDataMutation();
 
   console.log(data);
+  console.log("editing image info", { editData });
 
-  const handleUpdate = (e: any) => {
-    // File upload handler
-    console.log(e.target.files[0]);
-    // Implementation for image upload would go here
+  const handleUpdate = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      const fileReader = new FileReader();
+
+      fileReader.onload = () => {
+        if (fileReader.readyState === FileReader.DONE) {
+          setImage(fileReader.result as string);
+        }
+      };
+
+      fileReader.readAsDataURL(file);
+    }
   };
 
-  const handleEdit = () => {
-    // Save changes logic
-    console.log("Saving changes:", {
-      title,
-      subTitle,
-      image,
-    });
+  const handleEdit = async () => {
+    const type = "Banner";
+    await editHeroData({ type, image, title, subTitle });
     // Implementation for saving changes would go here
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      toast.success("Hero updated");
+      redirect("/");
+    }
+    if (error) {
+      toast.error("Fail to updated Hero");
+    }
+  }, [isSuccess, error]);
 
   useEffect(() => {
     if (data?.layout?.banner) {
@@ -42,18 +66,17 @@ const AdminHero = () => {
     }
   }, [data]);
 
-  // Guard clause for when data is not yet loaded
   if (!data) {
     return (
-      <div className="w-full h-80 flex items-center justify-center">
-        Loading...
+      <div className="flex items-center justify-center w-full h-screen">
+        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-white mr-2" />{" "}
       </div>
     );
   }
 
   const isChanged =
     data.layout?.banner?.title !== title ||
-    data.layout?.banner?.SubTitle !== subTitle ||
+    data.layout?.banner?.subTitle !== subTitle ||
     image !== data.layout?.banner?.image?.url;
 
   return (
@@ -145,7 +168,7 @@ const AdminHero = () => {
           onClick={isChanged ? handleEdit : () => null}
           disabled={!isChanged}
         >
-          Save Changes
+          {isLoading ? "Upddating..." : "Save Changes"}
         </button>
       </div>
     </div>

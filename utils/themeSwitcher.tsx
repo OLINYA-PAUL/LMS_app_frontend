@@ -8,7 +8,7 @@ const ThemeSwitcher = () => {
   const [mounted, setMounted] = useState<boolean>(false);
   const { theme, setTheme } = useTheme();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => setMounted(true), [theme]);
 
   if (!mounted) return null;
 

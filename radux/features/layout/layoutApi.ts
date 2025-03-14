@@ -9,7 +9,43 @@ export const layoutApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    editHeroData: builder.mutation({
+      query: ({
+        type,
+        image,
+        title,
+        subTitle,
+      }: {
+        type: string;
+        image: string;
+        title: string;
+        subTitle: string;
+      }) => ({
+        url: `update-layout`,
+        method: "PUT",
+        body: { type, image, title, subTitle },
+        credentials: "include" as const,
+      }),
+    }),
+    editQuestionAndAnswerData: builder.mutation({
+      query: ({
+        type,
+        faq,
+      }: {
+        type: string;
+        faq: Array<{ question: string; answer: string }>;
+      }) => ({
+        url: `update-layout`,
+        method: "PUT",
+        body: { type, faq },
+        credentials: "include" as const,
+      }),
+    }),
   }),
 });
 
-export const { useGetHeroDataQuery } = layoutApi;
+export const {
+  useGetHeroDataQuery,
+  useEditHeroDataMutation,
+  useEditQuestionAndAnswerDataMutation,
+} = layoutApi;
