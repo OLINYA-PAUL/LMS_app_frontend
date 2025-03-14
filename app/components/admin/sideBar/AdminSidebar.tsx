@@ -234,7 +234,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
 
           {/* Dynamically render menu sections */}
           {menuSections.map((section, sectionIndex) => (
-            <React.Fragment key={`section-${sectionIndex}`}>
+            <div key={`section-${sectionIndex}`}>
               {!isCollapsed && (
                 <Typography variant="subtitle1" sx={styles.sectionTitle}>
                   {section.title}
@@ -252,7 +252,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
                   {item.name}
                 </MenuItem>
               ))}
-            </React.Fragment>
+            </div>
           ))}
 
           {/* Settings - Always at the bottom */}
