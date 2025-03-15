@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { styles } from "@/app/styles/style";
 import React, { useState } from "react";
@@ -17,6 +17,7 @@ interface CourseContent {
   title: string;
   description: string;
   videoSection: string;
+  videoLength: string;
   link: Link[];
   suggestion: string;
 }
@@ -94,6 +95,7 @@ const CourseContentData = ({
           title: "",
           description: "",
           videoSection,
+          videoLength: "",
           link: [{ title: "", url: "" }],
           suggestion: "",
         },
@@ -125,6 +127,7 @@ const CourseContentData = ({
         title: "",
         description: "",
         videoSection: `Untitled Section ${courseContentData.length + 1}`,
+        videoLength: "",
         link: [{ title: "", url: "" }],
         suggestion: "",
       },
@@ -163,7 +166,7 @@ const CourseContentData = ({
               index === 0 ||
               items.videoSection !== courseContentData[index - 1].videoSection;
 
-            return (  
+            return (
               <div key={index}>
                 <div
                   className={` ${
@@ -249,7 +252,7 @@ const CourseContentData = ({
                             className={`${styles.input} `}
                             placeholder="Project title"
                             value={items.title}
-                           onChange={(e) => {
+                            onChange={(e) => {
                               setCourseContentData((prev: CourseContent[]) =>
                                 prev.map((items, idx) => {
                                   if (idx === index) {
@@ -280,6 +283,30 @@ const CourseContentData = ({
                                     return {
                                       ...items,
                                       videoUrl: e.target.value,
+                                    };
+                                  }
+                                  return items;
+                                })
+                              );
+                            }}
+                          />
+                        </div>
+                        <div className="mt-auto w-full">
+                          <label htmlFor="" className={`${styles.lable}`}>
+                            Video Length (in minutes)
+                          </label>
+                          <input
+                            type="text"
+                            className={`${styles.input} `}
+                            placeholder="20 Minutes video"
+                            value={items.videoLength}
+                            onChange={(e) => {
+                              setCourseContentData((prev: CourseContent[]) =>
+                                prev.map((items, idx) => {
+                                  if (idx === index) {
+                                    return {
+                                      ...items,
+                                      videoLength: e.target.value,
                                     };
                                   }
                                   return items;
@@ -379,7 +406,7 @@ const CourseContentData = ({
                     )}
                   </div>
                 </div>
-                
+
                 {/* Action buttons outside of the parent background */}
                 {index === courseContentData.length - 1 && (
                   <div className="flex justify-between mt-3 px-1">

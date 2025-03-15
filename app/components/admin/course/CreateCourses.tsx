@@ -16,6 +16,7 @@ import { redirect } from "next/navigation";
 interface CourseInfo {
   name: string;
   description: string;
+  categories: string;
   price: number;
   estimatedPrice: number;
   tags: string;
@@ -42,6 +43,7 @@ interface CourseContent {
   title: string;
   description: string;
   videoSection: string;
+  videoLength: string;
   link: Link[];
   suggestion: string;
 }
@@ -92,8 +94,6 @@ const CreateCourse = ({
     },
   ] = useUpdateCourseMutation();
 
-  console.log("x course data", { x, courseId });
-
   const editedCourseData = x?.courses?.find(
     (items: any) => items._id === courseId
   );
@@ -105,6 +105,7 @@ const CreateCourse = ({
   const [courseInfo, setCourseInfo] = useState<CourseInfo>({
     name: "",
     description: "",
+    categories: "",
     price: 0,
     estimatedPrice: 0,
     tags: "",
@@ -124,6 +125,7 @@ const CreateCourse = ({
       title: "",
       description: "",
       videoSection: "Untitled Section",
+      videoLength: "",
       link: [{ title: "", url: "" }],
       suggestion: "",
     },
@@ -150,6 +152,7 @@ const CreateCourse = ({
       setCourseInfo({
         name: editedCourseData.name || "",
         description: editedCourseData.description || "",
+        categories: editedCourseData.categories || "",
         price: editedCourseData.price || 0,
         estimatedPrice: editedCourseData.estimatedPrice || 0,
         tags: editedCourseData.tags || "",
@@ -233,6 +236,7 @@ const CreateCourse = ({
       title: item.title,
       description: item.description,
       videoSection: item.videoSection,
+      videoLength: item.videoLength,
       link: item.link?.map((link) => ({
         title: link.title,
         url: link.url,
@@ -269,6 +273,12 @@ const CreateCourse = ({
       await createCoure(data);
     }
   };
+
+  console.log(
+    "courseContentData",
+    courseData,
+    courseData.courseData[0].videoLength
+  );
 
   return (
     <div className="w-full flex min-h-screen">

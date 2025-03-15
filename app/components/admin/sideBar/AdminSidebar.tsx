@@ -24,6 +24,11 @@ import {
 // ProSidebar imports
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
+import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
+import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
+import AccessibilityNewOutlinedIcon from "@mui/icons-material/AccessibilityNewOutlined";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 
 interface AdminSidebarProps {
   isCollapsed: boolean;
@@ -100,7 +105,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
         },
         {
           name: "Categories",
-          icon: <ManageAccounts />,
+          icon: <CategoryOutlinedIcon />,
           path: "/admin/categories",
         },
       ],
@@ -110,7 +115,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
       items: [
         {
           name: "Manage Teams",
-          icon: <Analytics />,
+          icon: <GroupsOutlinedIcon />,
           path: "/admin/team",
         },
       ],
@@ -120,8 +125,18 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
       items: [
         {
           name: "Courses Analytics",
-          icon: <Analytics />,
+          icon: <BarChartOutlinedIcon />,
           path: "/admin/course-analytics",
+        },
+        {
+          name: "Order Analytics",
+          icon: <InventoryOutlinedIcon />,
+          path: "/admin/order-analytics",
+        },
+        {
+          name: "User Analytics",
+          icon: <AccessibilityNewOutlinedIcon />,
+          path: "/admin/user-analytics",
         },
       ],
     },
