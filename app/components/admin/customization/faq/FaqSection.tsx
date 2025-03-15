@@ -10,7 +10,6 @@ import { AiOutlineDelete } from "react-icons/ai";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import toast from "react-hot-toast";
 
-// Define interfaces outside the component for better code organization
 interface Question {
   _id: string;
   question: string;
