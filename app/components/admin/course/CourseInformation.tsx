@@ -1,16 +1,24 @@
 import { styles } from "@/app/styles/style";
-import React, { SetStateAction, useState } from "react";
+import { useGetHeroDataQuery } from "@/radux/features/layout/layoutApi";
+import React, { SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { IoIosCheckmark } from "react-icons/io";
 
 interface CourseInfo {
   name: string;
   description: string;
+  categories: string;
   price: number;
   estimatedPrice: number;
   tags: string;
   level: string;
   demoUrl: string;
   thumbnails: string;
+}
+
+interface Category {
+  title: string;
+  _id: string;
 }
 
 interface courseInfoProps {
@@ -27,10 +35,21 @@ const CourseInformation = ({
   setCourseInfo,
 }: courseInfoProps) => {
   const [dragging, setDragging] = useState<boolean>(false);
+
+  const { data, isLoading, refetch } = useGetHeroDataQuery(
+    { type: "Categories" },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setActive(active + 1);
   };
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const [isSelected, setIsSelected] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,6 +118,15 @@ const CourseInformation = ({
 
     setActive(active + 1);
   };
+
+  useEffect(() => {
+    if (data?.layout?.categories) {
+      const categoriesData = JSON.parse(JSON.stringify(data.layout.categories));
+      setCategories(categoriesData);
+    }
+  }, [data]);
+
+  console.log("categories", courseInfo);
 
   return (
     <div className="w-[100%] px-10 max-sm:px-0">
@@ -169,20 +197,52 @@ const CourseInformation = ({
               />
             </div>
           </div>
-          <div className="w-full">
-            <label className={`${styles.lable} `}>Course Tags</label>
-            <input
-              type="text"
-              className={`${styles.input}`}
-              placeholder="tags"
-              required
-              name=""
-              value={courseInfo.tags}
-              onChange={(e) => {
-                setCourseInfo({ ...courseInfo, tags: e.target.value });
-              }}
-            />
+          <div className="w-full flex items-start gap-3 justify-between max-sm:flex-wrap md:flex-nowrap">
+            <div className="w-full">
+              <label className={`${styles.lable} `}>Course Tags</label>
+              <input
+                type="text"
+                className={`${styles.input}`}
+                placeholder="tags"
+                required
+                name=""
+                value={courseInfo.tags}
+                onChange={(e) => {
+                  setCourseInfo({ ...courseInfo, tags: e.target.value });
+                }}
+              />
+            </div>
+
+            <div className="w-full">
+              <label className={`${styles.lable}`}>Course Categories</label>
+              <div
+                className={`${styles.lable} w-full mt-3 bg-transparent rounded-md`}
+              >
+                <select
+                  name="categories"
+                  className="w-full px-3 border border-gray-400 rounded-md focus:outline-none py-2"
+                  onChange={(e) => {
+                    setIsSelected(true);
+                    setCourseInfo({
+                      ...courseInfo,
+                      categories: e.target.value,
+                    });
+                  }}
+                >
+                  {categories.map((category: Category) => (
+                    <option
+                      key={category._id}
+                      value={category.title}
+                      className="bg-transparent border-none outline-none"
+                    >
+                      {category.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
+
           <div className="w-full flex items-start gap-3 justify-between max-sm:flex-wrap md:flex-nowrap">
             <div className="w-full">
               <label className={`${styles.lable} `}>Course Levels</label>
