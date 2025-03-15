@@ -41,6 +41,20 @@ export const layoutApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+    updateCategories: builder.mutation({
+      query: ({
+        type,
+        categories,
+      }: {
+        type: string;
+        categories: Array<{ title: string }>;
+      }) => ({
+        url: `update-layout`,
+        method: "PUT",
+        body: { type, categories },
+        credentials: "include" as const,
+      }),
+    }),
   }),
 });
 
@@ -48,4 +62,5 @@ export const {
   useGetHeroDataQuery,
   useEditHeroDataMutation,
   useEditQuestionAndAnswerDataMutation,
+  useUpdateCategoriesMutation,
 } = layoutApi;
