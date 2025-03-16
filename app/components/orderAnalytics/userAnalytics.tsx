@@ -38,6 +38,15 @@ const OrderAnalytics = () => {
     { name: "Jun", orders: 22 },
   ];
 
+  const fallbackDatas = [
+    { name: "Jan", orders: 10 },
+    { name: "Feb", orders: 15 },
+    { name: "Mar", orders: 8 },
+    { name: "Apr", orders: 12 },
+    { name: "May", orders: 18 },
+    { name: "Jun", orders: 22 },
+  ];
+
   // Use fallback data if API data is empty
   const chartData = analysisData.length > 0 ? analysisData : fallbackData;
 
