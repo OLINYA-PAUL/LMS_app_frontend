@@ -1,10 +1,14 @@
+"use client";
+
 import DashboardHeaders from "@/app/admin/dashboardHeaders";
 import React from "react";
 
-const DashBoardHero = () => {
+const DashBoardHero = ({ isDashBoard }: { isDashBoard?: boolean }) => {
+  const [open, setOpen] = React.useState(false);
+
   return (
-    <div className="w-full z-50 ">
-      <DashboardHeaders />
+    <div className="w-full  ">
+      <DashboardHeaders open={open} setOpen={setOpen} />
     </div>
   );
 };

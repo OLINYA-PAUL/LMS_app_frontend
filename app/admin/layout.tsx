@@ -40,7 +40,7 @@ const Layout = ({
             style={{ marginLeft: sidebarWidth }}
           >
             <div className="max-w-screen-2xl mx-auto">
-              <DashBoardHero />
+              <DashBoardHero isDashBoard={true} />
               <div className="w-full">{children}</div>
             </div>
           </div>

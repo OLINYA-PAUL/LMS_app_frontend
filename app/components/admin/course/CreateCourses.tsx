@@ -277,7 +277,7 @@ const CreateCourse = ({
   console.log(
     "courseContentData",
     courseData,
-    courseData.courseData[0].videoLength
+    courseData?.courseData?.[0]?.videoLength
   );
 
   return (

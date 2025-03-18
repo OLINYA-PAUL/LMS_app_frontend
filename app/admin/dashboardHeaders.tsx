@@ -4,14 +4,18 @@ import ThemeSwitcher from "@/utils/themeSwitcher";
 import React, { FC, useState } from "react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 
-const DashboardHeaders = ({}) => {
-  const [open, setOpen] = useState(false);
-
+const DashboardHeaders = ({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   return (
-    <div className="w-full flex items-center justify-end p-6 fixed top-0 right-0 dark:bg-gradient-to-b dark:from-gray-800 dark:to-gray-900  bg-gradient-to-b from-gray-200 to-gray-300 duration-300">
+    <div className=" flex items-center justify-end p-6 fixed top-0 right-0 duration-300 z-[1100] ">
       <ThemeSwitcher />
       <div
-        className="relative cursor-pointer m-2 "
+        className="relative cursor-pointer m-2"
         onClick={() => setOpen((open) => !open)}
       >
         <IoMdNotificationsOutline className="text-2xl cursor-pointer dark:text-white text-black" />
@@ -19,8 +23,9 @@ const DashboardHeaders = ({}) => {
           3
         </span>
       </div>
+
       {open && (
-        <div className="w-[300px] h-[50vh] p-3 dark:bg-[#111C43] bg-white shadow-xl absolute top-16 z-10 rounded-xl">
+        <div className="w-[300px] h-[50vh] p-3 dark:bg-[#555555] bg-white shadow-xl absolute top-16 right-0 z-[1500] rounded-xl">
           <h5 className="text-center text-[20px] font-Poppins text-black dark:text-white p-3">
             Notifications
           </h5>

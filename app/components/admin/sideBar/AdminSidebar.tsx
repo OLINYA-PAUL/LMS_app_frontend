@@ -29,6 +29,7 @@ import InventoryOutlinedIcon from "@mui/icons-material/InventoryOutlined";
 import AccessibilityNewOutlinedIcon from "@mui/icons-material/AccessibilityNewOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+import zIndex from "@mui/material/styles/zIndex";
 
 interface AdminSidebarProps {
   isCollapsed: boolean;
@@ -146,6 +147,7 @@ const AdminSidebar = ({ isCollapsed, setIsCollapsed }: AdminSidebarProps) => {
   const styles = {
     container: {
       height: "100vh",
+      zIndex: 1000,
       width: isCollapsed ? "80px" : "250px", // More responsive width handling
       overflowY: "auto",
       overflowX: "hidden", // Prevent horizontal overflow
