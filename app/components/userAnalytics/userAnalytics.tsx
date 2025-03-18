@@ -109,7 +109,7 @@ const UserAnalytics = ({ isDashBoard }: isDashBoardprops) => {
                   </XAxis>
                   <YAxis domain={[minValue, "auto"]} />
                   <Tooltip content={CustomTooltip} />
-                  <Legend />
+                  {!isDashBoard && <Legend />}
                   <Area
                     type="monotone"
                     name="User Count"

@@ -13,13 +13,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const OrderAnalytics = () => {
+interface isDashBoardprops {
+  isDashBoard?: boolean;
+}
+const OrderAnalytics = ({ isDashBoard }: isDashBoardprops) => {
   const { data, isLoading } = useGetOrderAnalysisQuery({});
 
   const analysisData: any = [];
 
-  console.log("order user", data);
-
+  console.log("Raw data structure:", data);
   data &&
     data?.oderAanalysis?.last12Months?.forEach((v: any) => {
       analysisData.push({
@@ -68,12 +70,22 @@ const OrderAnalytics = () => {
             <h1 className={`${styles.title} px-5 !text-start`}>
               Order Analytics
             </h1>
-            <p className={`${styles.lable} px-5 !text-left`}>
-              Last 12 months order trends
-            </p>
 
-            <div className="w-full h-64 flex items-center justify-center">
-              <ResponsiveContainer width="100%" height="100%">
+            {!isDashBoard && (
+              <p className={`${styles.lable} px-5 !text-left`}>
+                Last 12 months order trends
+              </p>
+            )}
+
+            <div
+              className={`${
+                isDashBoard ? "h-[300px]" : "h-[400px]"
+              } w-full flex items-center justify-center mt-10`}
+            >
+              <ResponsiveContainer
+                width={isDashBoard ? "100%" : "90%"}
+                height={isDashBoard ? 300 : 400}
+              >
                 <LineChart
                   width={300}
                   height={100}
