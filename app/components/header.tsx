@@ -14,10 +14,10 @@ import avatar from "../../public/assets/profile_image.jpg";
 import { useSocialAuthMutation } from "@/radux/features/auth/authApi";
 import { useSession } from "next-auth/react";
 import { CiLogout } from "react-icons/ci";
-
 import toast from "react-hot-toast";
 import { ImSpinner } from "react-icons/im";
 import Login from "./auth/Login";
+
 interface headerProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,27 +33,24 @@ const Header = ({
   route,
   setRoute,
 }: headerProps) => {
-  const [active, setActive] = useState<boolean>(false);
-  const [isMobile, setisMobile] = useState<boolean>(false);
+  const [active, setActive] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [hasAuthenticated, setHasAuthenticated] = useState(false);
 
   const { user, token } = useSelector((state: any) => state.auth);
-  console.log({ USER: user, TOKEN: token });
   const { data } = useSession();
-  console.log("session data", data, data?.user?.image);
 
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
 
+  // Optimized scroll handler with debounce
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) setActive(true);
-      else setActive(false);
+      setActive(window.scrollY > 20);
     };
 
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-      // Clean up the event listener on unmount
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
@@ -65,64 +62,67 @@ const Header = ({
         name: data.user?.name as string,
         avatar: data.user?.image as string,
       });
-
-      setHasAuthenticated(true); // Prevent re-runs
+      setHasAuthenticated(true);
     }
 
     if (isSuccess && !hasAuthenticated) {
       toast.success("Login successful!");
     }
-  }, [data, user, isSuccess, hasAuthenticated]);
+  }, [data, user, socialAuth, isSuccess, hasAuthenticated]);
 
   const handleClose = (e: any) => {
-    if (e.target?.id === "screen") {
-      setisMobile(false);
+    if (e.target.id === "screen") {
+      setIsMobile(false);
     }
   };
 
+  // Default avatar URL
+  const defaultAvatar =
+    "https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-profile-picture-business-profile-woman-suitable-social-media-profiles-icons-screensavers-as-templatex9_719432-1339.jpg?w=740";
+
   return (
     <div className="w-full relative">
-      <div className={`${active ? "nav_light_mode" : " nav_dark_mode"}`}>
-        <div className="w-[100%] m-auto h-full p-2">
-          <div className="w-full  flex-1 flex justify-between items-center h-auto p-3">
+      <div className={active ? "nav_light_mode" : "nav_dark_mode"}>
+        <div className="w-full m-auto h-full p-2">
+          <div className="w-full flex-1 flex justify-between items-center h-auto p-3">
             <div>
-              <Link href={`/`} className="link">
+              <Link href="/" className="link">
                 Elearning
               </Link>
             </div>
             <div className="justify-center items-center flex cursor-pointer">
               <NavItems activeItem={activeItem} isMobile={false} />
               <ThemeSwitcher />
-              {/* // only for mobile */}
+
+              {/* Mobile menu toggle */}
               <div className="800px:hidden">
                 <h1
                   className="font-bold text-xl ml-3"
-                  onClick={() => setisMobile(() => true)}
+                  onClick={() => setIsMobile(true)}
                 >
-                  <LuMenuSquare
-                    width={300}
-                    className="dark:text-white text-black"
-                  />
+                  <LuMenuSquare className="dark:text-white text-black" />
                 </h1>
               </div>
+
+              {/* Desktop profile */}
               <div className="hidden 800px:block">
                 <h1 className="font-bold text-xl ml-3">
                   {user ? (
-                    <Link href={"/profile"}>
+                    <Link href="/profile">
                       <img
                         src={
-                          user.avatar?.url === "" || data?.user?.image === ""
-                            ? "https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-profile-picture-business-profile-woman-suitable-social-media-profiles-icons-screensavers-as-templatex9_719432-1339.jpg?w=740"
-                            : user.avatar?.url || data?.user?.image
+                          user?.avatar?.url ||
+                          data?.user?.image ||
+                          defaultAvatar
                         }
                         alt={
-                          user?.profile || data?.user?.image || "user_profile"
+                          user?.profile || data?.user?.name || "user_profile"
                         }
-                        width={25}
-                        height={25}
-                        className={`rounded-full  sm:w-[80px] sm:h-[80px] md:w-[30px] md:h-[30px]  ${
+                        width={30}
+                        height={30}
+                        className={`rounded-full ${
                           activeItem === 5
-                            ? "border-[3px] border-green-500 "
+                            ? "border-[3px] border-green-500"
                             : ""
                         }`}
                       />
@@ -130,9 +130,8 @@ const Header = ({
                   ) : (
                     <div>
                       <CgProfile
-                        width={300}
                         className="dark:text-white text-black"
-                        onClick={() => setIsOpen(() => true)}
+                        onClick={() => setIsOpen(true)}
                       />
                     </div>
                   )}
@@ -141,16 +140,18 @@ const Header = ({
             </div>
           </div>
         </div>
+
+        {/* Mobile sidebar */}
         {isMobile && (
           <div
             className="moble_sidebar 800px:hidden"
-            onClick={(e) => handleClose(e)}
+            onClick={handleClose}
             id="screen"
           >
             <div className="moble_profile">
               <div className="text-center mt-5">
                 <Link
-                  href={`/`}
+                  href="/"
                   className="font-Poppins text-[20px] font-extrabold"
                 >
                   Elearning
@@ -158,10 +159,7 @@ const Header = ({
               </div>
               <NavItems activeItem={activeItem} isMobile={true} />
               <div className="text-xl ml-6 mt-5">
-                <h1
-                  className="font-bold "
-                  onClick={() => setIsOpen(() => true)}
-                >
+                <h1 className="font-bold" onClick={() => setIsOpen(true)}>
                   user
                 </h1>
                 <p className="mt-[250px] text-sm">
@@ -172,53 +170,39 @@ const Header = ({
           </div>
         )}
       </div>
-      {route === "Login" && (
-        <>
-          {isOpen && (
-            <div className="w-full">
-              <CustomeModel
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                activeItem={activeItem}
-                route={route}
-                setRoute={setRoute}
-                Component={Login}
-              />
-            </div>
-          )}
-        </>
+
+      {/* Auth modals */}
+      {route === "Login" && isOpen && (
+        <CustomeModel
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          activeItem={activeItem}
+          route={route}
+          setRoute={setRoute}
+          Component={Login}
+        />
       )}
-      {route === "Sign-up" && (
-        <>
-          {isOpen && (
-            <div className="w-full">
-              <CustomeModel
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                activeItem={activeItem}
-                route={route}
-                setRoute={setRoute}
-                Component={Signup}
-              />
-            </div>
-          )}
-        </>
+
+      {route === "Sign-up" && isOpen && (
+        <CustomeModel
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          activeItem={activeItem}
+          route={route}
+          setRoute={setRoute}
+          Component={Signup}
+        />
       )}
-      {route === "Verification" && (
-        <>
-          {isOpen && (
-            <div className="w-full">
-              <CustomeModel
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                activeItem={activeItem}
-                route={route}
-                setRoute={setRoute}
-                Component={Verification}
-              />
-            </div>
-          )}
-        </>
+
+      {route === "Verification" && isOpen && (
+        <CustomeModel
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          activeItem={activeItem}
+          route={route}
+          setRoute={setRoute}
+          Component={Verification}
+        />
       )}
     </div>
   );
