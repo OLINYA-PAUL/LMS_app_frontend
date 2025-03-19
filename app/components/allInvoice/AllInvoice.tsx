@@ -8,6 +8,7 @@ import { AiOutlineMail } from "react-icons/ai";
 import { useTheme } from "next-themes";
 import Box from "@mui/material/Box";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { Button } from "@mui/material";
 
 const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
   const { data, isLoading } = useGetAllOrdersQuery({});
@@ -46,7 +47,6 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
         };
       });
 
-      console.log("all temp data", temp);
       setOrderData(temp);
     }
   };
@@ -66,7 +66,10 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
     { field: "id", headerName: "ID", flex: 0.3 },
     { field: "userName", headerName: "Name", flex: isDashBoard ? 0.6 : 0.5 },
     ...(isDashBoard
-      ? []
+      ? [
+          { field: "title", headerName: "Course Title", flex: 1 },
+          { field: "price", headerName: "Price", flex: 0.5 },
+        ]
       : [
           { field: "userEmail", headerName: "Email", flex: 0.5 },
           { field: "title", headerName: "Course Title", flex: 0.5 },
@@ -81,9 +84,11 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
       flex: 0.2,
       renderCell: (params: any) => {
         return (
-          <a href={`mailto:${params.row.userEmail}`}>
-            <AiOutlineMail className="dark:text-white text-black" size={20} />
-          </a>
+          <Button>
+            <a href={`mailto:${params.row.userEmail}`}>
+              <AiOutlineMail className="dark:text-white text-black" size={20} />
+            </a>
+          </Button>
         );
       },
     },
@@ -124,12 +129,14 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
     // },
   ];
 
-  data &&
-    data.users.forEach((items: any) => {
+  console.log("items", orderData);
+
+  orderData &&
+    orderData.forEach((items: any) => {
       rows.push({
         id: items._id,
-        userName: items.name,
-        userEmail: items.email,
+        userName: items.userName,
+        userEmail: items.Usermail,
         title: items.title,
         price: items.price,
         created_at: items.createdAt,
@@ -137,7 +144,7 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
     });
 
   return (
-    <div className="w-full">
+    <div className="w-full overflow-auto">
       {orderData && orderData.length > 0 ? (
         orderData.map((item: any, index: number) => {
           console.log("all map items", item);
@@ -148,7 +155,7 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
                   m={isDashBoard ? "0" : "40px 0 0 0"}
                   width={"100%"}
                   height={isDashBoard ? "40vh" : "90vh"}
-                  overflow={"hidden"}
+                  overflow={isDashBoard ? "auto" : "hidden"}
                   sx={{
                     "& .MuiDataGrid-root": {
                       border: "none",
@@ -169,6 +176,9 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
                     },
                     "& .MuiTablePagination-root": {
                       color: theme === "dark" ? "#fff" : "#000",
+                    },
+                    "& .MuiDataGrid-columnHeaderTitleContainer": {
+                      color: theme === "dark" ? "#000" : "#000",
                     },
                     "& .MuiDataGrid-cell": {
                       borderBottom: "none!important",

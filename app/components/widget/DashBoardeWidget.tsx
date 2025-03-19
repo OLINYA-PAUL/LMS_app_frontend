@@ -123,7 +123,7 @@ const DashBoardeWidget = ({
         </div>
       </div>
       {/* grid grid-cols-1 lg:grid-cols-[65%,35%] gap-5 w-full mt-6 */}
-      <div className="">
+      <div className=" ">
         <div className="dark:bg-[#111C43] bg-white shadow-md rounded-xl w-full h-auto">
           <OrderAnalytics isDashBoard={true} />
         </div>
@@ -131,7 +131,7 @@ const DashBoardeWidget = ({
           <h5 className="dark:text-white text-black text-xl font-medium font-Poppins pb-4 border-b border-gray-200 dark:border-gray-700">
             Recent Transaction
           </h5>
-          <div className="mt-3">
+          <div className="mt-3 overflow-auto">
             <AllInvoice isDashBoard={true} />
           </div>
         </div>
