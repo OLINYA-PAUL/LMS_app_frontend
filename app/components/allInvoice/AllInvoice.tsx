@@ -67,8 +67,8 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
     { field: "userName", headerName: "Name", flex: isDashBoard ? 0.6 : 0.5 },
     ...(isDashBoard
       ? [
-          { field: "title", headerName: "Course Title", flex: 1 },
-          { field: "price", headerName: "Price", flex: 0.5 },
+          // { field: "title", headerName: "Course Title", flex: 1 },
+          // { field: "price", headerName: "Price", flex: 0.5 },
         ]
       : [
           { field: "userEmail", headerName: "Email", flex: 0.5 },

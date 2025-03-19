@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { HeaderSEO } from "../utils/headerSEO";
 import Header from "./components/header";
 import HeroBannar from "./components/heroBannar";
+import Courses from "./components/Courses/Courses";
 
 const Home = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -10,7 +11,7 @@ const Home = () => {
   const [route, setRoute] = useState<string>("Login");
 
   return (
-    <>
+    <div className="flex items-center justify-center flex-col">
       <HeaderSEO
         title="React Prodigy | Elearning"
         descripion="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
@@ -25,8 +26,9 @@ const Home = () => {
           route={route}
         />
         <HeroBannar />
+        <Courses />
       </section>
-    </>
+    </div>
   );
 };
 
