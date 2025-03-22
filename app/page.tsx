@@ -4,7 +4,10 @@ import { HeaderSEO } from "../utils/headerSEO";
 import Header from "./components/header";
 import HeroBannar from "./components/heroBannar";
 import Courses from "./components/Courses/Courses";
-
+import Reviews from "./components/Reviews/Reviews";
+import { Fa500Px } from "react-icons/fa";
+import FAQ from "./components/FAQ/FAQ";
+import Footer from "./components/Footer/Footer";
 const Home = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<number>(0);
@@ -27,6 +30,9 @@ const Home = () => {
         />
         <HeroBannar />
         <Courses />
+        <Reviews />
+        <FAQ />
+        <Footer />
       </section>
     </div>
   );
