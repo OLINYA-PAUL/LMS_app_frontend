@@ -120,16 +120,6 @@ const Reviews = () => {
           <div className="col-span-full text-center">No reviews available</div>
         )}
       </div>
-      <div className=" mt-10 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2">
-        {reviews && reviews.length > 0 ? (
-          reviews.map((review: IReview, index: number) => (
-            //@ts-ignore
-            <ReviewCard reviews={review} key={index} />
-          ))
-        ) : (
-          <div className="col-span-full text-center">No reviews available</div>
-        )}
-      </div>
     </div>
   );
 };

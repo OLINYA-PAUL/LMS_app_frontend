@@ -1,10 +1,10 @@
 "use client";
 
+import CoursePlayer from "@/utils/CoursePlayer";
 import Ratings from "@/utils/Rating";
 import React from "react";
 import { useSelector } from "react-redux";
 import { format } from "timeago.js";
-import CoursePlayer from "./CoursePlayer"
 
 interface Benefit {
   title: string;
@@ -61,8 +61,8 @@ const CourseContentDetails = ({ data }: { data: any }) => {
 
   return (
     <div className="w-full mx-auto mt-3 font-Poppins ">
-      <div className="w-full flex-col-reverse 800px:flex-col">
-        <div className="w-full 800px:w-[65%] 800px:pr-5">
+      <div className="w-full flex 800px:flex-row  flex-col-reverse">
+        <div className="w-full 800px:w-[65%] ">
           <h1 className="font-Poppins text-[25px] text-black dark:text-white">
             {data?.courses.name}
           </h1>
@@ -173,11 +173,50 @@ const CourseContentDetails = ({ data }: { data: any }) => {
                 ))}
           </div>
         </div>
-      </div>
-      <div className="w-[90%] 800px:w-[90%] mx-auto py5">
-           <div className="sticky top-[100px] left-0 z-50 w-full">
-            <CoursePlayer videoUrl={data?.courses.demoUrl } title={data?.courses.title}/>
-      </div>
+        <div className="w-[30%] 800px:w-[30%] h-[50px] mx-auto">
+          <div className="sticky top-[100px]   left-0 z-50 w-full">
+            <CoursePlayer
+              videoID={data?.courses.demoUrl}
+              title={data?.courses.title}
+            />
+
+            <div className="w-full flex items-center font-bold mt-10">
+              <h1
+                className={`text-xl ${
+                  data?.courses.estimatedPrice &&
+                  data?.courses.estimatedPrice > 0
+                    ? "line-through"
+                    : ""
+                }`}
+              >
+                {data?.courses.price === 0 ? "Free" : `${data?.courses.price}$`}
+              </h1>
+              {data?.courses.estimatedPrice > 0 && (
+                <>
+                  <h5 className="pl-3 text-sm opacity-80 line-through">
+                    {data?.courses.estimatedPrice}$
+                  </h5>
+                  <h5 className="pl-3 text-sm">
+                    {data?.courses.toFixed(0)}% Off
+                  </h5>
+                </>
+              )}
+
+              {/* -------------- */}
+
+              {data?.courses.estimatedPrice > 0 && (
+                <>
+                  <h5 className="pl-3 text-sm opacity-80 line-through">
+                    {data?.courses.estimatedPrice}$
+                  </h5>
+                  <h5 className="pl-3 text-sm">
+                    {data?.courses.toFixed(0)}% Off
+                  </h5>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
