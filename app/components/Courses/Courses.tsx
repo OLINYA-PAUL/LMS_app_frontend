@@ -2,7 +2,7 @@
 
 import { useGetUserAllCoursesQuery } from "@/radux/features/course/course";
 import React, { useEffect, useState } from "react";
-import CoursesCard from "../courseCard/CoursesCard";
+import CoursesCard from "../CourseDetails/CoursesCard";
 
 interface Benefit {
   title: string;

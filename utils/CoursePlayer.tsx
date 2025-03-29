@@ -6,9 +6,11 @@ import axios from "axios";
 const CoursePlayer = ({
   videoID,
   title,
+  isCoursePlayer,
 }: {
   videoID: string;
   title: string;
+  isCoursePlayer?: boolean;
 }) => {
   const [videoData, setVideoData] = useState<{ embedUrl: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +57,7 @@ const CoursePlayer = ({
       ) : videoData ? (
         <iframe
           width="100%"
-          height="450"
+          height="1000%"
           src={`${videoData.embedUrl}?controls=1&modestbranding=1&rel=0&disablekb=1`}
           title={title}
           allowFullScreen
