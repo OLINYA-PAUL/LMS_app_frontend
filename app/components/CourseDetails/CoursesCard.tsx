@@ -49,7 +49,7 @@ interface courseCardProps {
 
 const CoursesCard = ({ items, key, isProfile }: courseCardProps) => {
   return (
-    <div className="w-full" key={items?._id}>
+    <div className="w-full" key={items?._id || key}>
       <Link
         href={`${
           isProfile ? `course/${items._id}` : `course-access/${items._id}`
@@ -57,7 +57,7 @@ const CoursesCard = ({ items, key, isProfile }: courseCardProps) => {
       >
         <div className="mt-5 w-full h-auto rounded-lg bg-white dark:bg-slate-500 dark:bg-opacity-20 backdrop-blur border dark:border-[#ffffff1d] border-[#00000015] shadow-sm dark:shadow-inner overflow-hidden">
           <img
-            src={items.thumbnails.url}
+            src={items.thumbnails?.url}
             alt="course_image"
             className="w-full h-48 object-cover"
           />

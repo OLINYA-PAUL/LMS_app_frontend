@@ -175,7 +175,7 @@ const CourseContentList = ({
         isDemo && "ml-[-30px] sticky top-24 left-0 z-30"
       }`}
     >
-      {videoSections.map((section: string) => {
+      {videoSections.map((section: any) => {
         const isSectionVisible = visibleSections.has(section);
         const sectionVideos = courseData.filter(
           (item: any) => item.videoSection === section

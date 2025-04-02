@@ -80,7 +80,7 @@ const Courses = () => {
             {courses && courses.length > 0 ? (
               courses.map((item: CourseDatas, index: number) => (
                 <>
-                  <CoursesCard items={item} key={index} />
+                  <CoursesCard items={item} key={index} isProfile={true} />
                 </>
               ))
             ) : (
