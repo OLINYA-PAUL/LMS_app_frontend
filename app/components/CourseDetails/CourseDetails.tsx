@@ -2,16 +2,45 @@
 
 import { useGetCourseContentDetailsQuery } from "@/radux/features/course/course";
 import { HeaderSEO } from "@/utils/headerSEO";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../header";
 import CourseContentDetails from "./CourseContentDetails";
 import Footer from "../Footer/Footer";
+import {
+  useCreatePaymentIntentMutation,
+  useGetStripePublishableKeyQuery,
+} from "@/radux/features/orders/ordersapi";
+import { loadStripe } from "@stripe/stripe-js";
 
 const CourseDetails = ({ id }: { id: string }) => {
   const [route, setRoute] = useState("Login");
+  const [stripePromise, setStripePromise] = useState<Promise<any> | null>(null);
+  const [clientSecret, setClientSecret] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading } = useGetCourseContentDetailsQuery({ id });
+  const { data: config } = useGetStripePublishableKeyQuery({});
+  const [createPaymentIntent, { data: paymentIntent }] =
+    useCreatePaymentIntentMutation();
+
+  console.log("stripePromise", stripePromise, { config });
+
+  useEffect(() => {
+    if (config && config?.stripPublishableKey) {
+      setStripePromise(loadStripe(config?.stripPublishableKey));
+    }
+
+    if (data && data.courses.price !== 0) {
+      const amount = Math.round(data.courses.price * 100);
+      createPaymentIntent({ amount });
+    }
+  }, [config, data]);
+
+  useEffect(() => {
+    if (paymentIntent && paymentIntent?.clientSecret) {
+      setClientSecret(paymentIntent?.clientSecret);
+    }
+  }, [paymentIntent]);
 
   return (
     <div className="w-[95%] mx-auto mt-5">
@@ -33,7 +62,13 @@ const CourseDetails = ({ id }: { id: string }) => {
             route={route}
             setRoute={setRoute}
           />
-          <CourseContentDetails data={data ?? {}} />
+          {stripePromise && config?.stripPublishableKey && (
+            <CourseContentDetails
+              data={data}
+              stripePromise={stripePromise}
+              clientSecret={clientSecret}
+            />
+          )}
           <Footer />
         </div>
       )}

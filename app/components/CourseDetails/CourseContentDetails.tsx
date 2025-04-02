@@ -2,11 +2,13 @@
 
 import CoursePlayer from "@/utils/CoursePlayer";
 import Ratings from "@/utils/Rating";
-import React from "react";
-import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import React, { useState } from "react";
+import { IoIosCloseCircle, IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { format } from "timeago.js";
 import CourseContentList from "./CourseContentList";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "../checkOutForm/CheckoutForm";
 
 interface Benefit {
   title: string;
@@ -64,9 +66,15 @@ interface CourseContentDetailsProps {
   data: {
     courses: CourseData;
   };
+  stripePromise: Promise<any | null>;
+  clientSecret: string;
 }
 
-const CourseContentDetails = ({ data }: CourseContentDetailsProps) => {
+const CourseContentDetails = ({
+  data,
+  stripePromise,
+  clientSecret,
+}: CourseContentDetailsProps) => {
   const disCountPercentage = data?.courses?.estimatedPrice
     ? ((data.courses.estimatedPrice - data.courses.price) /
         data.courses.estimatedPrice) *
@@ -74,9 +82,17 @@ const CourseContentDetails = ({ data }: CourseContentDetailsProps) => {
     : 0;
 
   const { user } = useSelector((state: any) => state.auth);
-  const isPurchased = user?.courses?.some(
-    (c: any) => c._id === data?.courses._id
-  );
+  const isPurchased = user?.courses?.some((c: any) => {
+    return c._id === data?.courses?._id;
+  });
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleOrder = () => {
+    setIsOpen(true);
+  };
+
+  // console.log("isPurchased", isPurchased, user, data?.courses._id);
 
   return (
     <div className="w-full mx-auto mt-3 font-Poppins px-4 sm:px-6 lg:px-8 text-xs sm:text-sm">
@@ -234,6 +250,7 @@ const CourseContentDetails = ({ data }: CourseContentDetailsProps) => {
                         : "bg-red-800 hover:bg-red-900"
                     }
                   `}
+                  onClick={handleOrder}
                   disabled={isPurchased}
                 >
                   {isPurchased
@@ -263,6 +280,29 @@ const CourseContentDetails = ({ data }: CourseContentDetailsProps) => {
           </div>
         </div>
       </div>
+
+      <>
+        {isOpen && (
+          <div className="w-full h-screen bg-[#00000036] fixed top-0 left-0 z-50 flex flex-col items-center justify-center  ">
+            <div className="w-[500px] min-h-[400px] rounded-lg max-sm:w-[300px] max-sm:min-h-[300px] shadow-md bg-white dark:bg-white p-3">
+              <div className="w-full flex justify-end">
+                <IoIosCloseCircle
+                  size={30}
+                  className="text-black  cursor-pointer"
+                  onClick={() => setIsOpen(false)}
+                />
+              </div>
+              <div className="w-full mt-5">
+                {clientSecret && stripePromise && (
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <CheckoutForm data={data} setIsOpen={setIsOpen} />
+                  </Elements>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     </div>
   );
 };

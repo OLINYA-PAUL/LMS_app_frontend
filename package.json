@@ -16,6 +16,8 @@
     "@mui/types": "^7.2.19",
     "@mui/x-data-grid": "^7.27.3",
     "@reduxjs/toolkit": "^2.3.0",
+    "@stripe/react-stripe-js": "^3.6.0",
+    "@stripe/stripe-js": "^7.0.0",
     "axios": "^1.8.1",
     "formik": "^2.4.6",
     "lucide-react": "^0.477.0",
