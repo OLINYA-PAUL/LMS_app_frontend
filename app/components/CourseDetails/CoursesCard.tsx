@@ -49,7 +49,7 @@ interface courseCardProps {
 
 const CoursesCard = ({ items, key, isProfile }: courseCardProps) => {
   return (
-    <div className="w-full" key={items?._id || key}>
+    <div className="w-full" key={key}>
       <Link
         href={`${
           isProfile ? `course/${items._id}` : `course-access/${items._id}`
