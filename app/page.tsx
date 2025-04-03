@@ -17,7 +17,7 @@ const Home = () => {
     <div className="flex items-center justify-center flex-col">
       <HeaderSEO
         title="React Prodigy | Elearning"
-        descripion="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
+        description="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
         keyWords="Nextjs, React, Javascript, Radux MERN"
       />
       <section>

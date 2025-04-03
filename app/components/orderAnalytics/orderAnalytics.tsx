@@ -23,12 +23,12 @@ const OrderAnalytics = ({ isDashBoard }: isDashBoardprops) => {
 
   console.log("Raw data structure:", data);
   data &&
-    data?.oderAanalysis?.last12Months?.forEach((v: any) => {
+    data?.oderAanalysis?.last12Months?.forEach((v: any) =>
       analysisData.push({
         name: v.month,
         orders: v.count,
-      });
-    });
+      })
+    );
 
   // Fallback data in case API data is empty
   const fallbackData = [

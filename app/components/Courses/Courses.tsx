@@ -3,6 +3,7 @@
 import { useGetUserAllCoursesQuery } from "@/radux/features/course/course";
 import React, { useEffect, useState } from "react";
 import CoursesCard from "../CourseDetails/CoursesCard";
+import { useSelector } from "react-redux";
 
 interface Benefit {
   title: string;
@@ -60,6 +61,11 @@ const Courses = () => {
     }
   }, [data, isSuccess]);
 
+  const { user } = useSelector((state: any) => state.auth);
+  const isPurchased = user?.courses?.some((c: any) => {
+    return c._id === data?.courses?._id;
+  });
+
   return (
     <div className="w-full px-8 mt-5">
       {isLoading ? (
@@ -78,9 +84,14 @@ const Courses = () => {
           </div>
           <div className="w-full mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {courses && courses.length > 0 ? (
-              courses.map((item: CourseDatas, index: number) => (
+              courses.map((item: CourseDatas) => (
                 <>
-                  <CoursesCard items={item} key={index} isProfile={true} />
+                  <CoursesCard
+                    items={item}
+                    //@ts-ignore
+                    key={item._id}
+                    isProfile={!user || !isPurchased}
+                  />
                 </>
               ))
             ) : (

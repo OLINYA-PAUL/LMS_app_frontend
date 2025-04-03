@@ -9,6 +9,8 @@ import { format } from "timeago.js";
 import CourseContentList from "./CourseContentList";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../checkOutForm/CheckoutForm";
+import { useRouter } from "next/navigation";
+import { useLoadUserQuery } from "@/radux/features/api/apiSlice";
 
 interface Benefit {
   title: string;
@@ -81,8 +83,8 @@ const CourseContentDetails = ({
       100
     : 0;
 
-  const { user } = useSelector((state: any) => state.auth);
-  const isPurchased = user?.courses?.some((c: any) => {
+  const { data: userData } = useLoadUserQuery({});
+  const isPurchased = userData.user?.courses?.some((c: any) => {
     return c._id === data?.courses?._id;
   });
 
@@ -92,7 +94,7 @@ const CourseContentDetails = ({
     setIsOpen(true);
   };
 
-  // console.log("isPurchased", isPurchased, user, data?.courses._id);
+  const router = useRouter();
 
   return (
     <div className="w-full mx-auto mt-3 font-Poppins px-4 sm:px-6 lg:px-8 text-xs sm:text-sm">
@@ -243,21 +245,27 @@ const CourseContentDetails = ({
                 </div>
 
                 <button
-                  className={`w-full py-2 px-4 rounded-lg font-semibold transition-colors text-white
+                  className={`cursor-pointer w-full py-2 px-4 rounded-lg font-semibold transition-colors text-white
                     ${
                       isPurchased
                         ? "bg-blue-600 hover:bg-blue-700 cursor-default"
                         : "bg-red-800 hover:bg-red-900"
                     }
+
                   `}
-                  onClick={handleOrder}
-                  disabled={isPurchased}
+                  onClick={() => {
+                    if (isPurchased) {
+                      router.push(`/course-access/${data.courses._id}`);
+                    } else {
+                      handleOrder();
+                    }
+                  }}
                 >
                   {isPurchased
-                    ? "Purchased"
+                    ? "Enter to course"
                     : data?.courses?.price === 0
                     ? "Enroll Now"
-                    : `Purchase - $${data?.courses?.price}`}
+                    : `Buy now - $${data?.courses?.price}`}
                 </button>
 
                 <div className="space-y-2 pt-3 border-t border-gray-200 dark:border-gray-700">

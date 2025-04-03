@@ -1,18 +1,18 @@
 "use client";
-import { Helmet } from "react-helmet";
 
 interface headerProps {
   title: string;
-  descripion: string;
+  description: string;
   keyWords: string;
 }
-export const HeaderSEO = ({ title, descripion, keyWords }: headerProps) => {
+
+export const HeaderSEO = ({ title, description, keyWords }: headerProps) => {
   return (
-    <Helmet>
+    <>
       <title>{title}</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="descripion" content={descripion} />
+      <meta name="description" content={description} />
       <meta name="keywords" content={keyWords} />
-    </Helmet>
+    </>
   );
 };
