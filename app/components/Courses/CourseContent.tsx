@@ -16,7 +16,6 @@ const CourseContent = ({ id }: { id: string }) => {
   const data = contentData?.courseContent;
   const [activeVideo, setActiveVideo] = useState(0);
 
-  console.log(data?.courseData?.[activeVideo]?.title, "data section222");
   return (
     <div className="w-full">
       {isLoading ? (
@@ -38,11 +37,11 @@ const CourseContent = ({ id }: { id: string }) => {
           <Header
             isOpen={isOpen}
             setIsOpen={setIsOpen}
-            activeItem={activeItem}
+            activeItem={1}
             setRoute={setRoute}
             route={route}
           />
-          <div className="grid  mx-auto p-5  800px:grid-cols-10 w-full">
+          <div className="grid  mx-auto  800px:grid-cols-10 w-full">
             <div className="w-full col-span-7 ">
               <CourseContentMedia
                 data={data}
