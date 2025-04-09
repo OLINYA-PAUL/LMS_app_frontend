@@ -16,7 +16,8 @@ const CourseContentList = ({
   const [visibleSections, setVisibleSections] = useState<Set<string>>(
     new Set<string>()
   );
-  const courseData = data?.courses?.courseData ?? [];
+  const courseData = data?.courses?.courseData ?? data;
+
   const videoSections = [
     ...new Set(courseData.map((item: any) => item.videoSection)),
   ];
@@ -32,7 +33,7 @@ const CourseContentList = ({
   return (
     <div
       className={`mt-10 w-full ${
-        isDemo && "ml-[-30px] sticky top-24 left-0 z-30"
+        isDemo && "ml-[-30px] sticky top-24 left-0 z-30 text-sm"
       }`}
     >
       {videoSections.map((section: any) => {
@@ -88,7 +89,7 @@ const CourseContentList = ({
                     <div
                       key={item._id}
                       className={`flex items-center justify-between p-2 rounded hover:bg-gray-800 cursor-pointer ${
-                        isActive ? "bg-gray-700" : ""
+                        isActive ? "bg-red-700" : "bg-gray-700"
                       }`}
                       onClick={() => !isDemo && setActiveVideo?.(index)}
                     >
