@@ -113,28 +113,6 @@ const CourseContentMedia = ({
             )}
           </div>
         )}
-        {activeBar === 1 && (
-          <div className="w-full mt-5">
-            {data.courseData[activeVideo].link.map(
-              (items: any, index: number) => {
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center justify-start my-2"
-                  >
-                    <a
-                      href={items.url}
-                      target="_blank"
-                      className="text-sm text-blue-500 inline-block "
-                    >
-                      Source Code: {items.url}
-                    </a>
-                  </div>
-                );
-              }
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
