@@ -100,24 +100,6 @@ const Courses = () => {
               </div>
             )}
           </div>
-          {/* <div className="w-full mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {courses && courses.length > 0 ? (
-              courses.map((item: CourseDatas) => (
-                <>
-                  <CoursesCard
-                    items={item}
-                    //@ts-ignore
-                    key={item._id}
-                    isProfile={!user || !isPurchased}
-                  />
-                </>
-              ))
-            ) : (
-              <div className="col-span-full text-center">
-                No courses available
-              </div>
-            )}
-          </div> */}
         </div>
       )}
     </div>
