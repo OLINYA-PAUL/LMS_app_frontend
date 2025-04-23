@@ -1,8 +1,6 @@
 import { styles } from "@/app/styles/style";
 import { useAddCourseQuestionMutation } from "@/radux/features/course/course";
 import CoursePlayer from "@/utils/CoursePlayer";
-import { gridColumnsTotalWidthSelector } from "@mui/x-data-grid";
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -11,24 +9,31 @@ import {
   AiOutlineRight,
   AiOutlineStar,
 } from "react-icons/ai";
+import { format } from "timeago.js";
 
 const CourseContentMedia = ({
   data,
   user,
   id,
   activeVideo,
+  refetch,
   setActiveVideo,
 }: {
   data: any;
   user: any;
   id: string;
   activeVideo: number;
+  refetch: () => void;
   setActiveVideo: (index: number) => void;
 }) => {
   const [activeBar, setActiveBar] = React.useState(0);
   const [question, setQuestion] = useState("");
   const [comment, setComment] = useState("");
   const [isQuestion, setIsQuestion] = useState(false);
+  const [answer, setAnswer] = useState("");
+  const [answerId, setAnswerId] = useState("");
+  const [isAnswer, setIsAnswer] = useState(false);
+
   const courseData = data?.courses?.courseData ?? data?.courseData;
 
   const [rating, setRating] = useState<number[]>([1, 2, 3, 4, 5]);
@@ -45,6 +50,9 @@ const CourseContentMedia = ({
 
   useEffect(() => {
     if (questioData) {
+      refetch();
+      setQuestion("");
+      setIsQuestion(false);
       toast.success("Question added successfully");
     }
     if (error) {
@@ -69,16 +77,14 @@ const CourseContentMedia = ({
       return;
     }
 
-    console.log({ "error is here": courseData[activeVideo]._id });
-
     await addCourseQuestion({
       question,
       courseId: data?._id,
       contentId: courseData[activeVideo]._id,
     });
-
-    setQuestion("");
   };
+
+  const handleAnswerSubmit = () => {};
 
   // Handle next video
   const handleNextVideo = () => {
@@ -206,6 +212,22 @@ const CourseContentMedia = ({
                 {isLoading ? "Uploading..." : "Submit"}
               </button>
             </div>
+
+            <div className="w-full mt-5">
+              <CommentReply
+                data={courseData}
+                activeVideo={activeVideo}
+                setActiveVideo={setActiveVideo}
+                user={user}
+                handleAnswerSubmit={handleAnswerSubmit}
+                answer={answer}
+                setAnswer={setAnswer}
+                answerId={answerId}
+                isAnswer={isAnswer}
+                setIsAnswer={setIsAnswer}
+                setAnswerId={setAnswerId}
+              />
+            </div>
           </div>
         )}
 
@@ -288,4 +310,109 @@ const CourseContentMedia = ({
   );
 };
 
+interface CommentReplyProps {
+  data: any;
+  activeVideo: number;
+  setActiveVideo: (index: number) => void;
+  user: any;
+  handleAnswerSubmit: () => void;
+  answer: string;
+  setAnswer: (answer: string) => void;
+  answerId: string;
+  isAnswer: boolean;
+  setIsAnswer: (isAnswer: boolean) => void;
+  setAnswerId: (answerId: string) => void;
+}
+
+const CommentReply = ({
+  data,
+  activeVideo,
+  setActiveVideo,
+  answer,
+  setAnswer,
+  answerId,
+  setIsAnswer,
+  handleAnswerSubmit,
+  user,
+  isAnswer,
+  setAnswerId,
+}: CommentReplyProps) => {
+  return (
+    <div className="w-full">
+      {data &&
+        data[activeVideo]?.question?.map((items: any, index: number) => (
+          <CommentItems
+            key={index}
+            items={items}
+            data={data}
+            activeVideo={activeVideo}
+            setActiveVideo={setActiveVideo}
+            answer={answer}
+            setAnswer={setAnswer}
+            answerId={answerId}
+            setIsAnswer={setIsAnswer}
+            handleAnswerSubmit={handleAnswerSubmit}
+            user={user}
+            isAnswer={isAnswer}
+            setAnswerId={setAnswerId}
+          />
+        ))}
+    </div>
+  );
+};
+
+interface CommentItems {
+  data: any;
+  items: any;
+  activeVideo: number;
+  setActiveVideo: (index: number) => void;
+  user: any;
+  handleAnswerSubmit: () => void;
+  answer: string;
+  setAnswer: (answer: string) => void;
+  answerId: string;
+  isAnswer: boolean;
+  setIsAnswer: (isAnswer: boolean) => void;
+  setAnswerId: (answerId: string) => void;
+}
+const CommentItems = ({
+  data,
+  items,
+  activeVideo,
+  setActiveVideo,
+  user,
+  handleAnswerSubmit,
+  answer,
+  setAnswer,
+  answerId,
+  isAnswer,
+  setIsAnswer,
+  setAnswerId,
+}: CommentItems) => {
+  console.log("items", items);
+  return (
+    <div className="w-full my-4">
+      <div className="border-t  border-slate-900 ">
+        <div className="flex items-center gap-3 justify-start">
+          <div className="w-[50px] h-[50px] rounded-full bg-slate-900 p-3 text-center mt-4 dark:text-white text-black">
+            {items.user.name.toString().slice(0, 2).toUpperCase()}
+          </div>
+          <div className="mt-4">
+            <h1 className="font-bold font-Poppins text-[15px]">
+              {items.user.name}
+            </h1>
+            <p className="dark:text-slate-300 text-white font-Poppins text-sm ">
+              {" "}
+              {items.question}
+            </p>
+            <small className="dark:text-slate-300 text-white font-Poppins text-sm ">
+              {" "}
+              {format(items.createdAt)}
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 export default CourseContentMedia;
