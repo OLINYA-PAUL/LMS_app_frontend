@@ -89,6 +89,7 @@ const CourseContentDetails = ({
   });
 
   const [isOpen, setIsOpen] = useState(false);
+  const [activeVideo, setActiveVideo] = useState(0);
 
   const handleOrder = () => {
     setIsOpen(true);
@@ -151,7 +152,12 @@ const CourseContentDetails = ({
             <h2 className="text-base font-bold text-black dark:text-white mb-2">
               Course Overview
             </h2>
-            <CourseContentList data={data} isDemo={true} />
+            <CourseContentList
+              data={data}
+              isDemo={true}
+              activeVideo={activeVideo}
+              setActiveVideo={setActiveVideo}
+            />
           </section>
           <section className="mt-4">
             <h2 className="text-base font-bold text-black dark:text-white mb-2">

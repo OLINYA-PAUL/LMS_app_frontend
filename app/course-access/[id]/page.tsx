@@ -10,8 +10,6 @@ const page = ({ params }: { params: Promise<{ id: string }> }) => {
 
   const { data, error, isLoading } = useLoadUserQuery({});
 
-  console.log("data", data);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -37,7 +35,7 @@ const page = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
       ) : (
         <div className="w-full">
-          <CourseContent id={id} />
+          <CourseContent id={id} user={data.user} />
         </div>
       )}
     </div>

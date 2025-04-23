@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
+import { preconnect } from "react-dom";
 import { MdOutlineOndemandVideo } from "react-icons/md";
 
 const CourseContentList = ({
@@ -10,7 +11,7 @@ const CourseContentList = ({
 }: {
   data: any;
   activeVideo?: number;
-  setActiveVideo?: React.Dispatch<React.SetStateAction<number>>;
+  setActiveVideo: React.Dispatch<React.SetStateAction<number>>;
   isDemo?: boolean;
 }) => {
   const [visibleSections, setVisibleSections] = useState<Set<string>>(
@@ -38,9 +39,9 @@ const CourseContentList = ({
     >
       {videoSections.map((section: any) => {
         const isSectionVisible = visibleSections.has(section);
-        const sectionVideos = courseData.filter(
-          (item: any) => item.videoSection === section
-        );
+        const sectionVideos = courseData.filter((item: any) => {
+          return item.videoSection === section;
+        });
 
         // Calculate total section duration
         const sectionDuration = sectionVideos.reduce(
@@ -78,7 +79,7 @@ const CourseContentList = ({
             {isSectionVisible && (
               <div className="ml-4">
                 {sectionVideos.map((item: any, index: number) => {
-                  const isActive = index === activeVideo;
+                  const isActive = activeVideo === index;
                   const duration = item.videoLength;
                   const formattedItemDuration =
                     duration >= 60
@@ -89,9 +90,12 @@ const CourseContentList = ({
                     <div
                       key={item._id}
                       className={`flex items-center justify-between p-2 rounded hover:bg-gray-800 cursor-pointer ${
-                        isActive ? "bg-red-700" : "bg-gray-700"
+                        isActive && !isDemo ? "bg-red-700" : "bg-gray-700"
                       }`}
-                      onClick={() => !isDemo && setActiveVideo?.(index)}
+                      onClick={() => {
+                        setActiveVideo(index);
+                        alert(`You clicked on ${index}`); // Example action on click
+                      }}
                     >
                       <div className="flex items-center">
                         <MdOutlineOndemandVideo className="mr-2 flex-shrink-0 text-gray-400" />

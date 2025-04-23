@@ -7,7 +7,7 @@ import { useGetCourseContentDataQuery } from "@/radux/features/course/course";
 import CourseContentMedia from "./CourseContentMedia";
 import CourseContentList from "../CourseDetails/CourseContentList";
 
-const CourseContent = ({ id }: { id: string }) => {
+const CourseContent = ({ id, user }: { id: string; user: any }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<number>(0);
   const [route, setRoute] = useState<string>("Login");
@@ -54,6 +54,7 @@ const CourseContent = ({ id }: { id: string }) => {
                 id={id}
                 activeVideo={activeVideo}
                 setActiveVideo={setActiveVideo}
+                user={user}
               />
             </div>
 
