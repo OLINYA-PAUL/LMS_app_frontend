@@ -84,7 +84,7 @@ const CourseContentDetails = ({
     : 0;
 
   const { data: userData } = useLoadUserQuery({});
-  const isPurchased = userData.user?.courses?.some((c: any) => {
+  const isPurchased = userData?.user?.courses?.some((c: any) => {
     return c._id === data?.courses?._id;
   });
 

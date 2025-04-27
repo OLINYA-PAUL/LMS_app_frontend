@@ -35,7 +35,7 @@ const page = ({ params }: { params: Promise<{ id: string }> }) => {
         </div>
       ) : (
         <div className="w-full">
-          <CourseContent id={id} user={data.user} />
+          <CourseContent id={id} user={data?.user} />
         </div>
       )}
     </div>
