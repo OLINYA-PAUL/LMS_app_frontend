@@ -1,5 +1,8 @@
 import { styles } from "@/app/styles/style";
-import { useAddCourseQuestionMutation } from "@/radux/features/course/course";
+import {
+  useAddAnswerToQuestionMutation,
+  useAddCourseQuestionMutation,
+} from "@/radux/features/course/course";
 import CoursePlayer from "@/utils/CoursePlayer";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -9,6 +12,7 @@ import {
   AiOutlineRight,
   AiOutlineStar,
 } from "react-icons/ai";
+import { BiSolidMessage } from "react-icons/bi";
 import { format } from "timeago.js";
 
 const CourseContentMedia = ({
@@ -31,7 +35,7 @@ const CourseContentMedia = ({
   const [comment, setComment] = useState("");
   const [isQuestion, setIsQuestion] = useState(false);
   const [answer, setAnswer] = useState("");
-  const [answerId, setAnswerId] = useState("");
+  const [questionId, setQuestionId] = useState("");
   const [isAnswer, setIsAnswer] = useState(false);
 
   const courseData = data?.courses?.courseData ?? data?.courseData;
@@ -47,6 +51,10 @@ const CourseContentMedia = ({
 
   const [addCourseQuestion, { data: questioData, isLoading, error }] =
     useAddCourseQuestionMutation();
+  const [
+    addAnswerToQuestion,
+    { data: answerData, isLoading: answerisLoading, error: answerError },
+  ] = useAddAnswerToQuestionMutation();
 
   useEffect(() => {
     if (questioData) {
@@ -62,6 +70,21 @@ const CourseContentMedia = ({
       }
     }
   }, [questioData, error]);
+
+  useEffect(() => {
+    if (answerData) {
+      refetch();
+      setAnswer("");
+      setIsAnswer(false);
+      toast.success("answer added successfully");
+    }
+    if (answerError) {
+      if ("data" in answerError) {
+        const message = answerError as any;
+        toast.error(message?.data?.error || "Something went wrong");
+      }
+    }
+  }, [answerData, answerError]);
 
   // Handle prev video
   const handlePrevVideo = () => {
@@ -84,7 +107,20 @@ const CourseContentMedia = ({
     });
   };
 
-  const handleAnswerSubmit = () => {};
+  const handleAnswerSubmit = async () => {
+    if (answer.length === 0) {
+      toast.error("answer is required");
+
+      return;
+    }
+
+    await addAnswerToQuestion({
+      answer,
+      questionId,
+      courseId: data?._id,
+      contentId: courseData[activeVideo]._id,
+    });
+  };
 
   // Handle next video
   const handleNextVideo = () => {
@@ -179,7 +215,7 @@ const CourseContentMedia = ({
               <img
                 src={
                   user
-                    ? user.avatar.url
+                    ? user?.avatar?.url
                     : "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
                 }
                 alt={user.name || "user avatar"}
@@ -222,10 +258,11 @@ const CourseContentMedia = ({
                 handleAnswerSubmit={handleAnswerSubmit}
                 answer={answer}
                 setAnswer={setAnswer}
-                answerId={answerId}
+                questionId={questionId}
                 isAnswer={isAnswer}
                 setIsAnswer={setIsAnswer}
-                setAnswerId={setAnswerId}
+                setQuestionId={setQuestionId}
+                answerisLoading={answerisLoading}
               />
             </div>
           </div>
@@ -318,10 +355,11 @@ interface CommentReplyProps {
   handleAnswerSubmit: () => void;
   answer: string;
   setAnswer: (answer: string) => void;
-  answerId: string;
+  questionId: string;
   isAnswer: boolean;
-  setIsAnswer: (isAnswer: boolean) => void;
-  setAnswerId: (answerId: string) => void;
+  setIsAnswer: (questionId: boolean) => void;
+  setQuestionId: (questionId: string) => void;
+  answerisLoading: boolean;
 }
 
 const CommentReply = ({
@@ -330,12 +368,13 @@ const CommentReply = ({
   setActiveVideo,
   answer,
   setAnswer,
-  answerId,
-  setIsAnswer,
+  questionId,
+  setQuestionId,
   handleAnswerSubmit,
   user,
   isAnswer,
-  setAnswerId,
+  answerisLoading,
+  setIsAnswer,
 }: CommentReplyProps) => {
   return (
     <div className="w-full">
@@ -349,12 +388,13 @@ const CommentReply = ({
             setActiveVideo={setActiveVideo}
             answer={answer}
             setAnswer={setAnswer}
-            answerId={answerId}
-            setIsAnswer={setIsAnswer}
+            questionId={questionId}
+            setQuestionId={setQuestionId}
             handleAnswerSubmit={handleAnswerSubmit}
             user={user}
             isAnswer={isAnswer}
-            setAnswerId={setAnswerId}
+            answerisLoading={answerisLoading}
+            setIsAnswer={setIsAnswer}
           />
         ))}
     </div>
@@ -370,11 +410,13 @@ interface CommentItems {
   handleAnswerSubmit: () => void;
   answer: string;
   setAnswer: (answer: string) => void;
-  answerId: string;
+  questionId: string;
   isAnswer: boolean;
   setIsAnswer: (isAnswer: boolean) => void;
-  setAnswerId: (answerId: string) => void;
+  answerisLoading: boolean;
+  setQuestionId: (questionId: string) => void;
 }
+
 const CommentItems = ({
   data,
   items,
@@ -384,33 +426,140 @@ const CommentItems = ({
   handleAnswerSubmit,
   answer,
   setAnswer,
-  answerId,
+  questionId,
+  setQuestionId,
   isAnswer,
+  answerisLoading,
   setIsAnswer,
-  setAnswerId,
 }: CommentItems) => {
-  console.log("items", items);
+  const [replyActive, setReplyActive] = useState(false);
+
   return (
     <div className="w-full my-4">
-      <div className="border-t  border-slate-900 ">
+      <div className={`border-t  border-slate-900  `}>
         <div className="flex items-center gap-3 justify-start">
-          <div className="w-[50px] h-[50px] rounded-full bg-slate-900 p-3 text-center mt-4 dark:text-white text-black">
-            {items.user.name.toString().slice(0, 2).toUpperCase()}
-          </div>
+          <img
+            src={
+              user
+                ? user.avatar?.url
+                : "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+            }
+            alt={user.name || "user avatar"}
+            className="rounded-full w-[50px] h-[50px] object-cover max-sm:w-[30px] max-sm:h-[30px]"
+          />
           <div className="mt-4">
             <h1 className="font-bold font-Poppins text-[15px]">
               {items.user.name}
             </h1>
-            <p className="dark:text-slate-300 text-white font-Poppins text-sm ">
+            <p className="dark:text-slate-300 text-black font-Poppins text-sm ">
               {" "}
               {items.question}
             </p>
-            <small className="dark:text-slate-300 text-white font-Poppins text-sm ">
+            <small className="dark:text-slate-300 text-black font-Poppins text-sm ">
               {" "}
               {format(items.createdAt)}
             </small>
           </div>
         </div>
+        {user.role === "admin" && (
+          <div className="w-full mt-5 ml-5 max-sm:ml-0">
+            <div className="w-full flex items-center gap-2">
+              <span
+                className="dark:text-slate-300 text-black font-Poppins text-sm cursor-pointer"
+                onClick={() => {
+                  setReplyActive(!replyActive);
+                  setQuestionId(items._id);
+                }}
+              >
+                {!replyActive
+                  ? items.questionReplies.length > 0
+                    ? "All replies"
+                    : "Add a reply"
+                  : "Hide reply"}
+              </span>
+              <BiSolidMessage
+                size={20}
+                className={`${
+                  replyActive ? "hidden" : ""
+                } dark:text-slate-300 text-black font-Poppins text-sm cursor-pointer`}
+              />
+              <span
+                className={`${
+                  replyActive ? "hidden" : ""
+                } dark:text-slate-300 text-black font-Poppins text-sm cursor-pointer`}
+              >
+                {items.questionReplies.length + " replies"}
+              </span>
+            </div>
+            <div className="w-full mt-5">
+              {replyActive &&
+                items.questionReplies.map((reply: any, index: number) => {
+                  return (
+                    <div
+                      className="w-full font-Poppins
+                  text-black dark:text-white"
+                      key={reply._id || index}
+                    >
+                      <div className="flex items-center justify-start max-sm:flex-wrap ">
+                        <div className="flex items-center gap-3  mr-5">
+                          <img
+                            src={
+                              reply.user
+                                ? reply?.user?.avatar?.url
+                                : "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+                            }
+                            alt={reply.user.name || "user avatar"}
+                            className="rounded-full w-[40px] h-[40px] object-cover max-sm:w-[30px] max-sm:h-[30px]"
+                          />
+                          <div className="mt-4">
+                            <h1 className="font-bold font-Poppins text-[15px]">
+                              {reply.user.name}
+                            </h1>
+                            <small className="dark:text-slate-300 text-black font-Poppins text-sm ">
+                              {" "}
+                              {format(reply.createdAt)}
+                            </small>
+                          </div>
+                        </div>
+                        <div className="w-full flex-1 max-sm:flex-none">
+                          <input
+                            value={answer}
+                            onChange={(e) => {
+                              setAnswer(e.target.value);
+                              setIsAnswer(e.target.value.length > 0);
+                            }}
+                            // Remove the readOnly condition so all users can reply
+
+                            placeholder="Reply to this comment..."
+                            className={`border-0  outline-none rounded p-5 text-sm w-[95%]  mt-2 dark:bg-slate-900 bg-slate-700  ${
+                              isAnswer
+                                ? "border-green-600 border-b-2"
+                                : "border-gray-300"
+                            }`}
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-end mt-1">
+                          <button
+                            className={` ${
+                              answer.length === 0
+                                ? "bg-slate-400 cursor-not-allowed"
+                                : "bg-blue-800 cursor-pointer"
+                            }self-end py-1 px-4  rounded-full mt-5 text-sm  text-white`}
+                            onClick={handleAnswerSubmit}
+                            type="button"
+                            disabled={answer === "" || answer.length === 0}
+                          >
+                            {answerisLoading ? "Replying..." : "Reply"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
