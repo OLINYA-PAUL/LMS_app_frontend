@@ -34,7 +34,7 @@ const CourseContentMedia = ({
   const [question, setQuestion] = useState("");
   const [comment, setComment] = useState("");
   const [isQuestion, setIsQuestion] = useState(false);
-  const [answer, setAnswer] = useState("");
+  const [answer, setAnswer] = useState<{ [key: string]: string }>({});
   const [questionId, setQuestionId] = useState("");
   const [isAnswer, setIsAnswer] = useState(false);
 
@@ -74,7 +74,7 @@ const CourseContentMedia = ({
   useEffect(() => {
     if (answerData) {
       refetch();
-      setAnswer("");
+      setAnswer({ key: "" });
       setIsAnswer(false);
       toast.success("answer added successfully");
     }
@@ -108,18 +108,24 @@ const CourseContentMedia = ({
   };
 
   const handleAnswerSubmit = async () => {
-    if (answer.length === 0) {
-      toast.error("answer is required");
-
+    if (!answer[questionId] || answer[questionId].trim() === "") {
+      toast.error("Answer is required");
       return;
     }
 
     await addAnswerToQuestion({
-      answer,
+      answer: answer[questionId],
       questionId,
       courseId: data?._id,
       contentId: courseData[activeVideo]._id,
     });
+
+    // Clear the input for the current question
+    setAnswer((prev) => ({
+      ...prev,
+      [questionId]: "",
+    }));
+    setIsAnswer(false);
   };
 
   // Handle next video
@@ -353,8 +359,8 @@ interface CommentReplyProps {
   setActiveVideo: (index: number) => void;
   user: any;
   handleAnswerSubmit: () => void;
-  answer: string;
-  setAnswer: (answer: string) => void;
+  answer: { [key: string]: string };
+  setAnswer: (answer: { [key: string]: string }) => void;
   questionId: string;
   isAnswer: boolean;
   setIsAnswer: (questionId: boolean) => void;
@@ -408,8 +414,8 @@ interface CommentItems {
   setActiveVideo: (index: number) => void;
   user: any;
   handleAnswerSubmit: () => void;
-  answer: string;
-  setAnswer: (answer: string) => void;
+  answer: { [key: string]: string };
+  setAnswer: (answer: { [key: string]: string }) => void;
   questionId: string;
   isAnswer: boolean;
   setIsAnswer: (isAnswer: boolean) => void;
@@ -434,38 +440,47 @@ const CommentItems = ({
 }: CommentItems) => {
   const [replyActive, setReplyActive] = useState(false);
 
+  const handleInputChange = (questionId: string, value: string) => {
+    //@ts-ignore
+    setAnswer((prev: { [key: string]: string }) => ({
+      ...prev,
+      [questionId]: value,
+    }));
+    setIsAnswer(value.length > 0);
+  };
+
   return (
     <div className="w-full my-4">
-      <div className={`border-t  border-slate-900  `}>
-        <div className="flex items-center gap-3 justify-start">
+      <div className="border-t border-slate-900">
+        {/* User and comment section */}
+        <div className="flex items-start gap-3 mt-3">
           <img
             src={
-              user
-                ? user.avatar?.url
-                : "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+              user?.avatar?.url ||
+              "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
             }
-            alt={user.name || "user avatar"}
-            className="rounded-full w-[50px] h-[50px] object-cover max-sm:w-[30px] max-sm:h-[30px]"
+            alt={user?.name || "user avatar"}
+            className="rounded-full w-[50px] h-[50px] object-cover max-sm:w-[30px] max-sm:h-[30px] flex-shrink-0"
           />
-          <div className="mt-4">
+          <div className="flex flex-col">
             <h1 className="font-bold font-Poppins text-[15px]">
               {items.user.name}
             </h1>
-            <p className="dark:text-slate-300 text-black font-Poppins text-sm ">
-              {" "}
+            <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
               {items.question}
             </p>
-            <small className="dark:text-slate-300 text-black font-Poppins text-sm ">
-              {" "}
+            <small className="dark:text-slate-300 text-black font-Poppins text-sm">
               {format(items.createdAt)}
             </small>
           </div>
         </div>
+
+        {/* Admin reply section */}
         {user.role === "admin" && (
-          <div className="w-full mt-5 ml-5 max-sm:ml-0">
-            <div className="w-full flex items-center gap-2">
+          <div className="w-full mt-4 ml-12 max-sm:ml-8">
+            <div className="flex items-center gap-2">
               <span
-                className="dark:text-slate-300 text-black font-Poppins text-sm cursor-pointer"
+                className="dark:text-slate-300 text-black font-Poppins text-sm cursor-pointer hover:underline"
                 onClick={() => {
                   setReplyActive(!replyActive);
                   setQuestionId(items._id);
@@ -477,91 +492,93 @@ const CommentItems = ({
                     : "Add a reply"
                   : "Hide reply"}
               </span>
-              <BiSolidMessage
-                size={20}
-                className={`${
-                  replyActive ? "hidden" : ""
-                } dark:text-slate-300 text-black font-Poppins text-sm cursor-pointer`}
-              />
-              <span
-                className={`${
-                  replyActive ? "hidden" : ""
-                } dark:text-slate-300 text-black font-Poppins text-sm cursor-pointer`}
-              >
-                {items.questionReplies.length + " replies"}
-              </span>
+              <div className="flex items-center gap-1">
+                <BiSolidMessage
+                  size={16}
+                  className={`${
+                    replyActive ? "hidden" : ""
+                  } dark:text-slate-300 text-black cursor-pointer`}
+                />
+                <span
+                  className={`${
+                    replyActive ? "hidden" : ""
+                  } dark:text-slate-300 text-black font-Poppins text-sm`}
+                >
+                  {items.questionReplies.length}{" "}
+                  {items.questionReplies.length === 1 ? "reply" : "replies"}
+                </span>
+              </div>
             </div>
-            <div className="w-full mt-5">
-              {replyActive &&
-                items.questionReplies.map((reply: any, index: number) => {
-                  return (
-                    <div
-                      className="w-full font-Poppins
-                  text-black dark:text-white"
-                      key={reply._id || index}
-                    >
-                      <div className="flex items-center justify-start max-sm:flex-wrap ">
-                        <div className="flex items-center gap-3  mr-5">
-                          <img
-                            src={
-                              reply.user
-                                ? reply?.user?.avatar?.url
-                                : "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
-                            }
-                            alt={reply.user.name || "user avatar"}
-                            className="rounded-full w-[40px] h-[40px] object-cover max-sm:w-[30px] max-sm:h-[30px]"
-                          />
-                          <div className="mt-4">
-                            <h1 className="font-bold font-Poppins text-[15px]">
-                              {reply.user.name}
-                            </h1>
-                            <small className="dark:text-slate-300 text-black font-Poppins text-sm ">
-                              {" "}
-                              {format(reply.createdAt)}
-                            </small>
-                          </div>
-                        </div>
-                        <div className="w-full flex-1 max-sm:flex-none">
-                          <input
-                            value={answer}
-                            onChange={(e) => {
-                              setAnswer(e.target.value);
-                              setIsAnswer(e.target.value.length > 0);
-                            }}
-                            // Remove the readOnly condition so all users can reply
 
-                            placeholder="Reply to this comment..."
-                            className={`border-0  outline-none rounded p-5 text-sm w-[95%]  mt-2 dark:bg-slate-900 bg-slate-700  ${
-                              isAnswer
-                                ? "border-green-600 border-b-2"
-                                : "border-gray-300"
-                            }`}
-                          />
-                        </div>
-
-                        <div className="flex items-center justify-end mt-1">
-                          <button
-                            className={` ${
-                              answer.length === 0
-                                ? "bg-slate-400 cursor-not-allowed"
-                                : "bg-blue-800 cursor-pointer"
-                            }self-end py-1 px-4  rounded-full mt-5 text-sm  text-white`}
-                            onClick={handleAnswerSubmit}
-                            type="button"
-                            disabled={answer === "" || answer.length === 0}
-                          >
-                            {answerisLoading ? "Replying..." : "Reply"}
-                          </button>
-                        </div>
+            {/* Replies section */}
+            {replyActive && (
+              <div className="w-full mt-3 space-y-4">
+                {/* Existing replies */}
+                {items.questionReplies.map((reply: any, index: number) => (
+                  <div
+                    className="w-full font-Poppins text-black dark:text-white"
+                    key={reply._id || index}
+                  >
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={
+                          reply.user?.avatar?.url ||
+                          "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+                        }
+                        alt={reply.user?.name || "user avatar"}
+                        className="rounded-full w-[40px] h-[40px] object-cover max-sm:w-[30px] max-sm:h-[30px] flex-shrink-0"
+                      />
+                      <div className="flex flex-col">
+                        <h1 className="font-bold font-Poppins text-[15px]">
+                          {reply.user.name}
+                        </h1>
+                        <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
+                          {reply.answer || reply.content}
+                        </p>
+                        <small className="dark:text-slate-300 text-black font-Poppins text-sm">
+                          {format(reply.createdAt)}
+                        </small>
                       </div>
                     </div>
-                  );
-                })}
-            </div>
+                  </div>
+                ))}
+
+                {/* Reply input field */}
+                <div className="flex flex-col md:flex-row md:items-end gap-2 mt-4 w-full">
+                  <input
+                    value={answer[items._id] || ""}
+                    onChange={(e) => {
+                      handleInputChange(items._id, e.target.value);
+                    }}
+                    placeholder="Reply to this comment..."
+                    className={`border-0 outline-none rounded p-3 text-sm flex-grow dark:bg-slate-900 bg-slate-700 ${
+                      isAnswer
+                        ? "border-green-600 border-b-2"
+                        : "border-gray-300"
+                    }`}
+                  />
+                  <button
+                    className={`${
+                      !answer[items._id] || answer[items._id].trim() === ""
+                        ? "bg-slate-400 cursor-not-allowed"
+                        : "bg-blue-800 cursor-pointer hover:bg-blue-900"
+                    } py-2 px-4 rounded-full text-sm text-white transition-colors md:self-auto self-end whitespace-nowrap`}
+                    onClick={handleAnswerSubmit}
+                    type="button"
+                    disabled={
+                      !answer[items._id] || answer[items._id].trim() === ""
+                    }
+                  >
+                    {answerisLoading ? "Replying..." : "Reply"}
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
     </div>
   );
 };
+
 export default CourseContentMedia;
