@@ -17,6 +17,7 @@ import {
 } from "react-icons/ai";
 import { BiSolidMessage } from "react-icons/bi";
 import { format } from "timeago.js";
+import Ratings from "@/utils/Rating";
 
 const CourseContentMedia = ({
   data,
@@ -40,10 +41,13 @@ const CourseContentMedia = ({
   const [answer, setAnswer] = useState<{ [key: string]: string }>({});
   const [questionId, setQuestionId] = useState("");
   const [isAnswer, setIsAnswer] = useState(false);
+  const [reviewReply, setReviewReply] = useState<{ [key: string]: string }>({});
+  const [reviewActive, setReviewActive] = useState(false);
 
   const courseData = data?.courses?.courseData ?? data?.courseData;
 
-  console.log("user courses --->", user);
+  const courses = data.reviews ?? data;
+  console.log("user courses --->", courses);
 
   const [rating, setRating] = useState<number[]>([1, 2, 3, 4, 5]);
 
@@ -378,7 +382,7 @@ const CourseContentMedia = ({
               </div>
             )}
 
-            <div className="w-full mt-5">
+            <div className={`w-full mt-5 `}>
               <textarea
                 value={comment}
                 onChange={(e) => {
@@ -402,6 +406,40 @@ const CourseContentMedia = ({
                 </button>
               </div>
             </div>
+            <div className="w-full mt-5 border-t border-slate-700">
+              <div className="w-full">
+                {courses &&
+                  [...courses].reverse().map((reviews: any, index: any) => {
+                    return (
+                      <div className="w-full mt-5" key={reviews._id || index}>
+                        <div className="flex items-start gap-3">
+                          <img
+                            src={
+                              reviews.user?.avatar?.url ||
+                              "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+                            }
+                            alt={reviews.user?.name || "user avatar"}
+                            className="rounded-full w-[50px] h-[50px] object-cover max-sm:w-[30px] max-sm:h-[30px] flex-shrink-0"
+                          />
+                          <div className="flex flex-col">
+                            <h1 className="font-bold font-Poppins text-[15px] text-black dark:text-white">
+                              {reviews.user.name}
+                            </h1>
+                            <Ratings rating={reviews.ratings} />
+                            <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
+                              {reviews.comment}
+                            </p>
+                            <small className="dark:text-slate-400 text-gray-500 font-Poppins text-xs">
+                              {format(reviews.createdAt)}
+                            </small>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+            {/* comment replies */}
           </div>
         )}
       </div>
@@ -441,24 +479,26 @@ const CommentReply = ({
   return (
     <div className="w-full">
       {data &&
-        data[activeVideo]?.question?.map((items: any, index: number) => (
-          <CommentItems
-            key={index}
-            items={items}
-            data={data}
-            activeVideo={activeVideo}
-            setActiveVideo={setActiveVideo}
-            answer={answer}
-            setAnswer={setAnswer}
-            questionId={questionId}
-            setQuestionId={setQuestionId}
-            handleAnswerSubmit={handleAnswerSubmit}
-            user={user}
-            isAnswer={isAnswer}
-            answerisLoading={answerisLoading}
-            setIsAnswer={setIsAnswer}
-          />
-        ))}
+        [...data[activeVideo]?.question]
+          .reverse()
+          ?.map((items: any, index: number) => (
+            <CommentItems
+              key={index}
+              items={items}
+              data={data}
+              activeVideo={activeVideo}
+              setActiveVideo={setActiveVideo}
+              answer={answer}
+              setAnswer={setAnswer}
+              questionId={questionId}
+              setQuestionId={setQuestionId}
+              handleAnswerSubmit={handleAnswerSubmit}
+              user={user}
+              isAnswer={isAnswer}
+              answerisLoading={answerisLoading}
+              setIsAnswer={setIsAnswer}
+            />
+          ))}
     </div>
   );
 };
@@ -611,7 +651,7 @@ const CommentItems = ({
                         handleInputChange(items._id, e.target.value);
                       }}
                       placeholder="Reply to this comment..."
-                      className={`border-0 outline-none rounded p-3 text-sm flex-grow dark:bg-slate-800 bg-slate-100 dark:text-white text-black ${
+                      className={`border-0 outline-none rounded p-3 text-sm flex-grow max-sm:w-[85%] dark:bg-slate-800 bg-slate-100 dark:text-white text-black ${
                         isAnswer
                           ? "border-green-600 border-b-2"
                           : "border-gray-300"
@@ -622,7 +662,7 @@ const CommentItems = ({
                         !answer[items._id] || answer[items._id].trim() === ""
                           ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
                           : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                      } py-2 px-4 rounded-full text-sm text-white transition-colors md:self-auto self-end whitespace-nowrap`}
+                      } py-2 px-4 rounded-full text-sm text-white transition-colors md:self-auto self-end max-sm:self-end max-sm:mr-12 max-sm:mt-3 whitespace-nowrap`}
                       onClick={handleAnswerSubmit}
                       type="button"
                       disabled={
