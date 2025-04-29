@@ -88,17 +88,25 @@ const Ratings = ({
               onClick={(e) => handleClick(index, e)}
             >
               <Star
-                className={`transition-colors ${
-                  isFull ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-                }`}
-                size={20}
+                className="transition-colors"
+                size={15}
+                style={{
+                  color: isFull || isPartial ? "#FACC15" : "#D1D5DB", // Yellow for filled, gray for outline
+                  fill: isFull || isPartial ? "#FACC15" : "none", // Fill for full or partial stars
+                }}
               />
               {isPartial && (
                 <div
                   className="absolute top-0 left-0 overflow-hidden"
                   style={{ width: partialWidth }}
                 >
-                  <Star className="text-yellow-400 fill-yellow-400" size={20} />
+                  <Star
+                    size={15}
+                    style={{
+                      color: "#FACC15",
+                      fill: "#FACC15",
+                    }}
+                  />
                 </div>
               )}
             </div>
