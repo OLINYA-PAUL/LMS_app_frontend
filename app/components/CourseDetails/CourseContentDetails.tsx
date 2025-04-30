@@ -11,6 +11,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../checkOutForm/CheckoutForm";
 import { useRouter } from "next/navigation";
 import { useLoadUserQuery } from "@/radux/features/api/apiSlice";
+import { MdVerified } from "react-icons/md";
 
 interface Benefit {
   title: string;
@@ -187,34 +188,77 @@ const CourseContentDetails = ({
               Student Reviews
             </h2>
             <div className="space-y-4">
-              {data?.courses?.reviews?.map((review: Review) => (
-                <div
-                  key={review._id}
-                  className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                      <span className="uppercase text-gray-700 dark:text-gray-300 text-xs">
-                        {review.user.name.slice(0, 2)}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                        <h3 className="font-medium text-black dark:text-white">
-                          {review.user.name}
-                        </h3>
-                        <Ratings rating={review.rating} />
+              {data?.courses?.reviews?.map((reviews: Review | any) => {
+                console.log("reviews <----->", reviews);
+                return (
+                  <div
+                    key={reviews._id}
+                    className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm"
+                  >
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={
+                          reviews.user?.avatar?.url ||
+                          "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+                        }
+                        alt={reviews.user?.name || "user avatar"}
+                        className="rounded-full w-[50px] h-[50px] object-cover max-sm:w-[30px] max-sm:h-[30px] flex-shrink-0"
+                      />
+                      <div className="flex flex-col">
+                        <h1 className="font-bold font-Poppins text-[15px] text-black dark:text-white">
+                          {reviews.user.name}
+                        </h1>
+                        <Ratings rating={reviews.ratings} />
+                        <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
+                          {reviews.comment}
+                        </p>
+                        <small className="dark:text-slate-400 text-gray-500 font-Poppins text-xs">
+                          {format(reviews.createdAt)}
+                        </small>
                       </div>
-                      <p className="mt-1 text-black dark:text-white">
-                        {review.comment}
-                      </p>
-                      <time className="block mt-1 text-gray-500 dark:text-gray-400 text-xs">
-                        {format(review.createdAt)}
-                      </time>
+                    </div>
+                    ddddd
+                    <div className="w-full mt-5 ml-10 max-sm:ml-2">
+                      {[...reviews.commentReplies]
+                        .reverse()
+                        .map((review: any, index: number) => {
+                          console.log("review <----->", review);
+                          return (
+                            <div
+                              className="w-full font-Poppins text-black dark:text-white my-5"
+                              key={review._id || index}
+                            >
+                              <div className="flex items-start gap-3">
+                                <img
+                                  src={
+                                    review.user?.avatar?.url ||
+                                    "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+                                  }
+                                  alt={review.user?.name || "user avatar"}
+                                  className="rounded-full w-[40px] h-[40px] object-cover max-sm:w-[30px] max-sm:h-[30px] flex-shrink-0"
+                                />
+                                <div className="flex flex-col">
+                                  <h1 className="font-bold font-Poppins text-[15px] text-black dark:text-white flex items-center gap-2">
+                                    {review.user.name}
+                                    {review.user.role === "admin" && (
+                                      <MdVerified
+                                        size={15}
+                                        className="text-blue-500"
+                                      />
+                                    )}
+                                  </h1>
+                                  <small className="dark:text-slate-400 text-gray-500 font-Poppins text-xs">
+                                    {format(review.createdAt)}
+                                  </small>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
         </div>

@@ -19,7 +19,6 @@ import {
 import { BiSolidMessage } from "react-icons/bi";
 import { format } from "timeago.js";
 import Ratings from "@/utils/Rating";
-import { boolean, string } from "yup";
 
 const CourseContentMedia = ({
   data,
@@ -517,23 +516,24 @@ const CourseContentMedia = ({
                             <small className="dark:text-slate-400 text-gray-500 font-Poppins text-xs">
                               {format(reviews.createdAt)}
                             </small>
-                            {user.role === "admin" && (
-                              <>
-                                <span
-                                  className="text-[15px] mt-5 text-black dark:text-white font-Poppins cursor-pointer items-center flex gap-2"
-                                  onClick={() => {
-                                    toggleReviewActive(reviews._id);
-                                    setReviewId(reviews._id);
-                                  }}
-                                >
-                                  Reply Now{" "}
-                                  <MdVerified
-                                    size={15}
-                                    className="text-blue-500"
-                                  />
-                                </span>
-                              </>
-                            )}
+
+                            <>
+                              <span
+                                className="text-[15px] mt-5 text-black dark:text-white font-Poppins cursor-pointer items-center flex gap-2"
+                                onClick={() => {
+                                  toggleReviewActive(reviews._id);
+                                  setReviewId(reviews._id);
+                                }}
+                              >
+                                {user.role !== "admin"
+                                  ? "  See Replies "
+                                  : "  Reply Now"}
+                                <BiSolidMessage
+                                  size={15}
+                                  className="text-blue-500"
+                                />
+                              </span>
+                            </>
                           </div>
                         </div>
 
@@ -566,7 +566,9 @@ const CourseContentMedia = ({
                                         )}
                                       </h1>
                                       <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
-                                        {review.comment}
+                                        {!review.comment
+                                          ? "No Replies yet dude"
+                                          : review.comment}
                                       </p>
                                       <small className="dark:text-slate-400 text-gray-500 font-Poppins text-xs">
                                         {format(review.createdAt)}
@@ -575,36 +577,38 @@ const CourseContentMedia = ({
                                   </div>
                                 </div>
                               ))}
-                            <div className="w-full mt-5 flex items-center gap-3  max-sm:ml-0">
-                              <input
-                                value={reviewReply[reviews._id] || ""}
-                                onChange={(e) =>
-                                  handleReviewReplyChange(
-                                    reviews._id,
-                                    e.target.value
-                                  )
-                                }
-                                placeholder="Reply to this comment..."
-                                className={`border-0 outline-none  rounded p-3 text-sm w-[80%] max-sm:w-[80%] dark:bg-slate-800 bg-slate-100 dark:text-white text-black ${
-                                  reviewReply[reviews._id]?.trim()
-                                    ? "border-green-600 border-b-2"
-                                    : "border-gray-300"
-                                }`}
-                              />
-                              <button
-                                className={`${
-                                  !reviewReply[reviews._id]?.trim()
-                                    ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
-                                    : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
-                                } py-2 px-4 rounded-full text-sm text-white transition-colors mt-3`}
-                                onClick={handleReviewReplySubmit}
-                                disabled={!reviewReply[reviews._id]?.trim()}
-                              >
-                                {reviewLoading[reviews._id]
-                                  ? "Replying..."
-                                  : "Reply "}
-                              </button>
-                            </div>
+                            {user.role === "admin" && (
+                              <div className="w-full mt-5 flex items-center gap-3  max-sm:ml-0">
+                                <input
+                                  value={reviewReply[reviews._id] || ""}
+                                  onChange={(e) =>
+                                    handleReviewReplyChange(
+                                      reviews._id,
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Reply to this comment..."
+                                  className={`border-0 outline-none  rounded p-3 text-sm w-[80%] max-sm:w-[80%] dark:bg-slate-800 bg-slate-100 dark:text-white text-black ${
+                                    reviewReply[reviews._id]?.trim()
+                                      ? "border-green-600 border-b-2"
+                                      : "border-gray-300"
+                                  }`}
+                                />
+                                <button
+                                  className={`${
+                                    !reviewReply[reviews._id]?.trim()
+                                      ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+                                      : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                                  } py-2 px-4 rounded-full text-sm text-white transition-colors mt-3`}
+                                  onClick={handleReviewReplySubmit}
+                                  disabled={!reviewReply[reviews._id]?.trim()}
+                                >
+                                  {reviewLoading[reviews._id]
+                                    ? "Replying..."
+                                    : "Reply "}
+                                </button>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
