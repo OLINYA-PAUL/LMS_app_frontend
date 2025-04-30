@@ -2,6 +2,7 @@ import { styles } from "@/app/styles/style";
 import {
   useAddAnswerToQuestionMutation,
   useAddCourseQuestionMutation,
+  useAddReviewCommentReplyMutation,
   useAddReviewMutation,
 } from "@/radux/features/course/course";
 import CoursePlayer from "@/utils/CoursePlayer";
@@ -18,6 +19,7 @@ import {
 import { BiSolidMessage } from "react-icons/bi";
 import { format } from "timeago.js";
 import Ratings from "@/utils/Rating";
+import { boolean, string } from "yup";
 
 const CourseContentMedia = ({
   data,
@@ -42,14 +44,19 @@ const CourseContentMedia = ({
   const [questionId, setQuestionId] = useState("");
   const [isAnswer, setIsAnswer] = useState(false);
   const [reviewReply, setReviewReply] = useState<{ [key: string]: string }>({});
-  const [reviewActive, setReviewActive] = useState(false);
-
+  const [reviewActive, setReviewActive] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+  const [reviewLoading, setReviewLoading] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [reviewId, setReviewId] = useState("");
   const courseData = data?.courses?.courseData ?? data?.courseData;
 
   const courses = data.reviews ?? data;
   console.log("user courses --->", courses);
 
-  const [rating, setRating] = useState<number[]>([1, 2, 3, 4, 5]);
+  const [rating, setRating] = useState<number | null>(0);
 
   // Safe access to current video data
   const currentVideo = courseData[activeVideo] || courseData[0];
@@ -57,6 +64,8 @@ const CourseContentMedia = ({
   const isCourseReview = data?.reviews.find(
     (review: any) => review?.user._id === user?._id || review
   );
+
+  console.log("isCourseReview --->", isCourseReview);
 
   const [addCourseQuestion, { data: questioData, isLoading, error }] =
     useAddCourseQuestionMutation();
@@ -70,7 +79,26 @@ const CourseContentMedia = ({
     { data: reviewData, isLoading: reviewisLoading, error: reviewError },
   ] = useAddReviewMutation();
 
+  const [
+    addReviewCommentReply,
+    { data: reviewreplyData, error: reviewreplyError },
+  ] = useAddReviewCommentReplyMutation();
+
+  console.log("reviewreplyData --->", reviewreplyData);
+
   useEffect(() => {
+    if (reviewreplyData) {
+      refetch();
+      setReviewLoading({ [reviewId]: false });
+      toast.success("Review added successfully");
+    }
+    if (reviewreplyError) {
+      if ("data" in reviewreplyError) {
+        const message = reviewreplyError as any;
+        toast.error(message.data.error || "Something went wrong");
+      }
+    }
+
     if (questioData) {
       refetch();
       setQuestion("");
@@ -107,7 +135,16 @@ const CourseContentMedia = ({
         toast.error(message?.data?.error || "Something went wrong");
       }
     }
-  }, [questioData, error, answerData, answerError, reviewData, reviewData]);
+  }, [
+    questioData,
+    error,
+    answerData,
+    answerError,
+    reviewData,
+    reviewData,
+    reviewreplyData,
+    reviewreplyError,
+  ]);
 
   // Handle prev video
   const handlePrevVideo = () => {
@@ -163,6 +200,12 @@ const CourseContentMedia = ({
       return;
     }
 
+    if (rating === 0 || rating === null) {
+      toast.error("Rating is required");
+      setReviewLoading({ [reviewId]: false });
+      return;
+    }
+
     await addReview({
       reviews: comment,
       ratings: rating,
@@ -171,7 +214,43 @@ const CourseContentMedia = ({
     });
 
     setComment("");
-    setRating([]);
+    setRating(0);
+  };
+
+  const toggleReviewActive = (reviewId: string) => {
+    setReviewActive((prev) => ({
+      ...prev,
+      [reviewId]: !prev[reviewId],
+    }));
+  };
+
+  const handleReviewReplyChange = (reviewId: string, value: string) => {
+    setReviewReply((prev) => ({
+      ...prev,
+      [reviewId]: value,
+    }));
+  };
+
+  const handleReviewReplySubmit = async () => {
+    setReviewLoading({ [reviewId]: true });
+
+    if (!reviewReply[reviewId] || reviewReply[reviewId].trim() === "") {
+      toast.error("Review reply is required");
+      setReviewLoading({ [reviewId]: false });
+      return;
+    }
+
+    await addReviewCommentReply({
+      comment: reviewReply[reviewId], // Dynamically access the reply for the specific review
+      courseId: id, // Pass the course ID
+      reviewId: reviewId, // Use the current reviewId
+    });
+
+    // Clear the reply input for the specific review
+    setReviewReply((prev) => ({
+      ...prev,
+      [reviewId]: "",
+    }));
   };
 
   return (
@@ -361,7 +440,7 @@ const CourseContentMedia = ({
                   </h5>
                   <div className="w-full flex cursor-pointer mt-1">
                     {[1, 2, 3, 4, 5].map((i: any) =>
-                      rating >= i ? (
+                      rating! >= i ? (
                         <AiFillStar
                           key={i}
                           size={20}
@@ -382,7 +461,7 @@ const CourseContentMedia = ({
               </div>
             )}
 
-            <div className={`w-full mt-5 `}>
+            <div className={`w-full mt-5  ${isCourseReview ? "" : ""}`}>
               <textarea
                 value={comment}
                 onChange={(e) => {
@@ -399,10 +478,15 @@ const CourseContentMedia = ({
 
               <div className="w-full flex items-center justify-end mt-2">
                 <button
-                  className="py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-full mt-2 text-sm text-white transition-colors"
+                  className={`py-2 px-4 bg-blue-600 rounded-full mt-2 text-sm text-white transition-colors ${
+                    rating === 0 || rating === null
+                      ? "bg-slate-400 cursor-no-drop"
+                      : ""
+                  } `}
                   onClick={handleReviewSubmit}
+                  disabled={reviewisLoading || rating === 0 || rating === null}
                 >
-                  {reviewisLoading ? "uploading ..." : "Submit Review"}
+                  {reviewisLoading ? "Submit ..." : "Submit Review"}
                 </button>
               </div>
             </div>
@@ -410,6 +494,7 @@ const CourseContentMedia = ({
               <div className="w-full">
                 {courses &&
                   [...courses].reverse().map((reviews: any, index: any) => {
+                    console.log("reviews <--->", reviews);
                     return (
                       <div className="w-full mt-5" key={reviews._id || index}>
                         <div className="flex items-start gap-3">
@@ -432,14 +517,101 @@ const CourseContentMedia = ({
                             <small className="dark:text-slate-400 text-gray-500 font-Poppins text-xs">
                               {format(reviews.createdAt)}
                             </small>
+                            {user.role === "admin" && (
+                              <>
+                                <span
+                                  className="text-[15px] mt-5 text-black dark:text-white font-Poppins cursor-pointer items-center flex gap-2"
+                                  onClick={() => {
+                                    toggleReviewActive(reviews._id);
+                                    setReviewId(reviews._id);
+                                  }}
+                                >
+                                  Reply Now{" "}
+                                  <MdVerified
+                                    size={15}
+                                    className="text-blue-500"
+                                  />
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
+
+                        {reviewActive[reviews._id] && (
+                          <div className="w-full mt-5 ml-10 max-sm:ml-2">
+                            {[...reviews.commentReplies]
+                              .reverse()
+                              .map((review: any, index: number) => (
+                                <div
+                                  className="w-full font-Poppins text-black dark:text-white my-5"
+                                  key={review._id || index}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <img
+                                      src={
+                                        review.user?.avatar?.url ||
+                                        "https://img.freepik.com/premium-photo/memoji-african-american-man-white-background-emoji_826801-6860.jpg?w=740"
+                                      }
+                                      alt={review.user?.name || "user avatar"}
+                                      className="rounded-full w-[40px] h-[40px] object-cover max-sm:w-[30px] max-sm:h-[30px] flex-shrink-0"
+                                    />
+                                    <div className="flex flex-col">
+                                      <h1 className="font-bold font-Poppins text-[15px] text-black dark:text-white flex items-center gap-2">
+                                        {review.user.name}
+                                        {review.user.role === "admin" && (
+                                          <MdVerified
+                                            size={15}
+                                            className="text-blue-500"
+                                          />
+                                        )}
+                                      </h1>
+                                      <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
+                                        {review.comment}
+                                      </p>
+                                      <small className="dark:text-slate-400 text-gray-500 font-Poppins text-xs">
+                                        {format(review.createdAt)}
+                                      </small>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            <div className="w-full mt-5 flex items-center gap-3  max-sm:ml-0">
+                              <input
+                                value={reviewReply[reviews._id] || ""}
+                                onChange={(e) =>
+                                  handleReviewReplyChange(
+                                    reviews._id,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Reply to this comment..."
+                                className={`border-0 outline-none  rounded p-3 text-sm w-[80%] max-sm:w-[80%] dark:bg-slate-800 bg-slate-100 dark:text-white text-black ${
+                                  reviewReply[reviews._id]?.trim()
+                                    ? "border-green-600 border-b-2"
+                                    : "border-gray-300"
+                                }`}
+                              />
+                              <button
+                                className={`${
+                                  !reviewReply[reviews._id]?.trim()
+                                    ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed"
+                                    : "bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                                } py-2 px-4 rounded-full text-sm text-white transition-colors mt-3`}
+                                onClick={handleReviewReplySubmit}
+                                disabled={!reviewReply[reviews._id]?.trim()}
+                              >
+                                {reviewLoading[reviews._id]
+                                  ? "Replying..."
+                                  : "Reply "}
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     );
                   })}
               </div>
             </div>
-            {/* comment replies */}
           </div>
         )}
       </div>
