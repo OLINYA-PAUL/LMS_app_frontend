@@ -19,11 +19,12 @@ const CourseDetails = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, isLoading } = useGetCourseContentDetailsQuery({ id });
+
+  console.log("data ---> datas", data);
+
   const { data: config } = useGetStripePublishableKeyQuery({});
   const [createPaymentIntent, { data: paymentIntent }] =
     useCreatePaymentIntentMutation();
-
-  console.log("stripePromise", stripePromise, { config });
 
   useEffect(() => {
     if (config && config?.stripPublishableKey) {
