@@ -104,7 +104,7 @@ const CourseContentDetails = ({
         {/* Left Content Section */}
         <div className="w-full 800px:w-[65%] 800px:pr-6">
           <h1 className="text-lg sm:text-xl font-bold text-black dark:text-white">
-            {data?.courses.name}
+            {data?.courses?.name}
           </h1>
 
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mt-3">
@@ -165,7 +165,7 @@ const CourseContentDetails = ({
               Course Details
             </h2>
             <p className="text-black dark:text-white leading-relaxed">
-              {data?.courses.description}
+              {data?.courses?.description}
             </p>
           </section>
 
@@ -193,7 +193,7 @@ const CourseContentDetails = ({
                 return (
                   <div
                     key={reviews._id}
-                    className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm"
+                    className=" p-3 rounded-lg shadow-sm border-l border-gray-300 dark:border-gray-700 border-b "
                   >
                     <div className="flex items-start gap-3">
                       <img
@@ -217,7 +217,7 @@ const CourseContentDetails = ({
                         </small>
                       </div>
                     </div>
-                    ddddd
+
                     <div className="w-full mt-5 ml-10 max-sm:ml-2">
                       {[...reviews.commentReplies]
                         .reverse()
