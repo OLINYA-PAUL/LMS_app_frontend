@@ -1,5 +1,7 @@
 import { useGetHeroDataQuery } from "@/radux/features/layout/layoutApi";
+import { useRouter } from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 const HeroBanner = () => {
   const { data, isLoading } = useGetHeroDataQuery(
@@ -8,6 +10,26 @@ const HeroBanner = () => {
       refetchOnMountOrArgChange: true,
     }
   );
+
+  const [search, setSearch] = React.useState<string>("");
+
+  const router = useRouter();
+
+  const handleSearchCourses = (e: React.KeyboardEvent | React.MouseEvent) => {
+    if (!search || search.trim() === "") {
+      return toast.error("Please enter a course name to search.");
+    }
+
+    // Check if the "Enter" key was pressed
+    if ("key" in e && e.key === "Enter") {
+      return router.push(`/courses?title=${search}`);
+    }
+
+    // Handle button click
+    if (e.type === "click") {
+      return router.push(`/courses?title=${search}`);
+    }
+  };
 
   // Loading state
   if (isLoading || !data) {
@@ -57,11 +79,19 @@ const HeroBanner = () => {
             <input
               type="text"
               placeholder="Search Courses..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchCourses(e);
+                }
+              }}
               className="w-full p-3 rounded-l-lg dark:text-white bg-slate-900 text-white focus:outline-none"
             />
             <button
               className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-r-lg transition-colors"
               aria-label="Search courses"
+              onClick={handleSearchCourses}
             >
               🔍
             </button>

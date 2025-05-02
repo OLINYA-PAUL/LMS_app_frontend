@@ -19,7 +19,7 @@ const Layout = ({
       <div className="w-full min-h-screen">
         <HeaderSEO
           title="Elearning - Admin"
-          descripion="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
+          description="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
           keyWords="Nextjs, React, Javascript, Redux, MERN"
         />
         <div className="flex">

@@ -39,6 +39,7 @@ export interface CourseDatas {
   courseData: CourseContent[];
   _id: string | number;
   purchased?: number;
+  ratings?: number;
 }
 
 interface courseCardProps {
@@ -48,6 +49,8 @@ interface courseCardProps {
 }
 
 const CoursesCard = ({ items, key, isProfile }: courseCardProps) => {
+  console.log("items ---> items", items);
+
   return (
     <div className="w-full" key={key}>
       <Link
@@ -68,7 +71,7 @@ const CoursesCard = ({ items, key, isProfile }: courseCardProps) => {
             </h1>
 
             <div className="flex items-center justify-between mb-3">
-              <Ratings rating={5} />
+              <Ratings rating={Number(items.ratings)} />
               {!isProfile && (
                 <div className="text-sm text-black dark:text-white">
                   {items.purchased} Students
