@@ -6,6 +6,7 @@ import { IoIosCheckmark } from "react-icons/io";
 
 interface CourseInfo {
   name: string;
+  title: string;
   description: string;
   categories: string;
   price: number;

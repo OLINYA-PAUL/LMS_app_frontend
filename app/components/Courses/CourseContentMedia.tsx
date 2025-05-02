@@ -53,7 +53,6 @@ const CourseContentMedia = ({
   const courseData = data?.courses?.courseData ?? data?.courseData;
 
   const courses = data.reviews ?? data;
-  console.log("user courses --->", courses);
 
   const [rating, setRating] = useState<number | null>(0);
 
@@ -63,8 +62,6 @@ const CourseContentMedia = ({
   const isCourseReview = data?.reviews.find(
     (review: any) => review?.user._id === user?._id || review
   );
-
-  console.log("isCourseReview --->", isCourseReview);
 
   const [addCourseQuestion, { data: questioData, isLoading, error }] =
     useAddCourseQuestionMutation();
@@ -82,8 +79,6 @@ const CourseContentMedia = ({
     addReviewCommentReply,
     { data: reviewreplyData, error: reviewreplyError },
   ] = useAddReviewCommentReplyMutation();
-
-  console.log("reviewreplyData --->", reviewreplyData);
 
   useEffect(() => {
     if (reviewreplyData) {

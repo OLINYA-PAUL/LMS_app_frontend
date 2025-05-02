@@ -15,6 +15,7 @@ import { redirect } from "next/navigation";
 // Define types for the state variables
 interface CourseInfo {
   name: string;
+  title: string;
   description: string;
   categories: string;
   price: number;
@@ -51,6 +52,8 @@ interface CourseContent {
 export interface CourseDatas {
   name: string;
   description: string;
+  title: string;
+  categories: string;
   price: number;
   estimatedPrice: number;
   tags: string;
@@ -104,6 +107,7 @@ const CreateCourse = ({
 
   const [courseInfo, setCourseInfo] = useState<CourseInfo>({
     name: "",
+    title: "",
     description: "",
     categories: "",
     price: 0,
@@ -134,6 +138,8 @@ const CreateCourse = ({
   const [courseData, setCourseData] = useState<CourseDatas>({
     name: "",
     description: "",
+    title: "",
+    categories: "",
     price: 0,
     estimatedPrice: 0,
     tags: "",
@@ -151,6 +157,7 @@ const CreateCourse = ({
       // Update courseInfo state
       setCourseInfo({
         name: editedCourseData.name || "",
+        title: editedCourseData.title || "",
         description: editedCourseData.description || "",
         categories: editedCourseData.categories || "",
         price: editedCourseData.price || 0,
@@ -248,7 +255,9 @@ const CreateCourse = ({
   useEffect(() => {
     setCourseData({
       name: courseInfo.name,
+      title: courseInfo.title,
       description: courseInfo.description,
+      categories: courseInfo.categories,
       price: courseInfo.price,
       estimatedPrice: courseInfo.estimatedPrice,
       tags: courseInfo.tags,
