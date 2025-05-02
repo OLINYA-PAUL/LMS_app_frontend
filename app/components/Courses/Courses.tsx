@@ -51,6 +51,8 @@ export interface CourseDatas {
 const Courses = () => {
   const { data, isLoading, isSuccess } = useGetUserAllCoursesQuery({});
 
+  console.log("data home", data);
+
   const [courses, setCourses] = useState<CourseDatas[]>([]);
 
   const allCoureData = data ?? [];
