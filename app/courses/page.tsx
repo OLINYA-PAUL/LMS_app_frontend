@@ -8,9 +8,11 @@ import { HeaderSEO } from "@/utils/headerSEO";
 import React, { useEffect, useState } from "react";
 import Header from "../components/header";
 import Footer from "../components/Footer/Footer";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useGetHeroDataQuery } from "@/radux/features/layout/layoutApi";
 import { Frown, SearchX } from "lucide-react";
+import CoursesCard from "../components/CourseDetails/CoursesCard";
+import { useSelector } from "react-redux";
 
 const Courses = () => {
   const [route, setRoute] = useState("Login");
@@ -18,7 +20,7 @@ const Courses = () => {
 
   const searchParams = useSearchParams();
   const searchTitle = searchParams?.get("title") || "";
-  const [course, setCourse] = useState<any[]>([]);
+  const [courses, setCourse] = useState<any[]>([]);
   const [categories, setCategories] = useState("All");
 
   const { data, isLoading } = useGetUserAllCoursesQuery({});
@@ -27,6 +29,11 @@ const Courses = () => {
   const category = categoriesData?.layout?.categories || [];
 
   console.log(category);
+
+  const { user } = useSelector((state: any) => state.auth);
+  const isPurchased = user?.courses?.some((c: any) => {
+    return c._id === data?.courses?._id;
+  });
 
   useEffect(() => {
     if (!data?.courses) return;
@@ -58,7 +65,7 @@ const Courses = () => {
       ) : (
         <div className="w-full">
           <HeaderSEO
-            title={course ? `${course[0]?.name} - Elearning` : "Elearning"}
+            title={courses ? `${courses[0]?.name} - Elearning` : "Elearning"}
             description="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
             keyWords="Nextjs, React, Javascript, Radux MERN"
           />
@@ -99,7 +106,7 @@ const Courses = () => {
             </div>
 
             <div className="w-full mt-5">
-              {course && course.length !== 0 && (
+              {courses && courses.length === 0 && (
                 <div className="w-full min-h-[50vh] flex flex-col items-center justify-center text-center px-4 text-gray-400 space-y-4">
                   <div className="text-5xl text-red-500 animate-bounce">
                     {searchTitle ? <SearchX /> : <Frown />}
@@ -116,6 +123,20 @@ const Courses = () => {
                   </p>
                 </div>
               )}
+            </div>
+
+            <div className="w-full mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {courses &&
+                courses.length > 0 &&
+                courses.map((item: any) => (
+                  <>
+                    <CoursesCard
+                      items={item}
+                      key={item._id}
+                      isProfile={!user || !isPurchased}
+                    />
+                  </>
+                ))}
             </div>
           </div>
 
