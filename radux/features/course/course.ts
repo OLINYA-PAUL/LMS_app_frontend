@@ -140,6 +140,23 @@ const courseApi = apiSlice.injectEndpoints({
         credentials: "include" as const,
       }),
     }),
+
+      deleteUserReview: builder.mutation({
+      query: ({
+        courseId,
+       reviewId,
+      }: {
+        courseId: string;
+        reviewId: string;
+      }) => ({
+        url: `delete-review/${courseId}`,
+        method: "DELETE",
+        body: {
+          reviewId,
+        },
+        credentials: "include" as const,
+      }),
+    }),
   }),
 });
 
@@ -155,4 +172,5 @@ export const {
   useAddAnswerToQuestionMutation,
   useAddReviewMutation,
   useAddReviewCommentReplyMutation,
+  useDeleteUserReviewMutation
 } = courseApi;
