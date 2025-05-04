@@ -4,6 +4,7 @@ import {
   useAddCourseQuestionMutation,
   useAddReviewCommentReplyMutation,
   useAddReviewMutation,
+  useDeleteUserReviewMutation,
 } from "@/radux/features/course/course";
 import CoursePlayer from "@/utils/CoursePlayer";
 import React, { useEffect, useState } from "react";
@@ -18,6 +19,8 @@ import {
 } from "react-icons/ai";
 import { BiSolidMessage } from "react-icons/bi";
 import { format } from "timeago.js";
+import { MdDeleteForever } from "react-icons/md";
+
 import Ratings from "@/utils/Rating";
 
 const CourseContentMedia = ({
@@ -46,6 +49,9 @@ const CourseContentMedia = ({
   const [reviewActive, setReviewActive] = useState<{ [key: string]: boolean }>(
     {}
   );
+  const [deleteUserReviewLoading, setdeleteUserReviewLoading] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [reviewLoading, setReviewLoading] = useState<{
     [key: string]: boolean;
   }>({});
@@ -80,7 +86,28 @@ const CourseContentMedia = ({
     { data: reviewreplyData, error: reviewreplyError },
   ] = useAddReviewCommentReplyMutation();
 
+  const [
+    deleteUserReview,
+    {
+      data: reviewDataDelete,
+      error: reviewErrorDelete,
+    },
+  ] = useDeleteUserReviewMutation();
+
   useEffect(() => {
+    if (reviewDataDelete) {
+
+      console.log(reviewDataDelete)
+      refetch();
+      toast.success("Review delted successfully");
+    }
+    if (reviewErrorDelete) {
+      if ("data" in reviewErrorDelete) {
+        const message = reviewErrorDelete as any;
+        toast.error(message.data.error || "deleting error");
+      }
+    }
+
     if (reviewreplyData) {
       refetch();
       setReviewLoading({ [reviewId]: false });
@@ -138,6 +165,8 @@ const CourseContentMedia = ({
     reviewData,
     reviewreplyData,
     reviewreplyError,
+    reviewDataDelete,
+    reviewErrorDelete,
   ]);
 
   // Handle prev video
@@ -186,6 +215,15 @@ const CourseContentMedia = ({
     if (activeVideo < courseData.length - 1) {
       setActiveVideo(activeVideo + 1);
     }
+  };
+
+  const handleDeleteUserReview = async (reviewID) => {
+    setdeleteUserReviewLoading((prev) => ({
+      ...prev,
+      [reviewID]: !prev[reviewID],
+    }));
+
+    await deleteUserReview({ reviewId:reviewID, courseId: id });
   };
 
   const handleReviewSubmit = async () => {
@@ -488,7 +526,6 @@ const CourseContentMedia = ({
               <div className="w-full">
                 {courses &&
                   [...courses].reverse().map((reviews: any, index: any) => {
-                    console.log("reviews <--->", reviews);
                     return (
                       <div className="w-full mt-5" key={reviews._id || index}>
                         <div className="flex items-start gap-3">
@@ -501,9 +538,25 @@ const CourseContentMedia = ({
                             className="rounded-full w-[50px] h-[50px] object-cover max-sm:w-[30px] max-sm:h-[30px] flex-shrink-0"
                           />
                           <div className="flex flex-col">
-                            <h1 className="font-bold font-Poppins text-[15px] text-black dark:text-white">
-                              {reviews.user.name}
-                            </h1>
+                            <div className="w-full gap-5 flex items-center">
+                              <h1 className="font-bold font-Poppins text-[15px] text-black dark:text-white">
+                                {reviews.user.name}
+                              </h1>
+
+                             {deleteUserReviewLoading[reviews._id] ? "deleting..." : (
+                        <> 
+                        
+                           {user.role === "admin" && (
+                                <MdDeleteForever
+                                  size={15}
+                                  className="dark:text-white text-black cursor-pointer"
+                                  onClick={() => handleDeleteUserReview(reviews._id)}
+                                />
+                              )}
+                        </>
+                       )}
+                             
+                            </div>
                             <Ratings rating={reviews.ratings} />
                             <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
                               {reviews.comment}
