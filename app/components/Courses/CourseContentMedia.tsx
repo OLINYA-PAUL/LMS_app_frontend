@@ -88,16 +88,11 @@ const CourseContentMedia = ({
 
   const [
     deleteUserReview,
-    {
-      data: reviewDataDelete,
-      error: reviewErrorDelete,
-    },
+    { data: reviewDataDelete, error: reviewErrorDelete },
   ] = useDeleteUserReviewMutation();
 
   useEffect(() => {
     if (reviewDataDelete) {
-
-      console.log(reviewDataDelete)
       refetch();
       toast.success("Review delted successfully");
     }
@@ -217,14 +212,23 @@ const CourseContentMedia = ({
     }
   };
 
-  const handleDeleteUserReview = async (reviewID) => {
+  const handleDeleteUserReview = async (reviewID: string) => {
     setdeleteUserReviewLoading((prev) => ({
       ...prev,
       [reviewID]: !prev[reviewID],
     }));
 
-    await deleteUserReview({ reviewId:reviewID, courseId: id });
+    await deleteUserReview({ reviewId: reviewID, courseId: id });
   };
+
+  //   const handleDeleteUserReview = async (reviewID: string) => {
+  //   setdeleteUserReviewLoading((prev) => ({
+  //     ...prev,
+  //     [reviewID]: !prev[reviewID],
+  //   }));
+
+  //   await deleteUserReview({ reviewId: reviewID, courseId: id });
+  // };
 
   const handleReviewSubmit = async () => {
     if (comment.length === 0) {
@@ -471,6 +475,7 @@ const CourseContentMedia = ({
                     </span>
                   </h5>
                   <div className="w-full flex cursor-pointer mt-1">
+
                     {[1, 2, 3, 4, 5].map((i: any) =>
                       rating! >= i ? (
                         <AiFillStar
@@ -543,19 +548,21 @@ const CourseContentMedia = ({
                                 {reviews.user.name}
                               </h1>
 
-                             {deleteUserReviewLoading[reviews._id] ? "deleting..." : (
-                        <> 
-                        
-                           {user.role === "admin" && (
-                                <MdDeleteForever
-                                  size={15}
-                                  className="dark:text-white text-black cursor-pointer"
-                                  onClick={() => handleDeleteUserReview(reviews._id)}
-                                />
+                              {deleteUserReviewLoading[reviews._id] ? (
+                                "deleting..."
+                              ) : (
+                                <>
+                                  {user.role === "admin" && (
+                                    <MdDeleteForever
+                                      size={15}
+                                      className="dark:text-white text-black cursor-pointer"
+                                      onClick={() =>
+                                        handleDeleteUserReview(reviews._id)
+                                      }
+                                    />
+                                  )}
+                                </>
                               )}
-                        </>
-                       )}
-                             
                             </div>
                             <Ratings rating={reviews.ratings} />
                             <p className="dark:text-slate-300 text-black font-Poppins text-sm break-words">
