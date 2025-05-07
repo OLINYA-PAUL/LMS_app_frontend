@@ -221,15 +221,6 @@ const CourseContentMedia = ({
     await deleteUserReview({ reviewId: reviewID, courseId: id });
   };
 
-  //   const handleDeleteUserReview = async (reviewID: string) => {
-  //   setdeleteUserReviewLoading((prev) => ({
-  //     ...prev,
-  //     [reviewID]: !prev[reviewID],
-  //   }));
-
-  //   await deleteUserReview({ reviewId: reviewID, courseId: id });
-  // };
-
   const handleReviewSubmit = async () => {
     if (comment.length === 0) {
       toast.error("Comment  are required");
@@ -475,7 +466,6 @@ const CourseContentMedia = ({
                     </span>
                   </h5>
                   <div className="w-full flex cursor-pointer mt-1">
-
                     {[1, 2, 3, 4, 5].map((i: any) =>
                       rating! >= i ? (
                         <AiFillStar
