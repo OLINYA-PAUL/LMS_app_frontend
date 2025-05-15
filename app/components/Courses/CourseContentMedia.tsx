@@ -197,19 +197,6 @@ const CourseContentMedia = ({
       contentId: courseData[activeVideo]._id,
     });
 
-    //   const handleAnswerSubmit = async () => {
-    // if (!answer[questionId] || answer[questionId].trim() === "") {
-    //   toast.error("Answer is required");
-    //   return;
-    // }
-
-    // await addAnswerToQuestion({
-    //   answer: answer[questionId],
-    //   questionId,
-    //   courseId: data?._id,
-    //   contentId: courseData[activeVideo]._id,
-    // });
-
     // Clear the input for the current question
     setAnswer((prev) => ({
       ...prev,
