@@ -28,8 +28,6 @@ const Courses = () => {
 
   const category = categoriesData?.layout?.categories || [];
 
-  console.log(category);
-
   const { user } = useSelector((state: any) => state.auth);
   const isPurchased = user?.courses?.some((c: any) => {
     return c._id === data?.courses?._id;
@@ -40,19 +38,43 @@ const Courses = () => {
 
     let filteredCourses = [...data.courses];
 
+    console.log("Original courses:", filteredCourses);
+    console.log("Search title:", searchTitle);
+
+    // Filter by category
     if (categories !== "All") {
       filteredCourses = filteredCourses.filter(
         (item: any) => item.categories === categories
       );
+      console.log("After category filter:", filteredCourses);
     }
 
-    if (searchTitle) {
-      filteredCourses = filteredCourses.filter((item: any) =>
-        item.name.toLowerCase().includes(searchTitle.toLowerCase())
-      );
+    // Filter by search title - case insensitive
+    if (searchTitle && searchTitle.trim() !== "") {
+      const searchLower = searchTitle.toLowerCase();
+
+      filteredCourses = filteredCourses.filter((item: any) => {
+        if (item.title && item.title.toLowerCase().includes(searchLower)) {
+          console.log("Match found in title");
+          return true;
+        }
+
+        // Check categories
+        if (
+          item.categories &&
+          item.categories.toLowerCase().includes(searchLower)
+        ) {
+          console.log("Match found in categories");
+          return true;
+        }
+
+        return false;
+      });
+
+      console.log("After search filter:", filteredCourses);
     }
 
-    //@ts-ignore
+    // Set filtered courses
     setCourse(filteredCourses);
   }, [data, categories, searchTitle]);
 
@@ -65,7 +87,11 @@ const Courses = () => {
       ) : (
         <div className="w-full">
           <HeaderSEO
-            title={courses ? `${courses[0]?.name} - Elearning` : "Elearning"}
+            title={
+              courses
+                ? `${courses[0]?.name || "Courses"} - Elearning`
+                : "Elearning"
+            }
             description="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
             keyWords="Nextjs, React, Javascript, Radux MERN"
           />
@@ -129,13 +155,11 @@ const Courses = () => {
               {courses &&
                 courses.length > 0 &&
                 courses.map((item: any) => (
-                  <>
-                    <CoursesCard
-                      items={item}
-                      key={item._id}
-                      isProfile={!user || !isPurchased}
-                    />
-                  </>
+                  <CoursesCard
+                    items={item}
+                    key={item._id}
+                    isProfile={!user || !isPurchased}
+                  />
                 ))}
             </div>
           </div>
