@@ -18,11 +18,11 @@ export const storeConfigs = configureStore({
 
 const initialiseApp = async () => {
   // Attempt to refresh the token
-  const refreshResponse = await storeConfigs.dispatch(
-    apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true })
-  );
+  // const refreshResponse = await storeConfigs.dispatch(
+  //   apiSlice.endpoints.refreshToken.initiate({}, { forceRefetch: true })
+  // );
 
-  console.log({ refreshResponse });
+  // console.log({ refreshResponse });
   // if (
   //   refreshResponse.data?.accessToken &&
   //   refreshResponse.data?.status === "fulfilled"

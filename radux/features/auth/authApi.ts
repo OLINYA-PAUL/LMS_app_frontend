@@ -46,7 +46,6 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         try {
           const { data } = await queryFulfilled;
-          console.log({ REGISTER: data });
           console.log("get Register:", { queryFulfilled });
 
           dispatch(
