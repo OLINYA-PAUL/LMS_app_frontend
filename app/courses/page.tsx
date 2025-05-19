@@ -19,7 +19,7 @@ const Courses = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const searchParams = useSearchParams();
-  const searchTitle = searchParams?.get("title") || "";
+  let searchTitle = searchParams?.get("title") || "";
   const [courses, setCourse] = useState<any[]>([]);
   const [categories, setCategories] = useState("All");
 
@@ -28,10 +28,41 @@ const Courses = () => {
 
   const category = categoriesData?.layout?.categories || [];
 
+  console.log(category);
+
   const { user } = useSelector((state: any) => state.auth);
   const isPurchased = user?.courses?.some((c: any) => {
     return c._id === data?.courses?._id;
   });
+
+  // useEffect(() => {
+  //   if (!data?.courses) return;
+
+  //   let filteredCourses = [...data.courses];
+
+  //   if (categories !== "All") {
+  //     filteredCourses = filteredCourses.filter(
+  //       (item: any) => item.categories === categories
+  //     );
+  //   }
+
+  //   if (searchTitle) {
+  //     filteredCourses = filteredCourses.filter((item: any, index: number) => {
+  //       item.courseData[index]?.title
+  //         .toLowerCase()
+  //         .includes(searchTitle.toLowerCase()) ??
+  //         category.map((items: any, index: number) => {
+  //           console.log("item name categories:", { items });
+  //           items?.title.toLowerCase().includes(searchTitle.toLowerCase());
+  //         });
+  //     });
+
+  //     console.log("Filtered courses:", filteredCourses);
+  //   }
+
+  //   //@ts-ignore
+  //   setCourse(filteredCourses);
+  // }, [data, categories, searchTitle]);
 
   useEffect(() => {
     if (!data?.courses) return;
@@ -49,13 +80,18 @@ const Courses = () => {
       console.log("After category filter:", filteredCourses);
     }
 
+    if (categories) {
+      searchTitle = categories;
+      console.log("Search title after category:", searchTitle);
+    }
+
     // Filter by search title - case insensitive
     if (searchTitle && searchTitle.trim() !== "") {
       const searchLower = searchTitle.toLowerCase();
 
       filteredCourses = filteredCourses.filter((item: any) => {
         if (item.title && item.title.toLowerCase().includes(searchLower)) {
-          console.log("Match found in title");
+          console.log("Match found in title", item);
           return true;
         }
 
@@ -87,11 +123,7 @@ const Courses = () => {
       ) : (
         <div className="w-full">
           <HeaderSEO
-            title={
-              courses
-                ? `${courses[0]?.name || "Courses"} - Elearning`
-                : "Elearning"
-            }
+            title={courses ? `${courses[0]?.name} - Elearning` : "Elearning"}
             description="Empower your learning journey with React Prodigy, the ultimate platform for online education. Explore interactive courses, track progress, and achieve your goals anytime, anywhere. Join a thriving community of learners and unlock your potential today"
             keyWords="Nextjs, React, Javascript, Radux MERN"
           />
@@ -155,11 +187,13 @@ const Courses = () => {
               {courses &&
                 courses.length > 0 &&
                 courses.map((item: any) => (
-                  <CoursesCard
-                    items={item}
-                    key={item._id}
-                    isProfile={!user || !isPurchased}
-                  />
+                  <>
+                    <CoursesCard
+                      items={item}
+                      key={item._id}
+                      isProfile={!user || !isPurchased}
+                    />
+                  </>
                 ))}
             </div>
           </div>

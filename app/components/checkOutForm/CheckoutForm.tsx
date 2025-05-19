@@ -11,13 +11,22 @@ import { useCreateOrderMutation } from "@/radux/features/orders/ordersapi";
 import { useLoadUserQuery } from "@/radux/features/api/apiSlice";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { io } from "socket.io-client";
+const SOCKET_URL =
+  process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000";
+export const socket = io(SOCKET_URL, {
+  // autoConnect: false,
+  transports: ["websocket"],
+});
 
 const CheckoutForm = ({
   data,
-  setIsOpen,
+  user,
+  setAuthPaymentPopUp,
 }: {
   data: any;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  user: any;
+  setAuthPaymentPopUp: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -69,7 +78,13 @@ const CheckoutForm = ({
         if (response) {
           await refetch(); // Ensures the user data updates
           toast.success("Payment succeeded!");
-          setIsOpen(false);
+          setAuthPaymentPopUp(false);
+          socket.emit("notification", {
+            title: "New Order",
+            type: "order",
+            message: `You have anew order from ${data.course.name}`,
+            userId: user._id,
+          });
           router.push(`/course-access/${data.courses._id}`);
         }
       } catch (err) {

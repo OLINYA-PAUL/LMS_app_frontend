@@ -20,8 +20,15 @@ import {
 import { BiSolidMessage } from "react-icons/bi";
 import { format } from "timeago.js";
 import { MdDeleteForever } from "react-icons/md";
-
 import Ratings from "@/utils/Rating";
+
+import { io } from "socket.io-client";
+const SOCKET_URL =
+  process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000";
+export const socket = io(SOCKET_URL, {
+  // autoConnect: false,
+  transports: ["websocket"],
+});
 
 const CourseContentMedia = ({
   data,
@@ -120,6 +127,11 @@ const CourseContentMedia = ({
       setQuestion("");
       setIsQuestion(false);
       toast.success("Question added successfully");
+      socket.emit("notification", {
+        title: "New Question added",
+        message: `${user.name} added a Question in ${data?.[activeVideo]?.title}`,
+        userId: user?._id,
+      });
     }
     if (error) {
       if ("data" in error) {
@@ -133,6 +145,14 @@ const CourseContentMedia = ({
       setAnswer({ key: "" });
       setIsAnswer(false);
       toast.success("Answer added successfully");
+
+      if (user.role === "admin") {
+        socket.emit("notification", {
+          title: "New reply added",
+          message: `${user.name} added a new reply in ${data?.[activeVideo]?.title}`,
+          userId: user?._id,
+        });
+      }
     }
     if (answerError) {
       if ("data" in answerError) {
@@ -144,6 +164,11 @@ const CourseContentMedia = ({
     if (reviewData) {
       refetch();
       toast.success("review added successfully");
+      socket.emit("notification", {
+        title: "New Review",
+        message: `${user.name} added a Question in ${data?.[activeVideo]?.title}`,
+        userId: user?._id,
+      });
     }
     if (reviewError) {
       if ("data" in reviewError) {
