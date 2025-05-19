@@ -2,7 +2,7 @@
 
 import CoursePlayer from "@/utils/CoursePlayer";
 import Ratings from "@/utils/Rating";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosCloseCircle, IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { format } from "timeago.js";
@@ -71,12 +71,18 @@ interface CourseContentDetailsProps {
   };
   stripePromise: Promise<any | null>;
   clientSecret: string;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setRoute: React.Dispatch<React.SetStateAction<string>>;
+  isOpen: boolean;
 }
 
 const CourseContentDetails = ({
   data,
   stripePromise,
   clientSecret,
+  setIsOpen,
+  setRoute,
+  isOpen,
 }: CourseContentDetailsProps) => {
   const disCountPercentage = data?.courses?.estimatedPrice
     ? ((data.courses.estimatedPrice - data.courses.price) /
@@ -89,11 +95,27 @@ const CourseContentDetails = ({
     return c._id === data?.courses?._id;
   });
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    if (userData) {
+      setUser(userData.user);
+    }
+  }, [userData]);
+
   const [activeVideo, setActiveVideo] = useState(0);
 
+  const [authPaymentPopUp, setAuthPaymentPopUp] = useState(false);
+
   const handleOrder = () => {
-    setIsOpen(true);
+    if (user || isPurchased) {
+      setAuthPaymentPopUp(true);
+    } else {
+      setRoute("Login");
+      setIsOpen(true);
+      setAuthPaymentPopUp(false);
+      return;
+    }
   };
 
   const router = useRouter();
@@ -340,20 +362,23 @@ const CourseContentDetails = ({
       </div>
 
       <>
-        {isOpen && (
+        {authPaymentPopUp && (
           <div className="w-full h-screen bg-[#00000036] fixed top-0 left-0 z-50 flex flex-col items-center justify-center  ">
             <div className="w-[500px] min-h-[400px] rounded-lg max-sm:w-[300px] max-sm:min-h-[300px] shadow-md bg-white dark:bg-white p-3">
               <div className="w-full flex justify-end">
                 <IoIosCloseCircle
                   size={30}
                   className="text-black  cursor-pointer"
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setAuthPaymentPopUp(false)}
                 />
               </div>
               <div className="w-full mt-5">
                 {clientSecret && stripePromise && (
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
-                    <CheckoutForm data={data} setIsOpen={setIsOpen} />
+                    <CheckoutForm
+                      data={data}
+                      setAuthPaymentPopUp={setAuthPaymentPopUp}
+                    />
                   </Elements>
                 )}
               </div>

@@ -20,8 +20,6 @@ const CourseDetails = ({ id }: { id: string }) => {
 
   const { data, isLoading } = useGetCourseContentDetailsQuery({ id });
 
-  console.log("data ---> datas", data);
-
   const { data: config } = useGetStripePublishableKeyQuery({});
   const [createPaymentIntent, { data: paymentIntent }] =
     useCreatePaymentIntentMutation();
@@ -68,6 +66,9 @@ const CourseDetails = ({ id }: { id: string }) => {
               data={data}
               stripePromise={stripePromise}
               clientSecret={clientSecret}
+              setRoute={setRoute}
+              setIsOpen={setIsOpen}
+              isOpen={isOpen}
             />
           )}
           <Footer />
