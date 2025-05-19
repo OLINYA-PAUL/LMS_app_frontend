@@ -377,6 +377,7 @@ const CourseContentDetails = ({
                   <Elements stripe={stripePromise} options={{ clientSecret }}>
                     <CheckoutForm
                       data={data}
+                      user={user}
                       setAuthPaymentPopUp={setAuthPaymentPopUp}
                     />
                   </Elements>

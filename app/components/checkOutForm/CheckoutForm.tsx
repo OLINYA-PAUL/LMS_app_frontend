@@ -82,7 +82,7 @@ const CheckoutForm = ({
           socket.emit("notification", {
             title: "New Order",
             type: "order",
-            message: `You have anew order from ${data.course.name}`,
+            message: `You have a new order from ${data.name}`,
             userId: user._id,
           });
           router.push(`/course-access/${data.courses._id}`);

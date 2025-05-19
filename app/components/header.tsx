@@ -17,6 +17,8 @@ import { CiLogout } from "react-icons/ci";
 import toast from "react-hot-toast";
 import { ImSpinner } from "react-icons/im";
 import Login from "./auth/Login";
+import { useLoadUserQuery } from "@/radux/features/api/apiSlice";
+import { ref } from "yup";
 
 interface headerProps {
   isOpen: boolean;
@@ -37,7 +39,12 @@ const Header = ({
   const [isMobile, setIsMobile] = useState(false);
   const [hasAuthenticated, setHasAuthenticated] = useState(false);
 
-  const { user, token } = useSelector((state: any) => state.auth);
+  // const { user, token } = useSelector((state: any) => state.auth);
+  const {
+    data: userData,
+    isLoading,
+    refetch,
+  } = useLoadUserQuery({ refetchOnMountOrArgChange: true });
   const { data } = useSession();
 
   const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
@@ -55,8 +62,10 @@ const Header = ({
     };
   }, []);
 
+  console.log("userData =====>", userData);
+
   useEffect(() => {
-    if (!user && data && !hasAuthenticated) {
+    if (!userData && data && !hasAuthenticated) {
       socialAuth({
         email: data.user?.email as string,
         name: data.user?.name as string,
@@ -68,7 +77,7 @@ const Header = ({
     if (isSuccess && !hasAuthenticated) {
       toast.success("Login successful!");
     }
-  }, [data, user, socialAuth, isSuccess, hasAuthenticated]);
+  }, [data, userData, socialAuth, isSuccess, hasAuthenticated]);
 
   const handleClose = (e: any) => {
     if (e.target.id === "screen") {
@@ -107,16 +116,18 @@ const Header = ({
               {/* Desktop profile */}
               <div className="hidden 800px:block">
                 <h1 className="font-bold text-xl ml-3">
-                  {user ? (
+                  {userData?.user ? (
                     <Link href="/profile">
                       <img
                         src={
-                          user?.avatar?.url ||
+                          userData?.user?.avatar?.url ||
                           data?.user?.image ||
                           defaultAvatar
                         }
                         alt={
-                          user?.profile || data?.user?.name || "user_profile"
+                          userData?.user?.profile ||
+                          data?.user?.name ||
+                          "user_profile"
                         }
                         width={30}
                         height={30}
@@ -180,6 +191,7 @@ const Header = ({
           route={route}
           setRoute={setRoute}
           Component={Login}
+          refetch={refetch}
         />
       )}
 
@@ -202,6 +214,7 @@ const Header = ({
           route={route}
           setRoute={setRoute}
           Component={Verification}
+          refetch={refetch}
         />
       )}
     </div>

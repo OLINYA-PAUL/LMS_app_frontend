@@ -94,132 +94,90 @@ const AllInvoice = ({ isDashBoard }: { isDashBoard: boolean }) => {
     },
   ];
 
-  const rows: any = [
-    // mock data for testing
-    // {
-    //   id: "123455677655",
-    //   userName: "Shahriar Sajeeb",
-    //   userEmail: "programmershahriarsajeeb@gmail.com",
-    //   price: "$500",
-    //   created_at: "2 days ago",
-    // },
-    // {
-    //   id: "123455677655",
-    //   userName: "Shahriar Sajeeb",
-    //   userEmail: "programmershahriarsajeeb@gmail.com",
-    //   title: "React JS Course",
-    //   price: "$500",
-    //   created_at: "2 days ago",
-    // },
-    // {
-    //   id: "123455677655",
-    //   userName: "Shahriar Sajeeb",
-    //   userEmail: "programmershahriarsajeeb@gmail.com",
-    //   title: "React JS Course",
-    //   price: "$500",
-    //   created_at: "2 days ago",
-    // },
-    // {
-    //   id: "123455677655",
-    //   userName: "Shahriar Sajeeb",
-    //   userEmail: "programmershahriarsajeeb@gmail.com",
-    //   title: "React JS Course",
-    //   price: "$500",
-    //   created_at: "2 days ago",
-    // },
-  ];
+  const rows: any = [];
 
-  console.log("items", orderData);
-
-  orderData &&
-    orderData.forEach((items: any) => {
+  // Populate rows with order data
+  if (orderData && orderData.length > 0) {
+    orderData.forEach((item: any) => {
       rows.push({
-        id: items._id,
-        userName: items.userName,
-        userEmail: items.Usermail,
-        title: items.title,
-        price: items.price,
-        created_at: items.createdAt,
+        id: item._id,
+        userName: item.userName,
+        userEmail: item.Usermail,
+        title: item.title,
+        price: item.price,
+        created_at: item.createdAt,
       });
     });
+  }
 
   return (
     <div className="w-full overflow-auto">
       {orderData && orderData.length > 0 ? (
-        orderData.map((item: any, index: number) => {
-          console.log("all map items", item);
-          return (
-            <div key={index}>
-              <Box m={isDashBoard ? "0" : "40px"}>
-                <Box
-                  m={isDashBoard ? "0" : "40px 0 0 0"}
-                  width={"100%"}
-                  height={isDashBoard ? "40vh" : "90vh"}
-                  overflow={isDashBoard ? "auto" : "hidden"}
-                  sx={{
-                    "& .MuiDataGrid-root": {
-                      border: "none",
-                      outline: "none",
-                    },
-                    "& .css-pqjvzy-MuiSvgIcon-root-MuiSelect-icon": {
-                      color: theme === "dark" ? "#fff" : "#000",
-                    },
-                    "& .MuiDataGrid-sortIcon": {
-                      color: theme === "dark" ? "#fff" : "#000",
-                    },
-                    "& .MuiDataGrid-row": {
-                      color: theme === "dark" ? "#fff" : "#000",
-                      borderBottom:
-                        theme === "dark"
-                          ? "1px solid #ffffff30!important"
-                          : "1px solid #ccc!important",
-                    },
-                    "& .MuiTablePagination-root": {
-                      color: theme === "dark" ? "#fff" : "#000",
-                    },
-                    "& .MuiDataGrid-columnHeaderTitleContainer": {
-                      color: theme === "dark" ? "#000" : "#000",
-                    },
-                    "& .MuiDataGrid-cell": {
-                      borderBottom: "none!important",
-                    },
-                    "& .name-column--cell": {
-                      color: theme === "dark" ? "#fff" : "#000",
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                      backgroundColor: theme === "dark" ? "#3e4396" : "#4A49FC",
-                      borderBottom: "none",
-                    },
-                    "& .MuiDataGrid-virtualScroller": {
-                      backgroundColor: theme === "dark" ? "#1F2A40" : "#F2F0F0",
-                    },
-                    "& .MuiDataGrid-footerContainer": {
-                      color: theme === "dark" ? "#fff" : "#000",
-                      borderTop: "none",
-                      backgroundColor: theme === "dark" ? "#3e4396" : "#4A49FC",
-                    },
-                    "& .MuiCheckbox-root": {
-                      color:
-                        theme === "dark"
-                          ? "#b7ebde !important"
-                          : "#000 !important",
-                    },
-                    "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-                      color: "#fff !important",
-                    },
-                  }}
-                >
-                  <DataGrid
-                    checkboxSelection={isDashBoard ? false : true}
-                    rows={rows}
-                    columns={columns}
-                    slots={isDashBoard ? {} : { toolbar: GridToolbar }}
-                  />
-                </Box>
-              </Box>
-            </div>
-          );
-        })
+        <Box m={isDashBoard ? "0" : "40px"}>
+          <Box
+            m={isDashBoard ? "0" : "40px 0 0 0"}
+            width={"100%"}
+            height={isDashBoard ? "40vh" : "90vh"}
+            overflow={isDashBoard ? "auto" : "hidden"}
+            sx={{
+              "& .MuiDataGrid-root": {
+                border: "none",
+                outline: "none",
+              },
+              "& .css-pqjvzy-MuiSvgIcon-root-MuiSelect-icon": {
+                color: theme === "dark" ? "#fff" : "#000",
+              },
+              "& .MuiDataGrid-sortIcon": {
+                color: theme === "dark" ? "#fff" : "#000",
+              },
+              "& .MuiDataGrid-row": {
+                color: theme === "dark" ? "#fff" : "#000",
+                borderBottom:
+                  theme === "dark"
+                    ? "1px solid #ffffff30!important"
+                    : "1px solid #ccc!important",
+              },
+              "& .MuiTablePagination-root": {
+                color: theme === "dark" ? "#fff" : "#000",
+              },
+              "& .MuiDataGrid-columnHeaderTitleContainer": {
+                color: theme === "dark" ? "#000" : "#000",
+              },
+              "& .MuiDataGrid-cell": {
+                borderBottom: "none!important",
+              },
+              "& .name-column--cell": {
+                color: theme === "dark" ? "#fff" : "#000",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: theme === "dark" ? "#3e4396" : "#4A49FC",
+                borderBottom: "none",
+              },
+              "& .MuiDataGrid-virtualScroller": {
+                backgroundColor: theme === "dark" ? "#1F2A40" : "#F2F0F0",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                color: theme === "dark" ? "#fff" : "#000",
+                borderTop: "none",
+                backgroundColor: theme === "dark" ? "#3e4396" : "#4A49FC",
+              },
+              "& .MuiCheckbox-root": {
+                color:
+                  theme === "dark" ? "#b7ebde !important" : "#000 !important",
+              },
+              "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+                color: "#fff !important",
+              },
+            }}
+          >
+            <DataGrid
+              checkboxSelection={isDashBoard ? false : true}
+              rows={rows}
+              columns={columns}
+              slots={isDashBoard ? {} : { toolbar: GridToolbar }}
+            />
+          </Box>
+        </Box>
       ) : (
         <div>No orders found</div>
       )}
