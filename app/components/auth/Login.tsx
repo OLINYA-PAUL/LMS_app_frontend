@@ -17,9 +17,10 @@ import { useSession, signIn, signOut } from "next-auth/react";
 interface LoginPops {
   setRoute: React.Dispatch<SetStateAction<string>>;
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
+  refetch: any;
 }
 
-const Login = ({ setRoute, setIsOpen }: LoginPops) => {
+const Login = ({ setRoute, setIsOpen, refetch }: LoginPops) => {
   const [show, setShow] = useState<boolean>(true);
 
   const [login, { error, isSuccess, data, reset }] = useLoginMutation();
@@ -27,6 +28,7 @@ const Login = ({ setRoute, setIsOpen }: LoginPops) => {
   useEffect(() => {
     if (isSuccess) {
       const message = data?.message || "Login successful";
+      refetch();
 
       toast?.success(message);
       setIsOpen(false);
