@@ -90,7 +90,7 @@ const Header = ({
     "https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-profile-picture-business-profile-woman-suitable-social-media-profiles-icons-screensavers-as-templatex9_719432-1339.jpg?w=740";
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative ">
       <div className={active ? "nav_light_mode" : "nav_dark_mode"}>
         <div className="w-full m-auto h-full p-2">
           <div className="w-full flex-1 flex justify-between items-center h-auto p-3">
