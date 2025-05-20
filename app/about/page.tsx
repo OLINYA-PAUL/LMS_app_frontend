@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { HeaderSEO } from "@/utils/headerSEO";
 import Header from "../components/header";
 import { useSelector } from "react-redux";
+import Footer from "../components/Footer/Footer";
+import About from "./About";
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -12,7 +14,7 @@ const Page = () => {
   const { user } = useSelector((state: any) => state.auth);
 
   return (
-    <div>
+    <div className="w-full">
       <>
         <HeaderSEO
           title={`${user?.name} Profile - Elearning`}
@@ -27,6 +29,10 @@ const Page = () => {
           route={route}
         />
       </>
+      <About />
+      <div className="w-full mt-20">
+        <Footer />
+      </div>
     </div>
   );
 };

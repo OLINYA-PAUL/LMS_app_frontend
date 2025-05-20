@@ -6,6 +6,7 @@ import Header from "../components/header";
 import { useSelector } from "react-redux";
 import { useGetHeroDataQuery } from "@/radux/features/layout/layoutApi";
 import { HiMinus, HiPlus } from "react-icons/hi";
+import Footer from "../components/Footer/Footer";
 
 interface Question {
   _id: string;
@@ -119,6 +120,9 @@ const Page = () => {
             )}
           </div>
         </div>
+      </div>
+      <div className="w-full mt-20">
+        <Footer />
       </div>
     </>
   );
