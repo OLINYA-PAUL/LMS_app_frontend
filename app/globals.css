@@ -130,7 +130,7 @@ body {
 }
 
 .nav_text {
-  @apply text-[15px] px-2 font-Poppins flex font-extrabold;
+  @apply text-[12px] px-2 font-Poppins flex font-extrabold;
 }
 
 .active_link {

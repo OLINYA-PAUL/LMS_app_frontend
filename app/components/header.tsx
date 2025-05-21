@@ -8,17 +8,12 @@ import React, { useEffect, useState } from "react";
 import CustomeModel from "../../utils/customeModel";
 import Signup from "./auth/signup";
 import Verification from "./auth/Verification";
-import { useDispatch, useSelector } from "react-redux";
-import Image from "next/image";
-import avatar from "../../public/assets/profile_image.jpg";
+import { useSelector } from "react-redux";
 import { useSocialAuthMutation } from "@/radux/features/auth/authApi";
 import { useSession } from "next-auth/react";
-import { CiLogout } from "react-icons/ci";
 import toast from "react-hot-toast";
-import { ImSpinner } from "react-icons/im";
 import Login from "./auth/Login";
 import { useLoadUserQuery } from "@/radux/features/api/apiSlice";
-import { ref } from "yup";
 
 interface headerProps {
   isOpen: boolean;
@@ -39,30 +34,25 @@ const Header = ({
   const [isMobile, setIsMobile] = useState(false);
   const [hasAuthenticated, setHasAuthenticated] = useState(false);
 
-  // const { user, token } = useSelector((state: any) => state.auth);
   const {
     data: userData,
     isLoading,
     refetch,
   } = useLoadUserQuery({ refetchOnMountOrArgChange: true });
+
   const { data } = useSession();
 
-  const [socialAuth, { isSuccess, error }] = useSocialAuthMutation();
+  const [socialAuth, { isSuccess }] = useSocialAuthMutation();
 
-  // Optimized scroll handler with debounce
   useEffect(() => {
     const handleScroll = () => {
       setActive(window.scrollY > 20);
     };
-
     window.addEventListener("scroll", handleScroll);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-
-  console.log("userData =====>", userData);
 
   useEffect(() => {
     if (!userData && data && !hasAuthenticated) {
@@ -85,12 +75,11 @@ const Header = ({
     }
   };
 
-  // Default avatar URL
   const defaultAvatar =
     "https://img.freepik.com/premium-vector/vector-flat-illustration-grayscale-avatar-user-profile-person-icon-profile-picture-business-profile-woman-suitable-social-media-profiles-icons-screensavers-as-templatex9_719432-1339.jpg?w=740";
 
   return (
-    <div className="w-full relative ">
+    <div className="w-full relative">
       <div className={active ? "nav_light_mode" : "nav_dark_mode"}>
         <div className="w-full m-auto h-full p-2">
           <div className="w-full flex-1 flex justify-between items-center h-auto p-3">
@@ -99,6 +88,7 @@ const Header = ({
                 Elearning
               </Link>
             </div>
+
             <div className="justify-center items-center flex cursor-pointer">
               <NavItems activeItem={activeItem} isMobile={false} />
               <ThemeSwitcher />
@@ -124,11 +114,7 @@ const Header = ({
                           data?.user?.image ||
                           defaultAvatar
                         }
-                        alt={
-                          userData?.user?.profile ||
-                          data?.user?.name ||
-                          "user_profile"
-                        }
+                        alt="user_profile"
                         width={30}
                         height={30}
                         className={`rounded-full ${
@@ -136,15 +122,14 @@ const Header = ({
                             ? "border-[3px] border-green-500"
                             : ""
                         }`}
+                        loading="lazy"
                       />
                     </Link>
                   ) : (
-                    <div>
-                      <CgProfile
-                        className="dark:text-white text-black"
-                        onClick={() => setIsOpen(true)}
-                      />
-                    </div>
+                    <CgProfile
+                      className="dark:text-white text-black"
+                      onClick={() => setIsOpen(true)}
+                    />
                   )}
                 </h1>
               </div>
@@ -168,15 +153,36 @@ const Header = ({
                   Elearning
                 </Link>
               </div>
-              <NavItems activeItem={activeItem} isMobile={true} />
-              <div className="text-xl ml-6 mt-5">
-                <h1 className="font-bold" onClick={() => setIsOpen(true)}>
-                  user
-                </h1>
-                <p className="mt-[250px] text-sm">
-                  Copyright @React prodigy {new Date().getFullYear().toString()}
-                </p>
+
+              <div className="flex flex-col items-center mt-6 mb-3">
+                {userData?.user || data?.user ? (
+                  <Link href="/profile">
+                    <img
+                      src={
+                        userData?.user?.avatar?.url ||
+                        data?.user?.image ||
+                        defaultAvatar
+                      }
+                      alt="mobile_user"
+                      width={60}
+                      height={60}
+                      className="rounded-full border-[2px] border-green-500"
+                      loading="lazy"
+                    />
+                  </Link>
+                ) : (
+                  <CgProfile
+                    className="text-3xl text-gray-700 dark:text-white cursor-pointer"
+                    onClick={() => setIsOpen(true)}
+                  />
+                )}
               </div>
+
+              <NavItems activeItem={activeItem} isMobile={true} />
+
+              <p className="mt-[250px] text-sm text-center">
+                Copyright © React prodigy {new Date().getFullYear()}
+              </p>
             </div>
           </div>
         )}
