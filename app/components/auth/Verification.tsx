@@ -35,7 +35,6 @@ const Verification = ({ setRoute }: VerificationPops) => {
   useEffect(() => {
     if (isSuccess) {
       const message: any = data?.message || "Token verified! ✔✔";
-      // Navigate to Home screen
       setRoute("Login");
       toast.success(message + "✔✔");
     }
@@ -43,8 +42,7 @@ const Verification = ({ setRoute }: VerificationPops) => {
     if (error) {
       if ("data" in error) {
         const errorData = (error as any) || "failed to activate your account";
-        toast.success(errorData.data.error);
-
+        toast.error(errorData.data.error);
         setIsValideError(true);
       }
     }
@@ -68,18 +66,17 @@ const Verification = ({ setRoute }: VerificationPops) => {
       setIsValideError(true);
       return;
     }
-    const activeCode = await activation({
+    await activation({
       activation_token: token,
       activation_code: verifyActivationCode,
     });
   };
 
   const handleInputChange = (index: number, value: string) => {
-    if (!/^\d?$/.test(value)) return; // Allow only numbers or empty values
+    if (!/^\d?$/.test(value)) return;
     setIsValideError(false);
     setVerifyNumber({ ...verifyNumber, [index]: value });
 
-    // Auto-focus next input or previous input
     if (value === "" && index > 0) {
       InputRef[index - 1].current?.focus();
     } else if (value.length === 1 && index < 6) {
@@ -88,12 +85,14 @@ const Verification = ({ setRoute }: VerificationPops) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <h1 className={`${styles.title} `}>Verify Your Account</h1>
-      <div className="bg-blue-800 dark:bg-white rounded-full p-2 w-16 h-16 flex items-center justify-center mt-3 shadow-md">
-        <VscWorkspaceTrusted className="w-10 h-10 dark:text-blue-600 text-white font-extrabold " />
+    <div className="flex flex-col items-center justify-center p-2">
+      <h1 className={`${styles.title} text-sm mb-3`}>Verify Your Account</h1>
+
+      <div className="bg-blue-800 dark:bg-white rounded-full p-1 w-10 h-10 flex items-center justify-center shadow-sm">
+        <VscWorkspaceTrusted className="w-5 h-5 dark:text-blue-600 text-white" />
       </div>
-      <div className=" mt-5">
+
+      <div className="mt-4 flex flex-wrap justify-center gap-1">
         {Object.keys(verifyNumber).map((key: string, index: number) => (
           <input
             key={index}
@@ -103,38 +102,37 @@ const Verification = ({ setRoute }: VerificationPops) => {
             value={verifyNumber[key as keyof VerifyNumber]}
             className={`${
               isValideError
-                ? "border-2 border-red-600 shake_animation"
-                : "border focus:border-blue-500 dark:border-blue-500 "
-            } h-[65px] w-[65px] font-Poppins text-black dark:text-white text-[18px] p-2 ml-3 rounded-lg text-center bg-transparent border_colour`}
+                ? "border border-red-500 animate-shake"
+                : "border border-gray-400 focus:border-blue-500 dark:border-blue-500"
+            } h-8 w-8 text-xs rounded text-center bg-transparent text-black dark:text-white`}
           />
         ))}
+      </div>
 
-        <div className="mt-10 flex flex-col items-center justify-center">
-          <button
-            disabled={isDisabled}
-            type="button"
-            className={`${isValideError && " border-2 border-red-600"}  ${
-              isDisabled
-                ? " cursor-not-allowed dark:text-white dark:bg-gray-500"
-                : "bg-black dark:bg-white dark:text-black"
-            } font-Poppins text-black font-extrabold text-[18px] border-2 focus:border-blue-500 dark:border-blue-500 ml-3 px-5 p-3 rounded-lg text-center bg-transparent border_colour`}
-            onClick={() => verifyHandleChange()}
-          >
-            {isDisabled ? "Input OTP" : "Verify OTP"}
-          </button>
-        </div>
-
-        <div
-          className="flex cursor-pointer items-center justify-center gap-3  text-black dark:text-white transition-all duration-300 transform mt-10 text-center font-Poppins text-[19px]"
-          onClick={() => setRoute("Login")}
+      <div className="mt-4 flex flex-col items-center">
+        <button
+          disabled={isDisabled}
+          type="button"
+          onClick={verifyHandleChange}
+          className={`${
+            isDisabled
+              ? "cursor-not-allowed dark:text-white dark:bg-gray-500"
+              : "bg-black dark:bg-white dark:text-black hover:opacity-90"
+          } ${
+            isValideError && "border border-red-500"
+          } text-xs rounded px-3 py-1.5 mt-2 border`}
         >
-          <p> Go back to Sign in? </p>
-          <p className="text-blue-500"> Sign in </p>
-          <FaLongArrowAltRight
-            width={20}
-            className="w-4 h-4 cursor-pointer hover:scale-105 transition-transform duration-200 "
-          />
-        </div>
+          {isDisabled ? "Input OTP" : "Verify OTP"}
+        </button>
+      </div>
+
+      <div
+        className="flex items-center justify-center gap-2 mt-4 text-xs cursor-pointer text-black dark:text-white"
+        onClick={() => setRoute("Login")}
+      >
+        <span>Go back to</span>
+        <span className="text-blue-500">Sign in</span>
+        <FaLongArrowAltRight className="w-3 h-3" />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import { HeaderSEO } from "@/utils/headerSEO";
 import Header from "../components/header";
 import Profile from "../components/profile/Profile";
 import { useSelector } from "react-redux";
+import Footer from "../components/Footer/Footer";
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -15,7 +16,7 @@ const Page = () => {
   console.log("profileUser", { user });
 
   return (
-    <div>
+    <div className="min-h-screen">
       <UserProtected>
         <>
           <HeaderSEO
@@ -32,6 +33,7 @@ const Page = () => {
           />
 
           <Profile user={user} />
+          <Footer />
         </>
       </UserProtected>
     </div>

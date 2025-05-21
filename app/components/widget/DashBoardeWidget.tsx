@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { use, useEffect } from "react";
 import UserAnalytics from "../userAnalytics/userAnalytics";
 import { PiUsersFourLight } from "react-icons/pi";
 import OrderAnalytics from "../orderAnalytics/orderAnalytics";
 import AllInvoice from "../allInvoice/AllInvoice";
+import { useGetOrderAnalysisQuery } from "@/radux/features/analysis/analysisApi";
+import { useGetUserAnalysisQuery } from "@/radux/features/analysis/analysisApi";
 
 // Define CircularProgressWithLabel component
 const CircularProgressWithLabel = ({
@@ -62,20 +64,77 @@ const DashBoardeWidget = ({
   isDashBoard?: boolean;
   value?: number;
 }) => {
+  const [compareUserPercentage, setcompareUserPercentage] =
+    React.useState<any>();
+  const [compareOrderPercentage, setcompareOrderPercentage] =
+    React.useState<any>();
+  const [comparePercentage, setcomparePercentage] = React.useState([]);
+
+  const { data: userData, isLoading: userAnaLoading } = useGetUserAnalysisQuery(
+    {}
+  );
+  const { data: orderData, isLoading } = useGetOrderAnalysisQuery({});
+  // console.log("user data", userData);
+  // console.log("order data", orderData);
+
+  useEffect(() => {
+    if (userAnaLoading || isLoading) {
+      return;
+    }
+
+    if (userData && orderData) {
+      const userLastTwoMonths = userData?.userAanalysis?.last12Months.slice(-2);
+      const orderLastTwoMonths =
+        orderData?.oderAanalysis?.last12Months.slice(-2);
+
+      console.log("userLastTwoMonths >>>>>>>>>>>>>>>>>", userData);
+
+      console.log("orderLastTwoMonths >>>>>>>>>>>>>>>>>", orderData);
+
+      if (userLastTwoMonths.length > 2 && orderLastTwoMonths.length > 2) {
+        const useCurrentMonth = userLastTwoMonths[1].count;
+        const userPreviousMonth = userLastTwoMonths[0].count;
+        const orderCurrentMonth = orderLastTwoMonths[1].count;
+        const orderPreviousMonth = orderLastTwoMonths[0].count;
+
+        const userPercentChange =
+          ((useCurrentMonth - userPreviousMonth) / userPreviousMonth) * 100;
+
+        const orderPercentChange =
+          ((orderCurrentMonth - orderPreviousMonth) / orderPreviousMonth) * 100;
+
+        setcompareUserPercentage({
+          currentMonth: useCurrentMonth,
+          previousMonth: userPreviousMonth,
+          percentageChange: Math.round(userPercentChange),
+        });
+
+        setcompareOrderPercentage({
+          currentMonth: orderCurrentMonth,
+          previousMonth: orderPreviousMonth,
+          percentageChange: Math.round(orderPercentChange),
+        });
+      }
+    }
+  }, [userData, orderData, userAnaLoading, isLoading]);
+
+  console.log("compareUserPercentage", compareUserPercentage);
+  console.log("compareOrderPercentage", compareOrderPercentage);
+
   return (
     <div className="w-full">
       <div className="mt-6">
         {/* Main grid layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] md:grid-cols-[65%,35%] gap-5 md:gap-6">
           {/* Left column - UserAnalytics */}
-          <div className="bg-white dark:bg-[#111C43] rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
             <UserAnalytics isDashBoard={true} />
           </div>
 
           {/* Right column - Widgets with auto height */}
           <div className="flex flex-col md:flex-row lg:flex-col gap-5 h-auto">
             {/* Sales Widget */}
-            <div className="flex-1 bg-white dark:bg-[#111C43] rounded-xl shadow-md p-5 transition-all duration-300 hover:shadow-lg">
+            <div className=" bg-white dark:bg-gray-900 rounded-xl shadow-md p-5 transition-all duration-300 hover:shadow-lg">
               <div className="flex justify-between items-center">
                 <div className="space-y-3">
                   <div className="flex items-center">
@@ -98,13 +157,15 @@ const DashBoardeWidget = ({
             </div>
 
             {/* New Users Widget */}
-            <div className="flex-1 bg-white dark:bg-[#111C43] rounded-xl shadow-md p-5 transition-all duration-300 hover:shadow-lg">
+            <div className=" bg-white dark:bg-gray-900 rounded-xl shadow-md p-5 transition-all duration-300 hover:shadow-lg">
               <div className="flex justify-between items-center">
                 <div className="space-y-3">
                   <div className="flex items-center">
                     <PiUsersFourLight className="dark:text-[#45CBA0] text-[#000] text-4xl mr-3" />
                     <h5 className="font-Poppins dark:text-[#fff] text-black text-2xl font-semibold">
-                      450
+                      {compareUserPercentage &&
+                        compareUserPercentage?.percentageChange}
+                      %
                     </h5>
                   </div>
                   <h5 className="font-Poppins dark:text-[#45CBA0] text-black text-sm font-medium tracking-wide uppercase">
@@ -124,14 +185,14 @@ const DashBoardeWidget = ({
       </div>
       {/* grid grid-cols-1 lg:grid-cols-[65%,35%] gap-5 w-full mt-6 */}
       <div className=" grid grid-cols-1 lg:grid-cols-[60%,40%] gap-5 w-full mt-6">
-        <div className="dark:bg-[#111C43] bg-white shadow-md rounded-md w-full h-auto">
+        <div className="dark:bg-gray-900 bg-white shadow-md rounded-md w-full h-auto">
           <OrderAnalytics isDashBoard={true} />
         </div>
-        <div className="w-full bg-white dark:bg-[#111C43] rounded-md shadow-md mt-20">
+        <div className="w-full">
           <h5 className="dark:text-white text-black text-xl font-medium font-Poppins p-4 border-b border-gray-200 dark:border-gray-700">
             Recent Transaction
           </h5>
-          <div className="mt-3 overflow-auto">
+          <div className=" max-sm:overflow-x-auto ">
             <AllInvoice isDashBoard={true} />
           </div>
         </div>
