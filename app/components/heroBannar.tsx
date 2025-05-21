@@ -20,18 +20,15 @@ const HeroBanner = () => {
       return toast.error("Please enter a course name to search.");
     }
 
-    // Check if the "Enter" key was pressed
     if ("key" in e && e.key === "Enter") {
       return router.push(`/courses?title=${search}`);
     }
 
-    // Handle button click
     if (e.type === "click") {
       return router.push(`/courses?title=${search}`);
     }
   };
 
-  // Loading state
   if (isLoading || !data) {
     return (
       <div className="flex items-center justify-center w-full h-screen">
@@ -48,29 +45,27 @@ const HeroBanner = () => {
   } = bannerData;
 
   return (
-    <div className="text-white min-h-screen flex items-center px-6">
-      <div className="max-w-7xl w-full flex flex-col md:flex-row justify-between items-center mx-auto gap-2">
-        {/* Illustration Section */}
-        <div className="mx-auto p-3 flex justify-center md:justify-start w-full hero_animation h-[80vh] max-h-[90vh]">
+    <div className="text-white min-h-screen flex items-center px-4 md:px-6">
+      <div className="max-w-7xl w-full flex flex-col md:flex-row justify-between items-center mx-auto gap-6">
+        {/* Image / Animation Container */}
+        <div className="w-full md:w-1/2 flex justify-center md:justify-start h-auto max-h-[90vh]">
           {image?.url ? (
             <img
               src={image.url}
               alt="Course Illustration"
-              width={500}
-              height={500}
-              className="w-full md:w-full max-w-md rounded-full object-cover text-center ml-5 "
+              className="w-full max-w-[500px] h-auto rounded-md object-contain hero_animation"
             />
           ) : (
-            <div className="w-full md:w-full max-w-md rounded-full bg-gray-300 h-full" />
+            <div className="w-full max-w-[500px] h-64 bg-gray-300 rounded-md" />
           )}
         </div>
 
         {/* Text Content Section */}
-        <div className="w-full md:w-full md:pl-12">
-          <h1 className="text-3xl md:text-4xl font-bold leading-snug text-black dark:text-white">
+        <div className="w-full md:w-1/2 md:pl-6">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug text-black dark:text-white">
             {title}
           </h1>
-          <p className="text-black dark:text-white text-base md:text-lg mt-4">
+          <p className="text-black dark:text-white text-sm sm:text-base md:text-lg mt-4">
             {subTitle}
           </p>
 
@@ -81,17 +76,13 @@ const HeroBanner = () => {
               placeholder="Search Courses..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSearchCourses(e);
-                }
-              }}
+              onKeyDown={handleSearchCourses}
               className="w-full p-3 rounded-l-lg dark:text-white bg-slate-900 text-white focus:outline-none"
             />
             <button
               className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-r-lg transition-colors"
-              aria-label="Search courses"
               onClick={handleSearchCourses}
+              aria-label="Search courses"
             >
               🔍
             </button>
@@ -100,39 +91,37 @@ const HeroBanner = () => {
           {/* Trust Indicator */}
           <div className="mt-6">
             <div className="bg-black text-white p-4 rounded-md">
-              <div className="container mx-auto py-2">
-                <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3">
-                  {/* Avatar stack */}
-                  <div className="flex -space-x-1.5 sm:-space-x-2 md:-space-x-3">
-                    {[
-                      "https://img.freepik.com/premium-photo/adult-woman-face-smile-expression-studio-portrait_53876-83921.jpg?w=740",
-                      "https://img.freepik.com/free-photo/close-up-childish-african-student-male-with-funky-hair-blowing-his-cheeks_273609-14065.jpg?t=st=1732232951~exp=1732236551~hmac=fb46f696ce122e5e2415c66db7ad23877181bf9364978b841e9221e90a01d90e&w=740",
-                      "https://img.freepik.com/free-photo/medium-shot-man-with-afro-hairstyle_23-2150677136.jpg?t=st=1732234387~exp=1732237987~hmac=d3c7082f28cec9210a10bd2e028127801b66ca14a2c06d90d39d0aca4bdcd3df&w=740",
-                    ].map((src, index) => (
-                      <img
-                        key={index}
-                        src={src}
-                        alt={`Avatar ${index + 1}`}
-                        width={40}
-                        height={40}
-                        className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full border-2 border-black object-cover relative z-30"
-                        style={{ zIndex: 30 - index * 10 }}
-                      />
-                    ))}
-                  </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3">
+                {/* Avatars */}
+                <div className="flex -space-x-1.5 sm:-space-x-2 md:-space-x-3">
+                  {[
+                    "https://img.freepik.com/premium-photo/adult-woman-face-smile-expression-studio-portrait_53876-83921.jpg?w=740",
+                    "https://img.freepik.com/free-photo/close-up-childish-african-student-male-with-funky-hair-blowing-his-cheeks_273609-14065.jpg",
+                    "https://img.freepik.com/free-photo/medium-shot-man-with-afro-hairstyle_23-2150677136.jpg",
+                  ].map((src, index) => (
+                    <img
+                      key={index}
+                      src={src}
+                      alt={`Avatar ${index + 1}`}
+                      width={40}
+                      height={40}
+                      className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full border-2 border-black object-cover"
+                      style={{ zIndex: 30 - index * 10 }}
+                    />
+                  ))}
+                </div>
 
-                  {/* Text content */}
-                  <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-white">
-                    <span className="text-sm sm:text-base md:text-lg font-semibold text-center sm:text-left whitespace-nowrap">
-                      300K+ People already trusted us.
-                    </span>
-                    <a
-                      href="#courses"
-                      className="text-green-400 hover:text-green-300 transition-colors text-sm sm:text-base md:text-lg font-medium whitespace-nowrap"
-                    >
-                      View Courses
-                    </a>
-                  </div>
+                {/* Trust text */}
+                <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                  <span className="text-sm sm:text-base md:text-lg font-semibold text-center sm:text-left whitespace-nowrap">
+                    300K+ People already trusted us.
+                  </span>
+                  <a
+                    href="#courses"
+                    className="text-green-400 hover:text-green-300 transition-colors text-sm sm:text-base md:text-lg font-medium whitespace-nowrap"
+                  >
+                    View Courses
+                  </a>
                 </div>
               </div>
             </div>

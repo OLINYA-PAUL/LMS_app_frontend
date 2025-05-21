@@ -100,18 +100,6 @@ const CoursesCard = ({ items, key, isProfile }: courseCardProps) => {
                   {items.courseData?.length || 0} Lectures
                 </span>
               </div>
-
-              {/* add multiple card remeber to remove late */}
-
-              <div className="flex items-center">
-                <AiOutlineOrderedList
-                  className="text-black dark:text-white"
-                  size={18}
-                />
-                <span className="ml-2 text-sm text-black dark:text-white">
-                  {items.courseData?.length || 0} Lectures
-                </span>
-              </div>
             </div>
           </div>
         </div>

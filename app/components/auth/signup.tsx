@@ -18,22 +18,19 @@ interface LoginPops {
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
 }
 
-const Singup = ({ setRoute, setIsOpen }: LoginPops) => {
-  const [show, setShow] = useState<boolean>(true);
+const Signup = ({ setRoute, setIsOpen }: LoginPops) => {
+  const [show, setShow] = useState<boolean>(false);
   const [register, { error, isSuccess, data, reset }] = useRegisterMutation();
 
   useEffect(() => {
     if (isSuccess) {
-      const message = data?.message || "registration is successful";
-
+      const message = data?.message || "Registration successful";
       setRoute("Verification");
       toast?.success(message);
     }
-    if (error) {
-      if ("data" in error) {
-        const errorData = (error as any) || "failed to register";
-        toast?.success(errorData.data.error);
-      }
+    if (error && "data" in error) {
+      const errorData = (error as any)?.data?.error || "Failed to register";
+      toast?.error(errorData);
     }
   }, [isSuccess, error]);
 
@@ -47,7 +44,6 @@ const Singup = ({ setRoute, setIsOpen }: LoginPops) => {
     onSubmit: async ({ name, email, password }) => {
       try {
         await register({ name, email, password });
-
         reset();
       } catch (error: any) {
         console.log(error.message);
@@ -59,173 +55,147 @@ const Singup = ({ setRoute, setIsOpen }: LoginPops) => {
     errors,
     touched,
     handleChange,
-    resetForm,
-    values,
-    status,
-    isSubmitting,
     handleBlur,
+    values,
     handleSubmit,
+    isSubmitting,
   } = formik;
 
   return (
-    <div>
-      <div
+    <div className="w-full max-w-md p-4 mx-auto shadow-sm rounded-md">
+      <h1 className="text-[16px] font-semibold mb-3 text-center dark:text-white">
+        Signup With React Prodigy
+      </h1>
 
-      // className="flex flex-1 flex-col dark:bg-gradient-to-b  dark:from-blue-900 dark:to-black duration-300 w-full md:max-w-[50%] p-6 bg-white shadow-md rounded-lg absolute  left-[25%] border-2 dark:border-[#ffffff1c]  transition "
-      >
-        <h1 className={`${styles.title}`}>Singup With React Prodigy</h1>
-        <form onSubmit={handleSubmit} className="mt-5 mb-4">
-          <div>
-            <label htmlFor="name" className={`${styles.lable}`}>
-              name
-            </label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              placeholder="Enter your name"
-              onChange={handleChange}
-              onBlur={handleBlur} // Add this
-              value={values.name}
-              className={`${
-                errors.name && touched.name
-                  ? "border-red-600"
-                  : "border-transparent"
-              } w-full rounded-md p-3 mt-3 bg-slate-300 text-black dark:text-white 
-            border-2 border-r-slate-200 
-            focus:outline-none focus:ring-4 focus:ring-blue-500
-            focus:ring-opacity-50 
-            transition-all duration-300 
-            bg-gradient-to-r from-blue-500 to-teal-400 dark:placeholder:text-white`}
-              style={{
-                backgroundImage: "linear-gradient(45deg, #6ee7b7, #3b82f6)",
-                borderImage: "linear-gradient(45deg, #6ee7b7, #3b82f6) 1",
-              }}
-            />
-            {errors.name && touched.name && (
-              <div className="text-red-600 mt-2">{errors.name}</div>
-            )}
-          </div>
-          <div className="mt-2">
-            <label htmlFor="email" className={`${styles.lable}`}>
-              Email
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter your email"
-              onChange={handleChange}
-              onBlur={handleBlur} // Add this
-              value={values.email}
-              className={`${
-                errors.email && touched.email
-                  ? "border-red-600"
-                  : "border-transparent"
-              } w-full rounded-md p-3 mt-3 bg-slate-300 text-black dark:text-white 
-            border-2 border-r-slate-200 
-            focus:outline-none focus:ring-4 focus:ring-blue-500
-            focus:ring-opacity-50 
-            transition-all duration-300 
-            bg-gradient-to-r from-blue-500 to-teal-400 dark:placeholder:text-white`}
-              style={{
-                backgroundImage: "linear-gradient(45deg, #6ee7b7, #3b82f6)",
-                borderImage: "linear-gradient(45deg, #6ee7b7, #3b82f6) 1",
-              }}
-            />
-            {errors.email && touched.email && (
-              <div className="text-red-600 mt-2">{errors.email}</div>
-            )}
-          </div>
+      <form onSubmit={handleSubmit} className="space-y-3 text-sm">
+        {/* Name */}
+        <div>
+          <label htmlFor="name" className="block mb-1 text-xs dark:text-white">
+            Name
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.name}
+            className={`w-full px-2 py-1 rounded border text-sm dark:text-white dark:bg-transparent ${
+              errors.name && touched.name
+                ? "border-red-600"
+                : "border-gray-300 dark:border-gray-700"
+            }`}
+          />
+          {errors.name && touched.name && (
+            <p className="text-red-500 mt-1 text-xs">{errors.name}</p>
+          )}
+        </div>
 
-          <div className="mt-3">
-            <label htmlFor="Password" className={`${styles.lable}`}>
-              Password
-            </label>
-            <div className="flex items-center mt-3 rounded-md bg-gradient-to-r from-blue-500 to-teal-400 p-[2px]">
-              <input
-                id="password"
-                name="password"
-                type={show ? "text" : "password"}
-                placeholder="Enter your Password"
-                onChange={handleChange}
-                onBlur={handleBlur} // Add this
-                value={values.password}
-                className={`${
-                  errors.email && touched.email
-                    ? "border-red-600"
-                    : "border-transparent"
-                }  w-full p-3 text-black dark:text-white bg-transparent focus:outline-none 
-            placeholder:text-gray-700 dark:placeholder:text-white`}
+        {/* Email */}
+        <div>
+          <label htmlFor="email" className="block mb-1 text-xs dark:text-white">
+            Email
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.email}
+            className={`w-full px-2 py-1 rounded border text-sm dark:text-white dark:bg-transparent ${
+              errors.email && touched.email
+                ? "border-red-600"
+                : "border-gray-300 dark:border-gray-700"
+            }`}
+          />
+          {errors.email && touched.email && (
+            <p className="text-red-500 mt-1 text-xs">{errors.email}</p>
+          )}
+        </div>
+
+        {/* Password */}
+        <div>
+          <label
+            htmlFor="password"
+            className="block mb-1 text-xs dark:text-white"
+          >
+            Password
+          </label>
+          <div className="flex items-center border rounded px-2 py-1 dark:border-gray-700">
+            <input
+              id="password"
+              name="password"
+              type={show ? "text" : "password"}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.password}
+              placeholder="•••••••"
+              className="w-full text-sm bg-transparent outline-none text-black dark:text-white"
+            />
+            {show ? (
+              <AiOutlineEye
+                className="w-4 h-4 text-black dark:text-white ml-2 cursor-pointer"
+                onClick={() => setShow(false)}
               />
-              <div className="mr-5">
-                {show ? (
-                  <AiOutlineEye
-                    className="w-6 h-6 text-black dark:text-white cursor-pointer hover:scale-105 transition-transform duration-200"
-                    onClick={() => setShow(false)} // Toggle visibility
-                  />
-                ) : (
-                  <AiOutlineEyeInvisible
-                    className="w-6 h-6 text-black dark:text-white cursor-pointer hover:scale-105 transition-transform duration-200"
-                    onClick={() => setShow(true)} // Toggle visibility
-                  />
-                )}
-              </div>
-            </div>
+            ) : (
+              <AiOutlineEyeInvisible
+                className="w-4 h-4 text-black dark:text-white ml-2 cursor-pointer"
+                onClick={() => setShow(true)}
+              />
+            )}
           </div>
           {errors.password && touched.password && (
-            <div className="text-red-600 mt-2">{errors.password}</div>
+            <p className="text-red-500 mt-1 text-xs">{errors.password}</p>
           )}
-          <button
-            type="submit"
-            disabled={
-              (values.name === "" ||
-                values?.email === "" ||
-                values.password === "",
-              isSubmitting)
-            }
-            className={`${styles.submit} ${
-              values.name === "" ||
-              values?.email === "" ||
-              values?.password === ""
-                ? "opacity-50 cursor-not-allowed"
-                : "cursor-pointer"
-            } w-full py-3 mt-10 rounded-full flex items-center justify-center text-black bg-gradient-to-r from-blue-500 via-purple-500 to-teal-400 dark:text-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-501`}
-          >
-            {isSubmitting ? (
-              <ImSpinner className="w-6 h-6 text-black dark:text-white" />
-            ) : (
-              "Sing up"
-            )}
-          </button>
-          <div className="text-black dark:text-white transition-all duration-300 transform mt-10 font-extrabold text-center font-Poppins text-[20px]">
-            Join with Goole
-          </div>
-          <div className="flex items-center justify-center gap-3 mt-5 ">
-            <FcGoogle
-              className="w-8 h-8 cursor-pointer hover:scale-105 transition-transform duration-200"
-              onClick={() => setShow(false)} // Toggle visibility
-            />
-            <AiFillGithub
-              className="w-8 h-8 cursor-pointer hover:scale-105 transition-transform duration-200 ml-5"
-              onClick={() => setShow(false)} // Toggle visibility
-            />
-          </div>
-          <div
-            className="flex cursor-pointer items-center justify-center gap-3  text-black dark:text-white transition-all duration-300 transform mt-5 text-center font-Poppins text-[19px]"
-            onClick={() => setRoute("Login")}
-          >
-            <p> have an account?</p>
-            <p className="text-blue-500"> Sing in </p>
-            <FaLongArrowAltRight
-              width={20}
-              className="w-4 h-4 cursor-pointer hover:scale-105 transition-transform duration-200 "
-            />
-          </div>
-        </form>
-      </div>
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={
+            !values.name || !values.email || !values.password || isSubmitting
+          }
+          className={`w-full py-2 mt-1 rounded text-sm font-semibold transition-all ${
+            !values.name || !values.email || !values.password
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600 text-white"
+          }`}
+        >
+          {isSubmitting ? (
+            <ImSpinner className="animate-spin w-4 h-4 mx-auto" />
+          ) : (
+            "Sign up"
+          )}
+        </button>
+
+        {/* OAuth */}
+        <div className="text-center text-xs mt-4 dark:text-white">
+          Or Join with
+        </div>
+        <div className="flex justify-center space-x-4 mt-2">
+          <FcGoogle
+            className="w-5 h-5 cursor-pointer"
+            onClick={() => setShow(false)}
+          />
+          <AiFillGithub
+            className="w-5 h-5 cursor-pointer"
+            onClick={() => setShow(false)}
+          />
+        </div>
+
+        {/* Switch to Login */}
+        <div
+          className="flex justify-center items-center text-xs mt-4 gap-1 text-black dark:text-white cursor-pointer"
+          onClick={() => setRoute("Login")}
+        >
+          <p>Already have an account?</p>
+          <span className="text-blue-500">Sign in</span>
+          <FaLongArrowAltRight className="w-3 h-3" />
+        </div>
+      </form>
     </div>
   );
 };
 
-export default Singup;
+export default Signup;

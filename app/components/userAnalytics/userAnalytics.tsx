@@ -25,8 +25,6 @@ const UserAnalytics = ({ isDashBoard }: isDashBoardprops) => {
 
   const analysisData: any = [];
 
-  console.log("data user", data);
-
   data &&
     data?.userAanalysis?.last12Months?.forEach((v: any) => {
       analysisData.push({
