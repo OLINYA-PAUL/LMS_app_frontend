@@ -8,15 +8,17 @@ import { SessionProvider } from "next-auth/react";
 import React from "react";
 import CustomeLoader from "./components/customeLoader/loader";
 import { fontsStyles } from "./ServerLayout";
-import { io } from "socket.io-client";
-const SOCKET_URL =
-  process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000";
-export const socket = io(SOCKET_URL, {
-  // autoConnect: false,
-  transports: ["websocket"],
-});
+// import { io } from "socket.io-client";
+import SocketProvider from "../socketProvider/socketProvider";
+// const SOCKET_URL =
+//   process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000";
+// export const socket = io(SOCKET_URL, {
+//   // autoConnect: false,
+//   transports: ["websocket"],
+// });
 
-socket.on("connection", () => {});
+// socket.on("connection", () => {});
+// import SocketProvider from "@/socketProvider/socketProvider";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -29,7 +31,9 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
               defaultTheme="system"
               enableSystem
             >
-              <CustomeLoader>{children}</CustomeLoader>
+              <SocketProvider>
+                <CustomeLoader>{children}</CustomeLoader>
+              </SocketProvider>
               <Toaster />
             </ThemeProviders>
           </SessionProvider>

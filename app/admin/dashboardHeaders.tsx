@@ -6,8 +6,8 @@ import {
   useGetNotificationsQuery,
   useUpdateNotificationsMutation,
 } from "@/radux/features/notifications/notificationsApi";
-import { socket } from "../layout";
 import { format } from "timeago.js";
+import { socket } from "../../socketProvider/socketProvider";
 
 const DashboardHeaders = ({
   open,
