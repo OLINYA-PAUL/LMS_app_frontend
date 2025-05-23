@@ -958,10 +958,6 @@
 
 // export default CourseContentMedia;
 
-
-
-
-
 import { styles } from "@/app/styles/style";
 import {
   useAddAnswerToQuestionMutation,
@@ -988,7 +984,8 @@ import Ratings from "@/utils/Rating";
 
 import { io } from "socket.io-client";
 const SOCKET_URL =
-  process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_SOCKET_URL ||
+  "https://elearning-app-f00t.onrender.com";
 export const socket = io(SOCKET_URL, {
   // autoConnect: false,
   transports: ["websocket"],
@@ -1466,9 +1463,7 @@ const CourseContentMedia = ({
               <div>
                 <h5 className="text-[15px] font-semibold dark:text-white text-black">
                   {user?.name}{" "}
-                  <span className="text-red-600 font-bold text-[20px]">
-                    *
-                  </span>
+                  <span className="text-red-600 font-bold text-[20px]">*</span>
                 </h5>
                 <div className="w-full flex cursor-pointer mt-1">
                   {[1, 2, 3, 4, 5].map((i: any) =>

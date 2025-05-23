@@ -13,6 +13,8 @@ import { useGetHeroDataQuery } from "@/radux/features/layout/layoutApi";
 import { Frown, SearchX } from "lucide-react";
 import CoursesCard from "../components/CourseDetails/CoursesCard";
 import { useSelector } from "react-redux";
+import { useGetAllUsersQuery } from "@/radux/features/user/userApiSlice";
+import { useLoadUserQuery } from "@/radux/features/api/apiSlice";
 
 const Courses = () => {
   const [route, setRoute] = useState("Login");
@@ -30,7 +32,10 @@ const Courses = () => {
 
   console.log(category);
 
-  const { user } = useSelector((state: any) => state.auth);
+  // const { user } = useSelector((state: any) => state.auth);
+  const { data: user } = useLoadUserQuery({});
+
+  console.log("User data:", user);
   const isPurchased = user?.courses?.some((c: any) => {
     return c._id === data?.courses?._id;
   });
@@ -80,7 +85,7 @@ const Courses = () => {
       console.log("After category filter:", filteredCourses);
     }
 
-    if (categories) {
+    if (categories !== "All") {
       searchTitle = categories;
       console.log("Search title after category:", searchTitle);
     }

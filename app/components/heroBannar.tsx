@@ -16,10 +16,6 @@ const HeroBanner = () => {
   const router = useRouter();
 
   const handleSearchCourses = (e: React.KeyboardEvent | React.MouseEvent) => {
-    if (!search || search.trim() === "") {
-      return toast.error("Please enter a course name to search.");
-    }
-
     if ("key" in e && e.key === "Enter") {
       return router.push(`/courses?title=${search}`);
     }
