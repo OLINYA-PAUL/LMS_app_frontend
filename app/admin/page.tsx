@@ -3,8 +3,10 @@
 import { useState } from "react";
 import DashBoardeWidget from "../components/widget/DashBoardeWidget";
 
-const page = ({ isDashBoard }: { isDashBoard: boolean }) => {
+const page = () => {
   const [open, setOpen] = useState(false);
+
+  const isDashBoard: boolean = false;
 
   return (
     <div className="w-full ">

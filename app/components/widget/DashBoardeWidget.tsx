@@ -56,7 +56,7 @@ const CircularProgressWithLabel = ({
 const DashBoardeWidget = ({
   open,
   setOpen,
-  isDashBoard = false,
+  isDashBoard,
   value = 0,
 }: {
   open: boolean;
