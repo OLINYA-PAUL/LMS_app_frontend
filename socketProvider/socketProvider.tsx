@@ -21,5 +21,5 @@ export default function SocketProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  return <div>{children}</div>;
+  return <div className="w-full">{children}</div>;
 }
