@@ -37,7 +37,7 @@ const NavItems = ({ activeItem, isMobile }: navProps) => {
           navItemsData.map((i, index) => (
             <li
               key={index}
-              className="font-Poppins  cursor-pointer p-3 font-extrabold"
+              className="font-Poppins  cursor-pointer p-3 font-bold"
             >
               <Link
                 href={i.url}
@@ -57,7 +57,7 @@ const NavItems = ({ activeItem, isMobile }: navProps) => {
             navItemsData.map((i, index) => (
               <li
                 key={index}
-                className="mx-5 font-Poppins font-bold cursor-pointer moble_nav_items"
+                className="mx-5 font-Poppins  cursor-pointer moble_nav_items text-left"
               >
                 <Link
                   href={`${i.url}`}

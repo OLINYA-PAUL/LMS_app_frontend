@@ -26,26 +26,55 @@ const DashboardHeaders = ({
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [audio] = useState<HTMLAudioElement>(
     new Audio(
-      "https://asset.cloudinary.com/div69fetk/5abfb2803c7aa84fd013054ee1e36c97"
+      "https://res.cloudinary.com/div69fetk/video/upload/v1747648975/bell-notification-337658_vcj8wc.mp4"
     )
   );
 
-  const notificationSounds = () => {
-    audio.play().catch((err) => console.error("Audio play error:", err));
+  // const notificationSounds = (): Promise<void> => {
+  //   return audio.play().catch((err) => console.error("Audio play error:", err));
+  // };
+
+  const notificationSounds = async (): Promise<void> => {
+    try {
+      await audio.play();
+    } catch (err) {
+      console.error("Audio play error:", err);
+    }
   };
 
+  // useEffect(() => {
+  //   if (data) {
+  //     setNotifications(
+  //       // data.notifications
+  //       data.notifications.filter((item: any) => item.status === "unread")
+  //     );
+  //   }
+  //   if (isSuccess) {
+  //     refetch();
+  //   }
+  //   audio.load();
+  // }, [data, isSuccess, refetch, audio]);
+
+  // Load audio only once on mount
   useEffect(() => {
-    if (data) {
+    audio.load();
+  }, [audio]);
+
+  // Handle data and setting notifications
+  useEffect(() => {
+    if (data?.notifications) {
       setNotifications(
-        // data.notifications
         data.notifications.filter((item: any) => item.status === "unread")
       );
     }
+  }, [data]);
+
+  // Optional: trigger a refetch only once when isSuccess is true
+  useEffect(() => {
     if (isSuccess) {
       refetch();
     }
-    audio.load();
-  }, [data, isSuccess, refetch, audio]);
+  }, [isSuccess, refetch]);
 
   useEffect(() => {
     const handleSocketNotification = (data: any) => {

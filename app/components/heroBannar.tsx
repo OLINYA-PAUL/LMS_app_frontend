@@ -45,7 +45,7 @@ const HeroBanner = () => {
   } = bannerData;
 
   return (
-    <div className="text-white min-h-screen flex items-center px-4 md:px-6">
+    <div className="text-white min-h-screen flex items-center px-4 md:px-20">
       <div className="max-w-7xl w-full flex flex-col md:flex-row justify-between items-center mx-auto gap-6">
         {/* Image / Animation Container */}
         <div className="w-full md:w-1/2 flex justify-center md:justify-start h-auto max-h-[90vh]">
