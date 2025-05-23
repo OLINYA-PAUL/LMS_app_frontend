@@ -104,7 +104,7 @@ const Header = ({
               </div>
 
               {/* Desktop profile */}
-              <div className="hidden 800px:block">
+              <div className="">
                 <h1 className="font-bold text-xl ml-3">
                   {userData?.user ? (
                     <Link href="/profile">

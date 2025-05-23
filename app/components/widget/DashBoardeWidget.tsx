@@ -35,7 +35,7 @@ const CircularProgressWithLabel = ({
           strokeDasharray={`${value * 2.51} 251`}
           transform="rotate(-90 50 50)"
           className={`${
-            value && value > 99
+            value && value < 99
               ? "stroke-[#ff2600] fill-none"
               : "stroke-[#45CBA0] fill-none"
           } transition-all duration-300 ease-in-out`}
@@ -64,12 +64,11 @@ const DashBoardeWidget = ({
   isDashBoard?: boolean;
   value?: number;
 }) => {
-  const [compareUserPercentage, setcompareUserPercentage] =
-    React.useState<any>();
+  const [compareUserPercentage, setcompareUserPercentage] = React.useState<any>(
+    {}
+  );
   const [compareOrderPercentage, setcompareOrderPercentage] =
-    React.useState<any>();
-  const [comparePercentage, setcomparePercentage] = React.useState([]);
-
+    React.useState<any>({});
   const { data: userData, isLoading: userAnaLoading } = useGetUserAnalysisQuery(
     {}
   );
@@ -77,46 +76,66 @@ const DashBoardeWidget = ({
   // console.log("user data", userData);
   // console.log("order data", orderData);
 
-  useEffect(() => {
-    if (userAnaLoading || isLoading) {
-      return;
-    }
+  const userAndSalesPercentageChange = async () => {
+    try {
+      if (userData && orderData) {
+        const userLastTwoMonths =
+          await userData?.userAanalysis?.last12Months.slice(-2);
+        const orderLastTwoMonths =
+          await orderData?.oderAanalysis?.last12Months.slice(-2);
 
-    if (userData && orderData) {
-      const userLastTwoMonths = userData?.userAanalysis?.last12Months.slice(-2);
-      const orderLastTwoMonths =
-        orderData?.oderAanalysis?.last12Months.slice(-2);
+        if (userLastTwoMonths.length === 2 && orderLastTwoMonths.length === 2) {
+          const useCurrentMonth = userLastTwoMonths[1].count;
+          const userPreviousMonth = userLastTwoMonths[0].count;
+          const orderCurrentMonth = orderLastTwoMonths[1].count;
+          const orderPreviousMonth = orderLastTwoMonths[0].count;
 
-      console.log("userLastTwoMonths >>>>>>>>>>>>>>>>>", userData);
+          const userPercentChange =
+            userPreviousMonth !== 0
+              ? ((useCurrentMonth - userPreviousMonth) / userPreviousMonth) *
+                100
+              : 100;
 
-      console.log("orderLastTwoMonths >>>>>>>>>>>>>>>>>", orderData);
+          const orderPercentChange =
+            orderPreviousMonth !== 0
+              ? ((orderCurrentMonth - orderPreviousMonth) /
+                  orderPreviousMonth) *
+                100
+              : 100;
 
-      if (userLastTwoMonths.length > 2 && orderLastTwoMonths.length > 2) {
-        const useCurrentMonth = userLastTwoMonths[1].count;
-        const userPreviousMonth = userLastTwoMonths[0].count;
-        const orderCurrentMonth = orderLastTwoMonths[1].count;
-        const orderPreviousMonth = orderLastTwoMonths[0].count;
+          console.log("userLastTwoMonths >>>>>>>>>>>>>>>>>", userLastTwoMonths);
 
-        const userPercentChange =
-          ((useCurrentMonth - userPreviousMonth) / userPreviousMonth) * 100;
+          console.log(
+            "orderLastTwoMonths >>>>>>>>>>>>>>>>>",
+            orderLastTwoMonths
+          );
 
-        const orderPercentChange =
-          ((orderCurrentMonth - orderPreviousMonth) / orderPreviousMonth) * 100;
+          setcompareUserPercentage({
+            currentMonth: useCurrentMonth,
+            previousMonth: userPreviousMonth,
+            percentageChange: Math.round(userPercentChange),
+          });
 
-        setcompareUserPercentage({
-          currentMonth: useCurrentMonth,
-          previousMonth: userPreviousMonth,
-          percentageChange: Math.round(userPercentChange),
-        });
-
-        setcompareOrderPercentage({
-          currentMonth: orderCurrentMonth,
-          previousMonth: orderPreviousMonth,
-          percentageChange: Math.round(orderPercentChange),
-        });
+          setcompareOrderPercentage({
+            currentMonth: orderCurrentMonth,
+            previousMonth: orderPreviousMonth,
+            percentageChange: Math.round(orderPercentChange),
+          });
+        }
       }
+    } catch (err: any) {
+      console.log(err);
     }
-  }, [userData, orderData, userAnaLoading, isLoading]);
+  };
+  // userAndSalesPercentageChange();
+
+  useEffect(() => {
+    if (userData && orderData) {
+      userAndSalesPercentageChange();
+    }
+  }, [userData, orderData]);
+
+  if (userAnaLoading || isLoading) return "Loading percentage Data...";
 
   console.log("compareUserPercentage", compareUserPercentage);
   console.log("compareOrderPercentage", compareOrderPercentage);
@@ -140,7 +159,8 @@ const DashBoardeWidget = ({
                   <div className="flex items-center">
                     <PiUsersFourLight className="dark:text-[#45CBA0] text-[#000] text-4xl mr-3" />
                     <h5 className="font-Poppins dark:text-[#fff] text-black text-2xl font-semibold">
-                      450
+                      {compareOrderPercentage &&
+                        compareOrderPercentage?.currentMonth}
                     </h5>
                   </div>
                   <h5 className="font-Poppins dark:text-[#45CBA0] text-black text-sm font-medium tracking-wide uppercase">
@@ -148,9 +168,18 @@ const DashBoardeWidget = ({
                   </h5>
                 </div>
                 <div className="flex flex-col items-center">
-                  <CircularProgressWithLabel value={100} open={open} />
+                  <CircularProgressWithLabel
+                    value={compareOrderPercentage.percentage > 0 ? 100 : 0}
+                    open={open}
+                  />
                   <h5 className="text-center dark:text-white text-black font-medium mt-2 text-sm">
-                    +120%
+                    {isFinite(compareOrderPercentage?.percentageChange)
+                      ? `${
+                          compareOrderPercentage.percentageChange >= 0
+                            ? "+"
+                            : ""
+                        }${compareOrderPercentage.percentageChange}%`
+                      : "0%"}
                   </h5>
                 </div>
               </div>
@@ -164,8 +193,7 @@ const DashBoardeWidget = ({
                     <PiUsersFourLight className="dark:text-[#45CBA0] text-[#000] text-4xl mr-3" />
                     <h5 className="font-Poppins dark:text-[#fff] text-black text-2xl font-semibold">
                       {compareUserPercentage &&
-                        compareUserPercentage?.percentageChange}
-                      %
+                        compareUserPercentage?.currentMonth}
                     </h5>
                   </div>
                   <h5 className="font-Poppins dark:text-[#45CBA0] text-black text-sm font-medium tracking-wide uppercase">
@@ -173,9 +201,26 @@ const DashBoardeWidget = ({
                   </h5>
                 </div>
                 <div className="flex flex-col items-center">
-                  <CircularProgressWithLabel value={100} open={open} />
+                  <CircularProgressWithLabel
+                    value={compareUserPercentage.percentage > 0 ? 100 : 0}
+                    open={open}
+                  />
                   <h5 className="text-center dark:text-white text-black font-medium mt-2 text-sm">
-                    +150%
+                    {/* {compareUserPercentage &&
+                    compareUserPercentage?.percentageChange >= 0
+                      ? "+" +
+                          String(compareUserPercentage?.percentageChange) ===
+                          "Infinity" && 0
+                      : "-" +
+                          String(compareUserPercentage?.percentageChange) ===
+                          "Infinity" && 0} */}
+                  </h5>
+                  <h5 className="text-center dark:text-white text-black font-medium mt-2 text-sm">
+                    {isFinite(compareUserPercentage?.percentageChange)
+                      ? `${
+                          compareUserPercentage.percentageChange >= 0 ? "+" : ""
+                        }${compareUserPercentage.percentageChange}%`
+                      : "0%"}
                   </h5>
                 </div>
               </div>
